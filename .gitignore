@@ -1,0 +1,50 @@
+# Thư mục Library chứa dữ liệu cache, không cần push lên
+[Ll]ibrary/
+
+# Thư mục Temp chứa file tạm thời, không cần push
+[Tt]emp/
+
+# Thư mục Logs chứa log khi chạy game
+[Ll]ogs/
+
+# Thư mục chứa dữ liệu Build
+[Bb]uild/
+[Bb]uilds/
+
+# Không đẩy thư mục chứa file nguồn của Visual Studio
+[Oo]bj/
+.vscode/
+
+# File UserSettings chứa thông tin cá nhân, không cần push
+[Uu]serSettings/
+
+# Không đẩy file liên quan đến Unity Collaborate
+[Uu]nity[Cc]ollab/
+
+# Không đẩy file liên quan đến crash report
+[Cc]rash[Rr]eports/
+
+# Thư mục `.vs` của Visual Studio
+.vs/
+
+# File `.DS_Store` trên macOS
+.DS_Store
+
+# File lock của Unity Hub
+*.pidb
+*.suo
+*.tmp
+*.user
+*.rsuser
+*.swp
+*.sln*
+
+# Không đẩy file liên quan đến hệ thống version của Unity
+[Uu]nity[Yy]aml[Cc]ontent/
+
+# File log của Git
+.git/
+
+# Không đẩy file `.apk`, `.ipa` nếu build game mobile
+*.apk
+*.ipa
