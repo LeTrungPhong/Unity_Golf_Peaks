@@ -174,6 +174,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ball
       objectReference: {fileID: 0}
+    - target: {fileID: 6880385538580010981, guid: a32e77d19082a8043a104f8f08f47fb4, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7764327307819410537, guid: a32e77d19082a8043a104f8f08f47fb4, type: 3}
     m_RemovedGameObjects: []
@@ -1603,7 +1607,6 @@ MonoBehaviour:
   obstaclePrefab: {fileID: 6332702502486906646, guid: aa53dd9c3124459448de384412bf8e6c, type: 3}
   planePrefab: {fileID: 1918964778487139147, guid: 098362a7e882cd14f9932e73c8b7235b, type: 3}
   changeDirectionPrefab: {fileID: 7444671658643919707, guid: c95abb0259ccf7a4caa91d40192d9d8a, type: 3}
-  ball: {fileID: 25731140}
 --- !u!4 &1791446003
 Transform:
   m_ObjectHideFlags: 0

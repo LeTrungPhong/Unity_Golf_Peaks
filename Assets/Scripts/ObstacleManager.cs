@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,10 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject obstaclePrefab;
     [SerializeField] private GameObject planePrefab;
     [SerializeField] private GameObject changeDirectionPrefab;
-    [SerializeField] private GameObject ball;
-    private float obstacleSize = 1;
+    private GameObject player;
     private float changeDirectionSize = 1;
-    private float ballSize = 0.25f;
+    public float obstacleSize = 1;
+    public float ballSize = 0.25f;
 
     // set up obstacle spawn points
     public int[][] spawnObstacles;
@@ -20,6 +21,7 @@ public class ObstacleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindWithTag("Player").gameObject;
         obstacleSize = obstaclePrefab.transform.localScale.x;
         changeDirectionSize = obstacleSize / 2;
 
@@ -31,6 +33,7 @@ public class ObstacleManager : MonoBehaviour
            new int[] { 7, 6, 6, 7, 0 }
         };
 
+        // 1 = z, 3 = -z, 2 = x, 4 = -x
         this.spawnPlanes = new int[][] {
            new int[] { 0, 0, 0, 3, 0 },
            new int[] { 0, 0, 0, 0, 2 },
@@ -69,8 +72,8 @@ public class ObstacleManager : MonoBehaviour
                 if (i == 2 && j == 2)
                 {
                     // Spawn Ball
-                    ball.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
-                    ball.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
+                    player.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
+                    player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
                 }
             }
         }
@@ -89,5 +92,43 @@ public class ObstacleManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public bool checkObstacle(int[] positionIndex) 
+    {
+        //Debug.Log(positionIndex[0] + " " + positionIndex[1] + " " + positionIndex[2]);
+        //Debug.Log(spawnObstacles.Length);
+        if (positionIndex[0] >= spawnObstacles.Length)
+        {
+            return false;
+        }
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length)
+        {
+            return false;
+        }
+        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
+        if (positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]])
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public int checkPlane(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length)
+        {
+            return 0;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length)
+        {
+            return 0;
+        }
+        if (spawnPlanes[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return spawnPlanes[positionIndex[0]][positionIndex[2]];
+        }
+        return 0;
     }
 }
