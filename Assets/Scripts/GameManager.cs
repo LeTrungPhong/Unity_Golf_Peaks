@@ -33,14 +33,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GameOver()
+    public void GameOver()
     {
+        stateGame.color = Color.red;
         stateGame.text = "Game Over";
         stateGame.gameObject.SetActive(true);
     }
 
-    void GameWin()
+    public void GameWin()
     {
+        stateGame.color = Color.green;
         stateGame.text = "Game Win";
         stateGame.gameObject.SetActive(true);
     }

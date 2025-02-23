@@ -8,6 +8,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject obstaclePrefab;
     [SerializeField] private GameObject planePrefab;
     [SerializeField] private GameObject changeDirectionPrefab;
+    [SerializeField] private GameObject goalPrefab;
     private GameObject player;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
@@ -17,6 +18,7 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnObstacles;
     public int[][] spawnPlanes;
     public int[][] spawnChangeDirectionOb;
+    public int[][] spawnGoal;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +31,7 @@ public class ObstacleManager : MonoBehaviour
            new int[] { 0, 7, 6, 6, 7 },
            new int[] { 7, 0, 6, 0, 6 },
            new int[] { 6, 5, 5, 5, 6 },
-           new int[] { 6, 0, 5, 0, 7 },
+           new int[] { 6, 0, 6, 0, 7 },
            new int[] { 7, 6, 6, 7, 0 }
         };
 
@@ -50,6 +52,14 @@ public class ObstacleManager : MonoBehaviour
             new int[] { 4, 0, 0, 0, 0 }
         };
 
+        this.spawnGoal = new int[][] {
+            new int[] { 0, 0, 0, 0, 1 },
+            new int[] { 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0 },
+            new int[] { 0, 0, 0, 0, 0 }
+        };
+
         for (int i = 0; i < this.spawnObstacles.Length; ++i)
         {
             for (int j = 0; j < this.spawnObstacles[i].Length; ++j)
@@ -68,6 +78,10 @@ public class ObstacleManager : MonoBehaviour
                     int changeX = (numberDirection == 4) || (numberDirection == 3) ? 1 : -1;
                     int changeZ = (numberDirection == 3) || (numberDirection == 2) ? 1 : -1;
                     Instantiate(changeDirectionPrefab, new Vector3(i * obstacleSize + (changeDirectionSize / 2) * changeX, (this.spawnObstacles[i][j]) * obstacleSize - changeDirectionSize / 2, j * obstacleSize + (changeDirectionSize / 2) * changeZ), Quaternion.Euler(0, 90 * (this.spawnChangeDirectionOb[i][j] + 2), 0));
+                }
+                if (this.spawnGoal[i][j] > 0)
+                {
+                    Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
                 }
                 if (i == 2 && j == 2)
                 {
@@ -147,5 +161,22 @@ public class ObstacleManager : MonoBehaviour
             return spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]];
         }
         return 0;
+    }
+
+    public bool checkGoal(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (spawnGoal[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return true;
+        }
+        return false;
     }
 }
