@@ -29,7 +29,7 @@ public class ObstacleManager : MonoBehaviour
            new int[] { 0, 7, 6, 6, 7 },
            new int[] { 7, 0, 6, 0, 6 },
            new int[] { 6, 5, 5, 5, 6 },
-           new int[] { 6, 0, 6, 0, 7 },
+           new int[] { 6, 0, 5, 0, 7 },
            new int[] { 7, 6, 6, 7, 0 }
         };
 
