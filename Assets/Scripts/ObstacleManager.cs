@@ -50,6 +50,8 @@ public class ObstacleManager : MonoBehaviour
             new int[] { 4, 0, 0, 0, 0 }
         };
 
+        
+
         for (int i = 0; i < this.spawnObstacles.Length; ++i)
         {
             for (int j = 0; j < this.spawnObstacles[i].Length; ++j)
@@ -98,17 +100,17 @@ public class ObstacleManager : MonoBehaviour
     {
         //Debug.Log(positionIndex[0] + " " + positionIndex[1] + " " + positionIndex[2]);
         //Debug.Log(spawnObstacles.Length);
-        if (positionIndex[0] >= spawnObstacles.Length)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
         }
         //Debug.Log(spawnObstacles[positionIndex[0]].Length);
-        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
         //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
-        if (positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]])
+        if (positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
         {
             return false;
         }
@@ -117,11 +119,11 @@ public class ObstacleManager : MonoBehaviour
 
     public int checkPlane(int[] positionIndex)
     {
-        if (positionIndex[0] >= spawnObstacles.Length)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return 0;
         }
-        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return 0;
         }
