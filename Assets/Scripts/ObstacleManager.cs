@@ -50,8 +50,6 @@ public class ObstacleManager : MonoBehaviour
             new int[] { 4, 0, 0, 0, 0 }
         };
 
-        
-
         for (int i = 0; i < this.spawnObstacles.Length; ++i)
         {
             for (int j = 0; j < this.spawnObstacles[i].Length; ++j)
@@ -130,6 +128,23 @@ public class ObstacleManager : MonoBehaviour
         if (spawnPlanes[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
         {
             return spawnPlanes[positionIndex[0]][positionIndex[2]];
+        }
+        return 0;
+    }
+
+    public int checkChangeDirection(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return 0;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return 0;
+        }
+        if (spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]];
         }
         return 0;
     }
