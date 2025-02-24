@@ -23,18 +23,13 @@ public class BallController : MonoBehaviour
     private float ballSize = 0;
     private float obstacleSize = 0;
 
-    // direction
-    private int x = 0;
-    private int y = 0;
-    private int z = 0;
-
     private int numberMove = 0;
     private int numberUp = 0;
+    private int turn = -1;
 
     private int[] direction = new int[] { 0, 0, 0 };
 
     private float speed = 0.5f;
-    private int checkDirection = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -47,10 +42,6 @@ public class BallController : MonoBehaviour
         buttonB.onClick.AddListener(OnButtonBClick);
         buttonL.onClick.AddListener(OnButtonLClick);
         buttonR.onClick.AddListener(OnButtonRClick);
-        button1.onClick.AddListener(OnButton1Click);
-        button2.onClick.AddListener(OnButton2Click);
-        button3.onClick.AddListener(OnButton3Click);
-        button4.onClick.AddListener(OnButton4Click);
         this.ballSize = obstacleManager.ballSize;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
@@ -62,73 +53,64 @@ public class BallController : MonoBehaviour
         movePlayer();
     }
 
-//      Vector3.up(0, 1, 0)	Lên trên(trục Y)
-//      Vector3.down(0, -1, 0)	Xuống dưới(trục Y)
-//      Vector3.left(-1, 0, 0)	Trái(trục X)
-//      Vector3.right(1, 0, 0)	Phải(trục X)
-//      Vector3.forward(0, 0, 1)	Tiến lên(trục Z)
-//      Vector3.back(0, 0, -1)	Lùi lại(trục Z)
+    public void setNumber(int turn, int numberMove, int numberUp)
+    {
+        this.numberMove = numberMove;
+        this.numberUp = numberUp;
+        this.turn = turn;
+    }
+
+    //      Vector3.up(0, 1, 0)	Lên trên(trục Y)
+    //      Vector3.down(0, -1, 0)	Xuống dưới(trục Y)
+    //      Vector3.left(-1, 0, 0)	Trái(trục X)
+    //      Vector3.right(1, 0, 0)	Phải(trục X)
+    //      Vector3.forward(0, 0, 1)	Tiến lên(trục Z)
+    //      Vector3.back(0, 0, -1)	Lùi lại(trục Z)
 
     void OnButtonTClick()
     {
         // -z
         direction = new int[] { 0, 0, -1 };
-        addMoveValid();
+        ballMove();
     }
 
     void OnButtonBClick()
     {
         // +z
         direction = new int[] { 0, 0, 1 };
-        addMoveValid();
+        ballMove();
     }
 
     void OnButtonLClick()
     {
         // +x
         direction = new int[] { 1, 0, 0 };
-        addMoveValid();
+        ballMove();
     }
 
     void OnButtonRClick()
     {
         // -x
         direction = new int[] { -1, 0, 0 };
-        addMoveValid();
+        ballMove();
     }
 
-    void OnButton1Click()
+    void ballMove()
     {
-        numberMove = 1;
-        numberUp = 0;
-        button1.gameObject.SetActive(false);    
-    }
-
-    void OnButton2Click()
-    {
-        numberMove = 2;
-        numberUp = 0;
-        button2.gameObject.SetActive(false);
-    }
-
-    void OnButton3Click()
-    {
-        numberMove = 4;
-        numberUp = 0;
-        button3.gameObject.SetActive(false);
-    }
-
-    void OnButton4Click()
-    {
-        numberMove = 1;
-        numberUp = 3;
-        button4.gameObject.SetActive(false);
+        if (turn == 0)
+        {
+            addMoveValid();
+            addFlyValid();
+        }
+        else if (turn == 1)
+        {
+            addFlyValid();
+            addMoveValid();
+        }
     }
 
     void addMoveValid()
     {
-        checkDirection = 0;
-        addFlyValid();
         while (numberMove > 0)
         {
             handleMoveValid();
@@ -143,7 +125,6 @@ public class BallController : MonoBehaviour
 
     void handleMoveValid()
     {
-        checkDirection++;
         Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
         int[] positionIndexLast = getPositionIndex(positionLast);
 
@@ -297,7 +278,33 @@ public class BallController : MonoBehaviour
         {
             Vector3 vector3 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             int[] positionIndex3 = getPositionIndex(vector3);
-
+            int plane = obstacleManager.checkPlane(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] });
+            if (plane > 0)
+            {
+                Vector3 position1 = new Vector3(vector3.x, vector3.y - (ballSize / 2) - (obstacleSize / 2) + (ballSize / 2) * Mathf.Sqrt(2), vector3.z);
+                this.addInterpolation(vector3, position1, speed / 5);
+                if (plane == 1)
+                {
+                    direction = new int[] { 0, 0, 1 };
+                }
+                else if (plane == 2)
+                {
+                    direction = new int[] { 1, 0, 0 };
+                }
+                else if (plane == 3)
+                {
+                    direction = new int[] { 0, 0, -1 };
+                }
+                else if (plane == 4)
+                {
+                    direction = new int[] { -1, 0, 0 };
+                }
+                Vector3 position2 = new Vector3(position1.x + (float)direction[0] * (obstacleSize / 2) + (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position1.y - (obstacleSize / 2) + (ballSize / 2) - (ballSize / 2) * Mathf.Sqrt(2), position1.z + (float)direction[2] * (obstacleSize / 2) + (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
+                this.addInterpolation(position1, position2, speed / 4);
+                Vector3 position3 = new Vector3(position2.x + (float)direction[0] * (obstacleSize / 2) - (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position2.y, position2.z + (float)direction[2] * (obstacleSize / 2) - (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
+                this.addInterpolation(position2, position3, speed / 4);
+                return;
+            }
             if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false)
             {
                 this.addInterpolation(vector3, new Vector3(vector3.x, vector3.y - obstacleSize, vector3.z), speed / 4);
@@ -348,11 +355,21 @@ public class BallController : MonoBehaviour
         if (obstacleManager.checkGoal(getPositionIndex(player.transform.position)))
         {
             gameManager.GameWin();
+            return;
         }
-        else if (button1.IsActive() == false && button2.IsActive() == false && button3.IsActive() == false && button4.IsActive() == false)
+
+        Button[] buttons = FindObjectsOfType<Button>();
+
+        // Duyệt qua danh sách và đếm số Button có tên "MyButton"
+        foreach (Button btn in buttons)
         {
-            gameManager.GameOver();
+            if (btn.gameObject.name == "MyButton")
+            {
+                return;
+            }
         }
+
+        gameManager.GameOver();
     }
 }
 
