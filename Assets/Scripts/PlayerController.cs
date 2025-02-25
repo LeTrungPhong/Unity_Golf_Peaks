@@ -178,6 +178,7 @@ public class BallController : MonoBehaviour
                     // back
                     this.addInterpolation(position2, position1, speed / 2);
                     this.addInterpolation(position1, positionLast, speed / 2);
+                    direction = new int[] { -direction[0], direction[1], -direction[2] };
                 }
             }
             else
@@ -185,6 +186,7 @@ public class BallController : MonoBehaviour
                 // back
                 this.addInterpolation(positionLast, new Vector3(positionLast.x + direction[0] * ((float)obstacleSize / 2 - this.ballSize / 2), positionLast.y + direction[1], positionLast.z + direction[2] * ((float)obstacleSize / 2 - this.ballSize / 2)), speed / 2);
                 this.addInterpolation(interpolation[interpolation.Count - 1].end, positionLast, speed / 2);
+                direction = new int[] { -direction[0], direction[1], -direction[2] };
             }
             return;
         }
@@ -200,6 +202,7 @@ public class BallController : MonoBehaviour
             // back
             this.addInterpolation(positionLast, new Vector3(positionLast.x + (float)direction[0] * ((float)obstacleSize / 2 - this.ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * ((float)obstacleSize / 2 - this.ballSize / 2)), speed / 2);
             this.addInterpolation(interpolation[interpolation.Count - 1].end, positionLast, speed / 2);
+            direction = new int[] { -direction[0], direction[1], -direction[2] };
             return;
         }
     }
