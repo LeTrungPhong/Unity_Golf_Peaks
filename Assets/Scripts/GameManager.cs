@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private GameObject canvas;
     private GameObject player;
     private BallController playerController;
+    private ObstacleManager obstacleManager;
     public bool isGameOver = false;
     private float heigtButton = 50;
     private float widthButton = 200;
@@ -18,17 +19,21 @@ public class GameManager : MonoBehaviour
     private float transButtonY = 50;
     private float spaceButton = 10;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         player = GameObject.FindWithTag("Player").gameObject;
         canvas = GameObject.Find("Canvas").gameObject;
+        obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
+    }
 
-        createButton(new int[] { 0, 4, 0 });
-        createButton(new int[] { 0, 2, 0 });
-        createButton(new int[] { 0, 1, 0 });
-        createButton(new int[] { 1, 4, 1 });
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (obstacleManager.spawnObstacles == null)
+        {
+            GameNotData();
+        }
     }
 
     // Update is called once per frame
@@ -63,7 +68,14 @@ public class GameManager : MonoBehaviour
         stateGame.gameObject.SetActive(true);
     }
 
-    private void createButton(int[] index)
+    public void GameNotData()
+    {
+        stateGame.color = Color.cyan;
+        stateGame.text = "Not data";
+        stateGame.gameObject.SetActive(true);
+    }
+
+    public void createButton(int[] index)
     {
         // Tạo Button
         GameObject buttonObject = new GameObject("MyButton");

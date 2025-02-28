@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
+using static LevelManager;
 
 public class ObstacleManager : MonoBehaviour
 {
@@ -19,6 +22,12 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnPlanes;
     public int[][] spawnChangeDirectionOb;
     public int[][] spawnGoal;
+    public int[][] spawnBall;
+
+    private void Awake()
+    {
+        
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -27,39 +36,53 @@ public class ObstacleManager : MonoBehaviour
         obstacleSize = obstaclePrefab.transform.localScale.x;
         changeDirectionSize = obstacleSize / 2;
 
-        this.spawnObstacles = new int[][] {
-           new int[] { 0, 7, 6, 6, 7 },
-           new int[] { 7, 0, 6, 0, 6 },
-           new int[] { 6, 5, 5, 5, 6 },
-           new int[] { 6, 0, 6, 0, 7 },
-           new int[] { 7, 6, 6, 7, 0 }
-        };
+        //this.spawnObstacles = new int[][] {
+        //   new int[] { 0, 7, 6, 6, 7 },
+        //   new int[] { 7, 0, 6, 0, 6 },
+        //   new int[] { 6, 5, 5, 5, 6 },
+        //   new int[] { 6, 0, 6, 0, 7 },
+        //   new int[] { 7, 6, 6, 7, 0 }
+        //};
 
-        // 1 = z, 3 = -z, 2 = x, 4 = -x
-        this.spawnPlanes = new int[][] {
-           new int[] { 0, 0, 0, 3, 0 },
-           new int[] { 0, 0, 0, 0, 2 },
-           new int[] { 0, 1, 0, 3, 0 },
-           new int[] { 4, 0, 0, 0, 0 },
-           new int[] { 0, 1, 0, 0, 0 }
-        };
+        //// 1 = z, 3 = -z, 2 = x, 4 = -x
+        //this.spawnPlanes = new int[][] {
+        //   new int[] { 0, 0, 0, 3, 0 },
+        //   new int[] { 0, 0, 0, 0, 2 },
+        //   new int[] { 0, 1, 0, 3, 0 },
+        //   new int[] { 4, 0, 0, 0, 0 },
+        //   new int[] { 0, 1, 0, 0, 0 }
+        //};
 
-        this.spawnChangeDirectionOb = new int[][] {
-            new int[] { 0, 0, 1, 0, 0 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 1, 0, 0, 0, 0 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 4, 0, 0, 0, 0 }
-        };
+        //this.spawnChangeDirectionOb = new int[][] {
+        //    new int[] { 0, 0, 1, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 1, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 4, 0, 0, 0, 0 }
+        //};
 
-        this.spawnGoal = new int[][] {
-            new int[] { 0, 0, 0, 0, 1 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 0, 0, 0, 0, 0 },
-            new int[] { 0, 0, 0, 0, 0 }
-        };
+        //this.spawnGoal = new int[][] {
+        //    new int[] { 0, 0, 0, 0, 1 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 }
+        //};
 
+        //this.spawnBall = new int[][] {
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 1, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 },
+        //    new int[] { 0, 0, 0, 0, 0 }
+        //};
+
+        Spawn();
+    }
+
+    public void Spawn()
+    {
+        if (spawnObstacles == null) return;
         for (int i = 0; i < this.spawnObstacles.Length; ++i)
         {
             for (int j = 0; j < this.spawnObstacles[i].Length; ++j)
@@ -83,7 +106,7 @@ public class ObstacleManager : MonoBehaviour
                 {
                     Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
                 }
-                if (i == 2 && j == 2)
+                if (this.spawnBall[i][j] > 0)
                 {
                     // Spawn Ball
                     player.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
@@ -100,15 +123,15 @@ public class ObstacleManager : MonoBehaviour
             Instantiate(obstaclePrefab, new Vector3(indexX * obstacleSize, i * obstacleSize, indexY * obstacleSize), Quaternion.identity);
         }
     }
-    
+
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public bool checkObstacle(int[] positionIndex) 
+    public bool checkObstacle(int[] positionIndex)
     {
         //Debug.Log(positionIndex[0] + " " + positionIndex[1] + " " + positionIndex[2]);
         //Debug.Log(spawnObstacles.Length);
@@ -179,4 +202,12 @@ public class ObstacleManager : MonoBehaviour
         }
         return false;
     }
+
+    
+
+    
+
+    
+
+    
 }

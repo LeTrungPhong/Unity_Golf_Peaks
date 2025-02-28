@@ -16,10 +16,6 @@ public class BallController : MonoBehaviour
     [SerializeField] private Button buttonB;
     [SerializeField] private Button buttonL;
     [SerializeField] private Button buttonR;
-    [SerializeField] private Button button1;
-    [SerializeField] private Button button2;
-    [SerializeField] private Button button3;
-    [SerializeField] private Button button4;
     private float ballSize = 0;
     private float obstacleSize = 0;
 
@@ -50,7 +46,10 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movePlayer();
+        if (obstacleManager.spawnObstacles != null)
+        {
+            movePlayer();
+        }
     }
 
     public void setNumber(int turn, int numberMove, int numberUp)
@@ -97,6 +96,7 @@ public class BallController : MonoBehaviour
 
     void ballMove()
     {
+        if (obstacleManager.spawnObstacles == null) return;
         if (turn == 0)
         {
             addMoveValid();
