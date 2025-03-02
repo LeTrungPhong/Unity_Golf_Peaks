@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -54,25 +55,36 @@ public class LevelManager : MonoBehaviour
 
     public void LoadLevel()
     {
-        string path = Application.persistentDataPath + "/level.json";
+        //string path = Application.persistentDataPath + "/level.json";
 
-        if (File.Exists(path))
+        //if (File.Exists(path))
+        //{
+        //    string json = File.ReadAllText(path);
+        //    LevelData data = JsonUtility.FromJson<LevelData>(json);
+
+        //    listPathLevelData = data.listPath;
+
+        //    //foreach (string item in listPathLevelData)
+        //    //{
+        //    //    Debug.Log($"src: {item}");
+        //    //}
+
+        //    Debug.Log($"Load file by {path}");
+        //} else
+        //{
+        //    Debug.Log($"Not found path {path}");
+        //}
+
+        PathLevelScriptableObject pathLevel = AssetDatabase.LoadAssetAtPath<PathLevelScriptableObject>("Assets/GameData/Level/PathLevel.asset");
+
+        if (pathLevel == null)
         {
-            string json = File.ReadAllText(path);
-            LevelData data = JsonUtility.FromJson<LevelData>(json);
-
-            listPathLevelData = data.listPath;
-
-            foreach (string item in listPathLevelData)
-            {
-                Debug.Log($"src: {item}");
-            }
-
-            Debug.Log($"Load file by {path}");
-        } else
-        {
-            Debug.Log($"Not found path {path}");
+            Debug.Log("Khong tim thay file PathLevel");
+            return;
         }
+
+        Debug.Log("Da load file PathLevel");
+        listPathLevelData = pathLevel.pathLevel;
     }
 
     public void SetLevel(int index)
