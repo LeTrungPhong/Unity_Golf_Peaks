@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -18,6 +20,8 @@ public class GameManager : MonoBehaviour
     private float transButtonX = 120;
     private float transButtonY = 50;
     private float spaceButton = 10;
+    //private List<Button> listButton;
+    private Button selectButton;
 
     private void Awake()
     {
@@ -25,6 +29,7 @@ public class GameManager : MonoBehaviour
         canvas = GameObject.Find("Canvas").gameObject;
         obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
+        //listButton = new List<Button>();
     }
 
     // Start is called before the first frame update
@@ -34,6 +39,7 @@ public class GameManager : MonoBehaviour
         {
             GameNotData();
         }
+        FocusButton();
     }
 
     // Update is called once per frame
@@ -75,6 +81,18 @@ public class GameManager : MonoBehaviour
         stateGame.gameObject.SetActive(true);
     }
 
+    public void BackToSceneLevel()
+    {
+        Debug.Log("Back to scene Level");
+        SceneManager.LoadScene("Level");
+    }
+
+    public void Reset()
+    {
+        Debug.Log("Reset game");
+        SceneManager.LoadScene("GamePlay");
+    }
+
     public void createButton(int[] index)
     {
         // Tạo Button
@@ -107,20 +125,73 @@ public class GameManager : MonoBehaviour
         // Chỉnh kích thước Button
         RectTransform btnRect = buttonObject.GetComponent<RectTransform>();
         btnRect.sizeDelta = new Vector2(200, 50);
-        btnRect.anchorMin = new Vector2(1, 1);
-        btnRect.anchorMax = new Vector2(1, 1);
-        btnRect.anchoredPosition = new Vector2(-transButtonX, -transButtonY);
-        transButtonY += heigtButton + spaceButton;
+        btnRect.anchorMin = new Vector2(1, 0);
+        btnRect.anchorMax = new Vector2(1, 0);
+        btnRect.anchoredPosition = new Vector2(- transButtonX, transButtonY);
+        transButtonY = transButtonY + heigtButton + spaceButton;
 
         // Chỉnh kích thước văn bản
         RectTransform textRect = textObject.GetComponent<RectTransform>();
         textRect.sizeDelta = new Vector2(widthButton, heigtButton);
         textRect.anchoredPosition = Vector2.zero;
 
+        Outline outLine = buttonObject.AddComponent<Outline>();
+        outLine.effectColor = Color.white;
+        outLine.effectDistance = new Vector2(2, 2);
+
         // Thêm sự kiện khi nhấn Button
         button.onClick.AddListener(() => {
             playerController.setNumber(index[0], index[1], index[2]);
-            Destroy(buttonObject);
+            selectButton = button;
+            SelectButton(button);
         });
+
+        //listButton.Add(button);
+    }
+
+    public void SelectButton(Button button)
+    {
+        Button[] allButtons = FindObjectsOfType<Button>().Where(btn => btn.gameObject.name == "MyButton").ToArray();
+
+        foreach(Button btn in allButtons)
+        {
+            if (btn == button)
+            {
+                btn.GetComponent<Image>().color = Color.grey;
+                btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.white;
+            } else
+            {
+                btn.GetComponent<Image>().color = Color.white;
+                btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.black;
+            }
+        }
+    }
+
+    public void FocusButton()
+    {
+        Button[] allButtons = FindObjectsOfType<Button>().Where(btn => btn.gameObject.name == "MyButton").ToArray();
+
+        if (allButtons.Length != 0)
+        {
+            foreach (Button btn in allButtons)
+            {
+                if (btn != null)
+                {
+                    btn.onClick.Invoke();
+                    return;
+                }
+            }
+        }
+    }
+
+    public void DestroyButton()
+    {
+        if (selectButton != null)
+        {
+            Destroy(selectButton.gameObject);
+            selectButton = null;
+            //listButton.Remove(selectButton);
+            //Debug.Log(listButton.Count);
+        }
     }
 }

@@ -45,12 +45,12 @@ public class LevelManager : MonoBehaviour
 
     public void SaveLevel()
     {
-        LevelData data = new LevelData();
-        data.listPath = listPathLevelData;
+        //LevelData data = new LevelData();
+        //data.listPath = listPathLevelData;
 
-        string json = JsonUtility.ToJson(data);
+        //string json = JsonUtility.ToJson(data);
 
-        File.WriteAllText(Application.persistentDataPath + "/level.json", json);
+        //File.WriteAllText(Application.persistentDataPath + "/level.json", json);
     }
 
     public void LoadLevel()
@@ -95,9 +95,9 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    [System.Serializable]
-    public class LevelData
-    {
-        public List<string> listPath;
-    }
+    //[System.Serializable]
+    //public class LevelData
+    //{
+    //    public List<string> listPath;
+    //}
 }

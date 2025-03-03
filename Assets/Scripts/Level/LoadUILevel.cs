@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,9 +9,6 @@ public class LoadUILevel : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI textTitle;
     [SerializeField] private GameObject canvas;
-
-    float canvasWidth = Screen.width;
-    float canvasHeight = Screen.height;
 
     private int numberRow = 5;
     private int numberColumn = 5;
@@ -24,11 +21,19 @@ public class LoadUILevel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        widthItem = canvasWidth / numberColumn;
-        heightItem = canvasHeight / numberRow;
-        indexLevel = LevelManager.Instance.indexLevel;
+        Debug.Log("Screen: " + Screen.width + " " + Screen.height);
+        widthItem = Screen.width / numberColumn;
+        heightItem = Screen.height / numberRow;
+        Debug.Log("Item: " + widthItem + " " + heightItem);
         setUpLevel();
+        //StartCoroutine(WaitForScreenSize());
     }
+
+    //IEnumerator WaitForScreenSize()
+    //{
+    //    yield return new WaitForEndOfFrame(); 
+        
+    //}
 
     // Update is called once per frame
     void Update()
@@ -49,7 +54,7 @@ public class LoadUILevel : MonoBehaviour
                     rectTransform.anchorMin = new Vector2(0, 1.0f);
                     rectTransform.anchorMax = new Vector2(0, 1.0f);
                     rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                    rectTransform.anchoredPosition = new Vector2(canvasWidth / 2, -((float)1 / 2) * heightItem);
+                    rectTransform.anchoredPosition = new Vector2(Screen.width / 2, -((float)1 / 2) * heightItem);
                 }
                 else
                 {
@@ -85,7 +90,13 @@ public class LoadUILevel : MonoBehaviour
         btnRect.anchorMin = new Vector2(0, 1.0f);
         btnRect.anchorMax = new Vector2(0, 1.0f);
         btnRect.pivot = new Vector2(0.5f, 0.5f);
-        btnRect.anchoredPosition = new Vector2(widthItem * (j + (float)1 / 2), - heightItem * (i + (float)1 / 2));
+        float postX = widthItem * (j + (float)1 / 2);
+        float postY = - heightItem * (i + (float)1 / 2);
+        if (index == 0)
+        {
+            Debug.Log(widthItem + " " + heightItem);
+        }
+        btnRect.anchoredPosition = new Vector2(postX, postY);
 
         RectTransform textRect = text.GetComponent<RectTransform>();
         textRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);
