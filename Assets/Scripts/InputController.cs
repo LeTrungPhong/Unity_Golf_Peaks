@@ -53,7 +53,7 @@ public class InputController : MonoBehaviour
                 return;
             }
 
-            gameManager.DestroyButton();
+            gameManager.HiddenButton();
 
             if (direction == 1)
             {

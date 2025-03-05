@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,7 @@ public class BallController : MonoBehaviour
     private int numberMove = 0;
     private int numberUp = 0;
     private int turn = -1;
+    private bool checkMove = false;
 
     private int[] direction = new int[] { 0, 0, 0 };
 
@@ -99,6 +101,7 @@ public class BallController : MonoBehaviour
             addFlyValid();
             addMoveValid();
         }
+        this.addInterpolation(interpolation.Last().end, interpolation.Last().end, 0);
     }
 
     void addMoveValid()
@@ -332,6 +335,7 @@ public class BallController : MonoBehaviour
                 {
                     inter.time += Time.deltaTime;
                     player.transform.position = Vector3.Lerp(inter.start, inter.end, inter.time / inter.duration);
+                    checkMove = true;
                     if (inter.time >= inter.duration)
                     {
                         inter.check = false;
@@ -340,10 +344,25 @@ public class BallController : MonoBehaviour
                 }
             }
         }
+        checkMove = false;
+        checkGameOver();
+    }
 
-        if (numberMove == 0 && numberUp == 0)
+    public void moveBack()
+    {
+        bool checkPause = true;
+        while (checkMove == false && interpolation.Count > 0)
         {
-            checkGameOver();
+            if (checkPause == false && interpolation.Last().start == interpolation.Last().end && interpolation.Last().duration == 0)
+            {
+                return;
+            }
+            if (checkPause == true && interpolation.Last().start == interpolation.Last().end && interpolation.Last().duration == 0)
+            {
+                checkPause = false;
+            }
+            player.transform.position = interpolation.Last().start;
+            interpolation.RemoveAt(interpolation.Count - 1);
         }
     }
 

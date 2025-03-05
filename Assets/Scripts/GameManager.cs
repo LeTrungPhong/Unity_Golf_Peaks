@@ -21,7 +21,8 @@ public class GameManager : MonoBehaviour
     private float transButtonX = 120;
     private float transButtonY = 50;
     private float spaceButton = 10;
-    //private List<Button> listButton;
+    private List<Button> listButton;
+    private List<int> listHiddenButton;
     private Button selectButton;
 
     private void Awake()
@@ -31,7 +32,8 @@ public class GameManager : MonoBehaviour
         obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
         levelManager = GameObject.Find("LevelManager").gameObject.GetComponent<LevelManager>();
-        //listButton = new List<Button>();
+        listButton = new List<Button>();
+        listHiddenButton = new List<int>();
     }
 
     // Start is called before the first frame update
@@ -109,6 +111,14 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("GamePlay");
     }
 
+    public void Back()
+    {
+        Debug.Log("Back");
+        playerController.moveBack();
+        DisplayButton();
+        FocusButton();
+    }
+
     public void createButton(int[] index)
     {
         // Tạo Button
@@ -162,7 +172,7 @@ public class GameManager : MonoBehaviour
             SelectButton(button);
         });
 
-        //listButton.Add(button);
+        listButton.Add(button);
     }
 
     public void SelectButton(Button button)
@@ -204,12 +214,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void DestroyButton()
+    public void HiddenButton()
     {
         if (selectButton != null)
         {
-            Destroy(selectButton.gameObject);
-            selectButton = null;
+            for (int i = 0; i < listButton.Count; ++i)
+            {
+                if (listButton[i] == selectButton)
+                {
+                    listHiddenButton.Add(i);
+                    selectButton.gameObject.SetActive(false);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void DisplayButton()
+    {
+        if (listHiddenButton.Count > 0 && listHiddenButton[0] >= 0 && listHiddenButton[0] < listButton.Count)
+        {
+            listButton[listHiddenButton[0]].gameObject.SetActive(true);
+            listHiddenButton.RemoveAt(0);
         }
     }
 }
