@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private GameObject player;
     private BallController playerController;
     private ObstacleManager obstacleManager;
+    private LevelManager levelManager;
     public bool isGameOver = false;
     private float heigtButton = 50;
     private float widthButton = 200;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
         canvas = GameObject.Find("Canvas").gameObject;
         obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
+        levelManager = GameObject.Find("LevelManager").gameObject.GetComponent<LevelManager>();
         //listButton = new List<Button>();
     }
 
@@ -72,6 +74,20 @@ public class GameManager : MonoBehaviour
         stateGame.color = Color.green;
         stateGame.text = "Game Win";
         stateGame.gameObject.SetActive(true);
+        PlayerPrefs.SetInt(levelManager.listPathLevelData[levelManager.levelSelected], 1);
+        StartCoroutine(DelayToNextMap());
+    }
+
+    public void NextGame()
+    {
+        levelManager.levelSelected = levelManager.levelSelected >= levelManager.listPathLevelData.Count - 1 ? levelManager.levelSelected : levelManager.levelSelected + 1;
+        SceneManager.LoadScene("GamePlay");
+    }
+
+    IEnumerator DelayToNextMap()
+    {
+        yield return new WaitForSeconds(2f);
+        NextGame();
     }
 
     public void GameNotData()
@@ -169,17 +185,21 @@ public class GameManager : MonoBehaviour
 
     public void FocusButton()
     {
-        Button[] allButtons = FindObjectsOfType<Button>().Where(btn => btn.gameObject.name == "MyButton").ToArray();
+        StartCoroutine(FocusAfterDelay());
+    }
+
+    private IEnumerator FocusAfterDelay()
+    {
+        yield return new WaitForEndOfFrame();
+        Debug.Log("Focus button");
+        Button[] allButtons = FindObjectsOfType<Button>().Where(btn => btn.gameObject.name == "MyButton" && btn.gameObject != null).ToArray();
 
         if (allButtons.Length != 0)
         {
             foreach (Button btn in allButtons)
             {
-                if (btn != null)
-                {
-                    btn.onClick.Invoke();
-                    return;
-                }
+                btn.onClick.Invoke();
+                break;
             }
         }
     }
@@ -190,8 +210,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(selectButton.gameObject);
             selectButton = null;
-            //listButton.Remove(selectButton);
-            //Debug.Log(listButton.Count);
         }
     }
 }

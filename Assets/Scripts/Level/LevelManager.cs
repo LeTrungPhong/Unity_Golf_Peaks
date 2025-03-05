@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance;
     public List<string> listPathLevelData;
-    public string levelSelected;
+    public int levelSelected;
     public int indexLevel;
 
     // Start is called before the first frame update
@@ -91,7 +91,7 @@ public class LevelManager : MonoBehaviour
     {
         if (index >= 0 && index < listPathLevelData.Count)
         {
-            levelSelected = listPathLevelData[index];
+            levelSelected = index;
         }
     }
 

@@ -15,7 +15,7 @@ public class DataLoading : MonoBehaviour
         Debug.Log("Path level: " + LevelManager.Instance.levelSelected);
         obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         gameManager = GameObject.Find("GameManager").gameObject.GetComponent<GameManager>();
-        LoadData(LevelManager.Instance.levelSelected);
+        LoadData(LevelManager.Instance.listPathLevelData[LevelManager.Instance.levelSelected]);
     }
     // Start is called before the first frame update
     void Start()

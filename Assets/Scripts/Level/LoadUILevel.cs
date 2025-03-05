@@ -10,6 +10,7 @@ public class LoadUILevel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textTitle;
     [SerializeField] private GameObject canvas;
 
+    private LevelManager levelManager;
     private int numberRow = 5;
     private int numberColumn = 5;
     float widthItem = 0;
@@ -21,6 +22,7 @@ public class LoadUILevel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
         Debug.Log("Screen: " + Screen.width + " " + Screen.height);
         widthItem = Screen.width / numberColumn;
         heightItem = Screen.height / numberRow;
@@ -68,12 +70,14 @@ public class LoadUILevel : MonoBehaviour
 
     public void createButtonLevel(int i, int j, int index)
     {
+        string pathLevel = index > 0 ? levelManager.listPathLevelData[index - 1] : levelManager.listPathLevelData[index];
+        int checkPassLevel = index == 0 ? 1 : PlayerPrefs.GetInt(pathLevel, 0);
         GameObject buttonLevel = new GameObject(nameButtonLevel);
         buttonLevel.transform.SetParent(canvas.transform);
 
         Button button = buttonLevel.AddComponent<Button>();
         Image image = buttonLevel.AddComponent<Image>();
-        image.color = Color.white;
+        image.color = checkPassLevel == 1 ? Color.white : Color.gray;
 
         GameObject text = new GameObject("TextButtonLevel");
         text.transform.SetParent(buttonLevel.transform);
@@ -91,7 +95,7 @@ public class LoadUILevel : MonoBehaviour
         btnRect.anchorMax = new Vector2(0, 1.0f);
         btnRect.pivot = new Vector2(0.5f, 0.5f);
         float postX = widthItem * (j + (float)1 / 2);
-        float postY = - heightItem * (i + (float)1 / 2);
+        float postY = -heightItem * (i + (float)1 / 2);
         if (index == 0)
         {
             Debug.Log(widthItem + " " + heightItem);
@@ -102,10 +106,13 @@ public class LoadUILevel : MonoBehaviour
         textRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);
         textRect.anchoredPosition = Vector2.zero;
 
-        button.onClick.AddListener(() =>
+        if (checkPassLevel == 1)
         {
-            LevelManager.Instance.SetLevel(index);
-            SceneManager.LoadScene("GamePlay");
-        });
+            button.onClick.AddListener(() =>
+            {
+                LevelManager.Instance.SetLevel(index);
+                SceneManager.LoadScene("GamePlay");
+            });
+        }
     }
 }
