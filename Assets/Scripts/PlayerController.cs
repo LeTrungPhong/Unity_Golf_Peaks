@@ -90,6 +90,7 @@ public class BallController : MonoBehaviour
 
     void ballMove()
     {
+        SoundManager.PlayLoopSound(SoundType.ROLL, 1);
         if (obstacleManager.spawnObstacles == null) return;
         if (turn == 0)
         {
@@ -345,6 +346,7 @@ public class BallController : MonoBehaviour
             }
         }
         checkMove = false;
+        SoundManager.StopLoopSound();
         checkGameOver();
     }
 
