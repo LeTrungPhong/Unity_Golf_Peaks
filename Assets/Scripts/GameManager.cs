@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private List<Button> listButton;
     private List<int> listHiddenButton;
     private Button selectButton;
+    private bool hiddenSoundButtonClickFirst = true;
 
     private void Awake()
     {
@@ -103,12 +104,14 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Back to scene Level");
         SceneManager.LoadScene("Level");
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
     }
 
     public void Reset()
     {
         Debug.Log("Reset game");
         SceneManager.LoadScene("GamePlay");
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
     }
 
     public void Back()
@@ -117,6 +120,7 @@ public class GameManager : MonoBehaviour
         playerController.moveBack();
         DisplayButton();
         FocusButton();
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
     }
 
     public void createButton(int[] index)
@@ -170,6 +174,13 @@ public class GameManager : MonoBehaviour
             playerController.setNumber(index[0], index[1], index[2]);
             selectButton = button;
             SelectButton(button);
+            if (hiddenSoundButtonClickFirst == false)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+            } else
+            {
+                hiddenSoundButtonClickFirst = false;
+            }
         });
 
         listButton.Add(button);

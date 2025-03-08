@@ -110,7 +110,7 @@ public class LoadUILevel : MonoBehaviour
         {
             button.onClick.AddListener(() =>
             {
-                SoundGeneralManager.PlaySound(SoundGeneralType.BUTTON_CLICK);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
                 LevelManager.Instance.SetLevel(index);
                 SceneManager.LoadScene("GamePlay");
             });
