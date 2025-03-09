@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public enum SoundType
 {
@@ -14,6 +15,7 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] private AudioSource MusicSource;
     [SerializeField] private AudioSource SFXSource;
+    [SerializeField] private AudioMixer audioMixer;
 
     public AudioClip MusicBackground;
     public AudioClip[] SoundList;
@@ -34,7 +36,7 @@ public class SoundManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        PlayBackgroundMusic(MusicBackground);
     }   
 
     // Update is called once per frame
@@ -63,5 +65,22 @@ public class SoundManager : MonoBehaviour
     public void StopBackgroundMusic()
     {
         MusicSource.Stop();
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        volume = volume / 100.0f;
+        audioMixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20);
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        volume = volume / 100.0f;
+        audioMixer.SetFloat("SFXVolume", Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20);
+    }
+
+    public void SoundButtonClick()
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
     }
 }

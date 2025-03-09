@@ -83,7 +83,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Da load file PathLevel");
+        //Debug.Log("Da load file PathLevel");
         listPathLevelData = pathLevel.pathLevel;
     }
 
@@ -93,6 +93,11 @@ public class LevelManager : MonoBehaviour
         {
             levelSelected = index;
         }
+    }
+
+    public void ButtonSettingClick()
+    {
+        
     }
 
     //[System.Serializable]

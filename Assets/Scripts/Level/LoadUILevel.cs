@@ -23,10 +23,10 @@ public class LoadUILevel : MonoBehaviour
     void Start()
     {
         levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
-        Debug.Log("Screen: " + Screen.width + " " + Screen.height);
+        //Debug.Log("Screen: " + Screen.width + " " + Screen.height);
         widthItem = Screen.width / numberColumn;
         heightItem = Screen.height / numberRow;
-        Debug.Log("Item: " + widthItem + " " + heightItem);
+        //Debug.Log("Item: " + widthItem + " " + heightItem);
         setUpLevel();
         //StartCoroutine(WaitForScreenSize());
     }
@@ -98,7 +98,7 @@ public class LoadUILevel : MonoBehaviour
         float postY = -heightItem * (i + (float)1 / 2);
         if (index == 0)
         {
-            Debug.Log(widthItem + " " + heightItem);
+            //Debug.Log(widthItem + " " + heightItem);
         }
         btnRect.anchoredPosition = new Vector2(postX, postY);
 
