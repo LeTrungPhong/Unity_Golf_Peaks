@@ -17,8 +17,6 @@ public class SettingManager : MonoBehaviour
     [SerializeField] private TMP_Text textClear;
     [SerializeField] private TMP_Text textControl;
 
-    
-
     private GameObject setting;
     private GameObject RawImageMute;
 
