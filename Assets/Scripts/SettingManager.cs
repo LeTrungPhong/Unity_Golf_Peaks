@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SettingManager : MonoBehaviour
@@ -12,10 +13,11 @@ public class SettingManager : MonoBehaviour
     [SerializeField] private TMP_Text textMusic;
     [SerializeField] private TMP_Text textSFX;
     [SerializeField] private TMP_Text textMute;
+    [SerializeField] private TMP_Text textUnlock;
+    [SerializeField] private TMP_Text textClear;
+    [SerializeField] private TMP_Text textControl;
 
-    private string playerPrefsMusic = "VolumeMusic";
-    private string playerPrefsSFX = "VolumeSFX";
-    private string playerPrefsMute = "MuteVolume";
+    
 
     private GameObject setting;
     private GameObject RawImageMute;
@@ -43,36 +45,53 @@ public class SettingManager : MonoBehaviour
     {
         float notFound = -100.0f;
 
-        string muteVolume = PlayerPrefs.GetString(playerPrefsMute, "false");
-
-        float volumeMusic = PlayerPrefs.GetFloat(playerPrefsMusic, notFound);
+        float volumeMusic = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsMusic, notFound);
         if (volumeMusic == notFound)
         {
             volumeMusic = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsMusic, volumeMusic);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsMusic, volumeMusic);
         }
         textMusic.SetText(volumeMusic.ToString());
 
-        float volumeSFX = PlayerPrefs.GetFloat(playerPrefsSFX, notFound);
+        float volumeSFX = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsSFX, notFound);
         if (volumeSFX == notFound)
         {
             volumeSFX = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsSFX, volumeSFX);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsSFX, volumeSFX);
         }
         textSFX.SetText(volumeSFX.ToString());
 
-        if (muteVolume == "true")
+        string muteVolume = PlayerPrefs.GetString(PlayerPrefsName.playerPrefsMute, PlayerPrefsName.falsePrefs);
+        if (muteVolume == PlayerPrefsName.truePrefs)
         {
-            textMute.SetText("Enabled");
+            textMute.SetText("ENABLED");
             SoundManager.Instance.SetMusicVolume(0);
             SoundManager.Instance.SetSFXVolume(0);
             RawImageMute.SetActive(true);
         } else
         {
-            textMute.SetText("Disabled");      
+            textMute.SetText("DISABLED");      
             SoundManager.Instance.SetMusicVolume(volumeMusic);
             SoundManager.Instance.SetSFXVolume(volumeSFX);
             RawImageMute.SetActive(false);
+        }
+
+        string unlock = PlayerPrefs.GetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.falsePrefs);
+        if (unlock == PlayerPrefsName.truePrefs)
+        {
+            textUnlock.SetText("DISABLED");
+        } else
+        {
+            textUnlock.SetText("ENABLED");
+        }
+
+        string control = PlayerPrefs.GetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.falsePrefs);
+        if (control == PlayerPrefsName.truePrefs)
+        {
+            textControl.SetText("INVERTED");
+        } else
+        {
+            textControl.SetText("REGULAR");
         }
     }
 
@@ -99,17 +118,17 @@ public class SettingManager : MonoBehaviour
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
         float notFound = -100.0f;
-        float volume = PlayerPrefs.GetFloat(playerPrefsMusic, notFound);
+        float volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsMusic, notFound);
         if (volume == notFound)
         {
             volume = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsMusic, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsMusic, volume);
         }
         else
         {
-            volume = PlayerPrefs.GetFloat(playerPrefsMusic) + 10;
+            volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsMusic) + 10;
             if (volume > 100) volume = 100;
-            PlayerPrefs.SetFloat(playerPrefsMusic, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsMusic, volume);
         }
         SetUpVolume();
     }
@@ -118,16 +137,16 @@ public class SettingManager : MonoBehaviour
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
         float notFound = -100.0f;
-        float volume = PlayerPrefs.GetFloat(playerPrefsMusic, notFound);
+        float volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsMusic, notFound);
         if (volume == notFound)
         {
             volume = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsMusic, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsMusic, volume);
         } else
         {
-            volume = PlayerPrefs.GetFloat(playerPrefsMusic) - 10;
+            volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsMusic) - 10;
             if (volume < 0) volume = 0;
-            PlayerPrefs.SetFloat(playerPrefsMusic, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsMusic, volume);
         }
         SetUpVolume();
     }
@@ -136,17 +155,17 @@ public class SettingManager : MonoBehaviour
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
         float notFound = -100.0f;
-        float volume = PlayerPrefs.GetFloat(playerPrefsSFX, notFound);
+        float volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsSFX, notFound);
         if (volume == notFound)
         {
             volume = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsSFX, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsSFX, volume);
         }
         else
         {
-            volume = PlayerPrefs.GetFloat(playerPrefsSFX) + 10;
+            volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsSFX) + 10;
             if (volume > 100) volume = 100;
-            PlayerPrefs.SetFloat(playerPrefsSFX, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsSFX, volume);
         }
         SetUpVolume();
     }
@@ -155,17 +174,17 @@ public class SettingManager : MonoBehaviour
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
         float notFound = -100.0f;
-        float volume = PlayerPrefs.GetFloat(playerPrefsSFX, notFound);
+        float volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsSFX, notFound);
         if (volume == notFound)
         {
             volume = 50.0f;
-            PlayerPrefs.SetFloat(playerPrefsSFX, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsSFX, volume);
         }
         else
         {
-            volume = PlayerPrefs.GetFloat(playerPrefsSFX) - 10;
+            volume = PlayerPrefs.GetFloat(PlayerPrefsName.playerPrefsSFX) - 10;
             if (volume < 0) volume = 0;
-            PlayerPrefs.SetFloat(playerPrefsSFX, volume);
+            PlayerPrefs.SetFloat(PlayerPrefsName.playerPrefsSFX, volume);
         }
         SetUpVolume();
     }
@@ -173,28 +192,52 @@ public class SettingManager : MonoBehaviour
     public void Disabled()
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
-        if (PlayerPrefs.GetString(playerPrefsMute, "false") == "false")
+        if (PlayerPrefs.GetString(PlayerPrefsName.playerPrefsMute, PlayerPrefsName.falsePrefs) == PlayerPrefsName.falsePrefs)
         {
-            PlayerPrefs.SetString(playerPrefsMute, "true");
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsMute, PlayerPrefsName.truePrefs);
         } else
         {
-            PlayerPrefs.SetString(playerPrefsMute, "false");
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsMute, PlayerPrefsName.falsePrefs);
         }
         SetUpVolume();
     }
 
     public void Control()
     {
-
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+        if (PlayerPrefs.GetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.falsePrefs) == PlayerPrefsName.falsePrefs)
+        {
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.truePrefs);
+            textControl.SetText("INVERTED");
+        } else
+        {
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.falsePrefs);
+            textControl.SetText("REGULAR");
+        }
     }
 
     public void Unlock()
     {
-
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+        if (PlayerPrefs.GetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.falsePrefs) == PlayerPrefsName.falsePrefs)
+        {
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.truePrefs);
+            textUnlock.SetText("DISABLED");
+        } else
+        {
+            PlayerPrefs.SetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.falsePrefs);
+            textUnlock.SetText("ENABLED");
+        }
+        SceneManager.LoadScene("Level");
     }
 
     public void Clear()
     {
-
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+        foreach(string key in LevelManager.Instance.listPathLevelData)
+        {
+            PlayerPrefs.DeleteKey(key);
+        }
+        SceneManager.LoadScene("Level");
     }
 }

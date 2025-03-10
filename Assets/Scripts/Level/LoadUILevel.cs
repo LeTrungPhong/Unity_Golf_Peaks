@@ -77,7 +77,7 @@ public class LoadUILevel : MonoBehaviour
 
         Button button = buttonLevel.AddComponent<Button>();
         Image image = buttonLevel.AddComponent<Image>();
-        image.color = checkPassLevel == 1 ? Color.white : Color.gray;
+        image.color = checkPassLevel == 1 || PlayerPrefs.GetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.falsePrefs) == PlayerPrefsName.truePrefs ? Color.white : Color.gray;
 
         GameObject text = new GameObject("TextButtonLevel");
         text.transform.SetParent(buttonLevel.transform);
@@ -106,7 +106,7 @@ public class LoadUILevel : MonoBehaviour
         textRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);
         textRect.anchoredPosition = Vector2.zero;
 
-        if (checkPassLevel == 1)
+        if (checkPassLevel == 1 || PlayerPrefs.GetString(PlayerPrefsName.playerPrefsUnlock, PlayerPrefsName.falsePrefs) == PlayerPrefsName.truePrefs)
         {
             button.onClick.AddListener(() =>
             {

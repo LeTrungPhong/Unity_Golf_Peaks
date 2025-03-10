@@ -87,6 +87,10 @@ public class InputController : MonoBehaviour
             {
                 imageArrow.SetActive(true);
                 const int moveArrow = 15;
+                if (PlayerPrefs.GetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.falsePrefs) == PlayerPrefsName.truePrefs)
+                {
+                    vectorDirection = new Vector2(vectorDirection.x * (-1), vectorDirection.y * (-1));
+                }
                 if (vectorDirection.x >= 0 && vectorDirection.y >= 0)
                 {
                     // right

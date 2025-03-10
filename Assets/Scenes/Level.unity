@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 129781530}
   - component: {fileID: 129781529}
   m_Layer: 5
-  m_Name: Text_C
+  m_Name: TextControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 275478374}
   - component: {fileID: 275478373}
   m_Layer: 5
-  m_Name: Text_C
+  m_Name: TextClear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2972,7 +2972,7 @@ GameObject:
   - component: {fileID: 1059050452}
   - component: {fileID: 1059050451}
   m_Layer: 5
-  m_Name: Text_C
+  m_Name: TextUnlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3308,6 +3308,12 @@ MonoBehaviour:
   textMusic: {fileID: 753086698}
   textSFX: {fileID: 1616763503}
   textMute: {fileID: 1535013947}
+  textUnlock: {fileID: 1059050451}
+  textClear: {fileID: 275478373}
+  textControl: {fileID: 129781529}
+  playerPrefsUnlock: UnlockLevel
+  truePrefs: true
+  falsePrefs: false
 --- !u!1 &1386095465
 GameObject:
   m_ObjectHideFlags: 0

@@ -95,11 +95,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void ButtonSettingClick()
-    {
-        
-    }
-
     //[System.Serializable]
     //public class LevelData
     //{
