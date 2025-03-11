@@ -31,6 +31,11 @@ public class BallController : MonoBehaviour
     private int[] direction = new int[] { 0, 0, 0 };
     private float speed = 0.5f;
 
+    [SerializeField] private ParticleSystem particleSystemBallMove; 
+    private ParticleSystem spawnedParticalSystem;
+    private bool playParticalSystem = false;
+    private Vector3 positionBallLast = new Vector3(0, 0, 0);
+
     [SerializeField] private AudioSource audioLoopSound;
     [SerializeField] private AudioSource audioShotSound;
     [SerializeField] private AudioClip[] ListAudio;
@@ -45,6 +50,8 @@ public class BallController : MonoBehaviour
         this.ballSize = obstacleManager.ballSize;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
+        spawnedParticalSystem = Instantiate(particleSystemBallMove, transform.position, Quaternion.identity);
+        spawnedParticalSystem.Stop();
     }
 
     // Update is called once per frame
@@ -353,8 +360,21 @@ public class BallController : MonoBehaviour
                 Interpolation inter = interpolation[i];
                 if (inter.check == true)
                 {
-                    if (inter.time == 0)
+                    if (playParticalSystem == false && particleSystemBallMove != null)
                     {
+                        Debug.Log("Play Partical System");
+                        spawnedParticalSystem.Play();
+                        playParticalSystem = true;
+                        positionBallLast = transform.position;
+                    } else
+                    {
+                        spawnedParticalSystem.transform.position = transform.position;
+                        Vector3 directionParticalSystem = transform.position - positionBallLast;
+                        spawnedParticalSystem.transform.rotation = Quaternion.LookRotation(-directionParticalSystem);
+                        positionBallLast = transform.position;
+                    }
+                    if (inter.time == 0)
+                    {   
                         PlayLoopSound(this.ListAudio[(int)inter.LoopSound]);
                     }
                     inter.time += Time.deltaTime;
@@ -372,6 +392,11 @@ public class BallController : MonoBehaviour
                     return;
                 }
             }
+        }
+        if (playParticalSystem == true)
+        {
+            spawnedParticalSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            playParticalSystem = false;
         }
         checkMove = false;
         checkGameOver();

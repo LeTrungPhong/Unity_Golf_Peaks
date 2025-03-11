@@ -17,7 +17,6 @@ public class InputController : MonoBehaviour
 
     private int direction = 0;
 
-    private float speed = 5.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,10 +32,7 @@ public class InputController : MonoBehaviour
     void Update()
     {
         playerConfirmMove();
-
     }
-
-    
 
     void playerConfirmMove()
     {

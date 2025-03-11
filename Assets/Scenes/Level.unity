@@ -3311,9 +3311,6 @@ MonoBehaviour:
   textUnlock: {fileID: 1059050451}
   textClear: {fileID: 275478373}
   textControl: {fileID: 129781529}
-  playerPrefsUnlock: UnlockLevel
-  truePrefs: true
-  falsePrefs: false
 --- !u!1 &1386095465
 GameObject:
   m_ObjectHideFlags: 0
