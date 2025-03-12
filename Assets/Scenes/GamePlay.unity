@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleSystemBallMove: {fileID: 8145046777991676196, guid: 88acae5bda03928469cc3c6278dcbb16, type: 3}
+  particleSystemWinGame: {fileID: 1232422772869288875, guid: 762c5ca10adb0bc4ebd14a74443639d7, type: 3}
   audioLoopSound: {fileID: 25731147}
   audioShotSound: {fileID: 25731148}
   ListAudio:

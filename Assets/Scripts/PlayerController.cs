@@ -31,7 +31,8 @@ public class BallController : MonoBehaviour
     private int[] direction = new int[] { 0, 0, 0 };
     private float speed = 0.5f;
 
-    [SerializeField] private ParticleSystem particleSystemBallMove; 
+    [SerializeField] private ParticleSystem particleSystemBallMove;
+    [SerializeField] private ParticleSystem particleSystemWinGame;
     private ParticleSystem spawnedParticalSystem;
     private bool playParticalSystem = false;
     private Vector3 positionBallLast = new Vector3(0, 0, 0);
@@ -39,6 +40,8 @@ public class BallController : MonoBehaviour
     [SerializeField] private AudioSource audioLoopSound;
     [SerializeField] private AudioSource audioShotSound;
     [SerializeField] private AudioClip[] ListAudio;
+
+    private bool stateGame = false;
 
     // Start is called before the first frame update
     void Start()
@@ -424,6 +427,11 @@ public class BallController : MonoBehaviour
     {
         if (obstacleManager.checkGoal(getPositionIndex(player.transform.position)))
         {
+            if (stateGame == false)
+            {
+                Instantiate(particleSystemWinGame, player.transform.position, Quaternion.LookRotation(Vector3.up));
+            }
+            stateGame = true;
             gameManager.GameWin();
             return;
         }
@@ -439,6 +447,7 @@ public class BallController : MonoBehaviour
             }
         }
 
+        stateGame = true;
         gameManager.GameOver();
     }
 
