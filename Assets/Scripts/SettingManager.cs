@@ -16,9 +16,7 @@ public class SettingManager : MonoBehaviour
     [SerializeField] private TMP_Text textUnlock;
     [SerializeField] private TMP_Text textClear;
     [SerializeField] private TMP_Text textControl;
-
-    private GameObject setting;
-    private GameObject RawImageMute;
+    [SerializeField] private GameObject RawImageMute;
 
     private void Awake()
     {
@@ -31,12 +29,9 @@ public class SettingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        setting = GameObject.Find("Setting");
-        RawImageMute = GameObject.Find("RawImageMute");
-        setting.GetComponent<Image>().color = colorGeneral;
+        gameObject.GetComponent<Image>().color = colorGeneral;
         textMusic.color = colorGeneral;
         textSFX.color = colorGeneral;
-        setting.SetActive(false);
     }
 
     public void SetUpVolume()
@@ -97,19 +92,6 @@ public class SettingManager : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public void ButtonSettingClick()
-    {
-        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
-        if (setting.activeSelf == true)
-        {
-            setting.SetActive(false);
-            return;
-        }
-        setting.SetActive(true);
-        setting.transform.SetAsLastSibling();
-        SetUpVolume();
     }
 
     public void HighMusic()

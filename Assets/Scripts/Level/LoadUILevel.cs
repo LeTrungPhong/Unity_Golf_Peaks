@@ -9,6 +9,8 @@ public class LoadUILevel : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI textTitle;
     [SerializeField] private GameObject canvas;
+    [SerializeField] private GameObject setting;
+    private SettingManager settingManager;
 
     private LevelManager levelManager;
     private int numberRow = 5;
@@ -23,6 +25,7 @@ public class LoadUILevel : MonoBehaviour
     void Start()
     {
         levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        settingManager = setting.GetComponent<SettingManager>();
         //Debug.Log("Screen: " + Screen.width + " " + Screen.height);
         widthItem = Screen.width / numberColumn;
         heightItem = Screen.height / numberRow;
@@ -41,6 +44,14 @@ public class LoadUILevel : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void ButtonSettingClick()
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+        setting.SetActive(!setting.activeSelf);
+        settingManager.gameObject.transform.SetAsLastSibling();
+        settingManager.SetUpVolume();
     }
 
     public void setUpLevel()
