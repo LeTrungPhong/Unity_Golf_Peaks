@@ -259,6 +259,14 @@ public class BallController : MonoBehaviour
             return;
         }
 
+        if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+        {
+            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+            this.addInterpolation(positionLast, new Vector3(positionLast.x + (float)direction[0] * ((float)1 / 2), positionLast.y, positionLast.z + (float)direction[2] * ((float)1 / 2)), speed / 2);
+            numberMove = 0;
+            return;
+        }
+
         int checkPlane = obstacleManager.checkPlane(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] });
         if (checkPlane > 0)
         {
@@ -274,7 +282,6 @@ public class BallController : MonoBehaviour
             //checkMoveDown(getPositionIndex(position3 - new Vector3(direction[0] / 2, direction[1], direction[2] / 2)));
             //Vector3 position3 = new Vector3(position2.x + (float)direction[0] * ((float)1 / 2) - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0], position2.y, position2.z + (float)direction[2] * ((float)1 / 2) - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2]);
             //this.addInterpolation(position2, position3, speed / 2);
-            Debug.Log("Plane");
         }
         else
         {
@@ -291,6 +298,17 @@ public class BallController : MonoBehaviour
         {
             Vector3 vector1 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             int[] positionIndex = getPositionIndex(vector1);
+
+            if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
+            {
+                Vector3 position1 = new Vector3(vector1.x, vector1.y - (float)obstacleSize, vector1.z);
+                this.addInterpolation(vector1, position1, speed / 2);
+                Vector3 position2 = new Vector3(position1.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(position1, position2, speed / 5);
+                numberMove = 0;
+                return;
+            }
+
             int plane = obstacleManager.checkPlane(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
             if (plane > 0)
             {
@@ -347,6 +365,13 @@ public class BallController : MonoBehaviour
         {
             Vector3 vector3 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             int[] positionIndex3 = getPositionIndex(vector3);
+
+            if (obstacleManager.checkBlockRoll(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }))
+            {
+                numberMove = 0;
+                return;
+            }
+
             int plane = obstacleManager.checkPlane(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] });
             if (plane > 0)
             {

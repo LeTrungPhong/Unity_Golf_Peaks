@@ -1604,6 +1604,7 @@ MonoBehaviour:
   planePrefab: {fileID: 1918964778487139147, guid: 098362a7e882cd14f9932e73c8b7235b, type: 3}
   changeDirectionPrefab: {fileID: 7444671658643919707, guid: c95abb0259ccf7a4caa91d40192d9d8a, type: 3}
   goalPrefab: {fileID: 7744627934442400409, guid: c065596e87d261340882aa177bab1c68, type: 3}
+  blockRollPrefab: {fileID: 8098078448101118788, guid: f88397d4f9480144a8521212374b96a5, type: 3}
   obstacleSize: 1
   ballSize: 0.25
 --- !u!4 &1791446003

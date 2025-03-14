@@ -12,6 +12,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject planePrefab;
     [SerializeField] private GameObject changeDirectionPrefab;
     [SerializeField] private GameObject goalPrefab;
+    [SerializeField] private GameObject blockRollPrefab;
     private GameObject player;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
@@ -21,6 +22,7 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnObstacles;
     public int[][] spawnPlanes;
     public int[][] spawnChangeDirectionOb;
+    public int[][] spawnBlockRoll;
     public int[][] spawnGoal;
     public int[][] spawnBall;
 
@@ -35,48 +37,6 @@ public class ObstacleManager : MonoBehaviour
         player = GameObject.FindWithTag("Player").gameObject;
         obstacleSize = obstaclePrefab.transform.localScale.x;
         changeDirectionSize = obstacleSize / 2;
-
-        //this.spawnObstacles = new int[][] {
-        //   new int[] { 0, 7, 6, 6, 7 },
-        //   new int[] { 7, 0, 6, 0, 6 },
-        //   new int[] { 6, 5, 5, 5, 6 },
-        //   new int[] { 6, 0, 6, 0, 7 },
-        //   new int[] { 7, 6, 6, 7, 0 }
-        //};
-
-        //// 1 = z, 3 = -z, 2 = x, 4 = -x
-        //this.spawnPlanes = new int[][] {
-        //   new int[] { 0, 0, 0, 3, 0 },
-        //   new int[] { 0, 0, 0, 0, 2 },
-        //   new int[] { 0, 1, 0, 3, 0 },
-        //   new int[] { 4, 0, 0, 0, 0 },
-        //   new int[] { 0, 1, 0, 0, 0 }
-        //};
-
-        //this.spawnChangeDirectionOb = new int[][] {
-        //    new int[] { 0, 0, 1, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 1, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 4, 0, 0, 0, 0 }
-        //};
-
-        //this.spawnGoal = new int[][] {
-        //    new int[] { 0, 0, 0, 0, 1 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 }
-        //};
-
-        //this.spawnBall = new int[][] {
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 1, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 },
-        //    new int[] { 0, 0, 0, 0, 0 }
-        //};
-
         Spawn();
     }
 
@@ -111,6 +71,10 @@ public class ObstacleManager : MonoBehaviour
                     // Spawn Ball
                     player.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
                     player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
+                }
+                if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
+                {
+                    Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
                 }
             }
         }
@@ -203,11 +167,20 @@ public class ObstacleManager : MonoBehaviour
         return false;
     }
 
-    
-
-    
-
-    
-
-    
+    public bool checkBlockRoll(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (spawnBlockRoll != null && spawnBlockRoll.Length > positionIndex[0] && spawnBlockRoll[positionIndex[0]].Length > positionIndex[2] && spawnBlockRoll[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return true;
+        }
+        return false;
+    }
 }
