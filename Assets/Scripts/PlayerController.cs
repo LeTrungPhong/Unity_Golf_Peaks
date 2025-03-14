@@ -121,6 +121,7 @@ public class BallController : MonoBehaviour
             addFlyValid();
             addMoveValid();
         }
+
         this.addInterpolation(interpolation.Last().end, interpolation.Last().end, 0);
     }
 
@@ -142,6 +143,12 @@ public class BallController : MonoBehaviour
     {
         Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
         int[] positionIndexLast = getPositionIndex(positionLast);
+
+        if (obstacleManager.checkBlockRoll(new int[] { positionIndexLast[0], positionIndexLast[1] - 1, positionIndexLast[2] }))
+        {
+            numberMove = 0;
+            return;
+        }
 
         int checkChangeDirection = obstacleManager.checkChangeDirection(new int[] { positionIndexLast[0], positionIndexLast[1], positionIndexLast[2] });
 
@@ -252,7 +259,7 @@ public class BallController : MonoBehaviour
 
     void checkMoveDown(int[] positionIndex)
     {
-        if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+        if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }) || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             this.addInterpolation(positionLast, new Vector3(positionLast.x + (float)direction[0] * ((float)1 / 2), positionLast.y, positionLast.z + (float)direction[2] * ((float)1 / 2)), speed / 2);
@@ -345,7 +352,7 @@ public class BallController : MonoBehaviour
                     Vector3 position3 = new Vector3(position2.x + (float)direction[0] * (ballSize / 2) - (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position2.y, position2.z + (float)direction[2] * (ballSize / 2) - (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
                     this.addInterpolation(position2, position3, speed / 4);
                 }
-            } else if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false)
+            } else if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false)
             {
                 this.addInterpolation(vector1, new Vector3(vector1.x, vector1.y - obstacleSize, vector1.z), speed / 4);
             }
@@ -399,7 +406,7 @@ public class BallController : MonoBehaviour
                 this.addInterpolation(position2, position3, speed / 4);
                 return;
             }
-            if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false)
+            if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false)
             {
                 if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 2, positionIndex3[2] }) == false)
                 {
@@ -461,6 +468,19 @@ public class BallController : MonoBehaviour
                             PlayShotSound(this.ListAudio[(int)inter.ShotSound]);
                         }
                         inter.check = false;
+
+
+                        if (inter.duration == 0)
+                        {
+                            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                            int[] positionIndexLast = getPositionIndex(positionLast);
+
+                            if (obstacleManager.checkDive(new int[] { positionIndexLast[0], positionIndexLast[1] - 1, positionIndexLast[2] }))
+                            {
+                                gameManager.GameOver();
+                                return;
+                            }
+                        }
                     }
                     return;
                 }

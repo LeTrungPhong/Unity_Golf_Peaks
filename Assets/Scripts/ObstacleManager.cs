@@ -13,6 +13,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject changeDirectionPrefab;
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject blockRollPrefab;
+    [SerializeField] private GameObject divePrefab;
     private GameObject player;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
@@ -25,6 +26,7 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnBlockRoll;
     public int[][] spawnGoal;
     public int[][] spawnBall;
+    public int[][] spawnDive;
 
     private void Awake()
     {
@@ -75,6 +77,10 @@ public class ObstacleManager : MonoBehaviour
                 if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
                 {
                     Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                }
+                if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
+                {
+                    Instantiate(divePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
                 }
             }
         }
@@ -178,6 +184,23 @@ public class ObstacleManager : MonoBehaviour
             return false;
         }
         if (spawnBlockRoll != null && spawnBlockRoll.Length > positionIndex[0] && spawnBlockRoll[positionIndex[0]].Length > positionIndex[2] && spawnBlockRoll[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool checkDive(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (spawnDive != null && spawnDive.Length > positionIndex[0] && spawnDive[positionIndex[0]].Length > positionIndex[2] && spawnDive[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
         {
             return true;
         }

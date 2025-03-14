@@ -9,6 +9,7 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public List<string> spawnPlanes;
     public List<string> spawnChangeDirectionOb;
     public List<string> spawnBlockRoll;
+    public List<string> spawnDive;
     public List<string> spawnGoal;
     public List<string> spawnBall;
     public List<string> itemMove;

@@ -50,6 +50,11 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnBlockRoll = ConvertListStringToArray2(spawnObstacleLevel.spawnBlockRoll);
         }
 
+        if (spawnObstacleLevel.spawnDive != null && spawnObstacleLevel.spawnDive.Count > 0)
+        {
+            obstacleManager.spawnDive = ConvertListStringToArray2(spawnObstacleLevel.spawnDive);
+        }
+
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 
         for (int i = 0; i < buttons.Length; ++i)

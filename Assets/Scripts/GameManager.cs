@@ -54,8 +54,6 @@ public class GameManager : MonoBehaviour
         {
             checkState();
         }
-
-
     }
 
     void checkState()
