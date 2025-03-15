@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        isGameOver = true;
         stateGame.color = Color.red;
         stateGame.text = "Game Over";
         stateGame.gameObject.SetActive(true);
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviour
 
     public void GameWin()
     {
+        isGameOver = true;
         stateGame.color = Color.green;
         stateGame.text = "Game Win";
         stateGame.gameObject.SetActive(true);

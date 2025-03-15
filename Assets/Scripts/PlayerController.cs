@@ -248,7 +248,7 @@ public class BallController : MonoBehaviour
                 this.addInterpolation(positionNow, positionFly, speed, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
                 numberUp--;
             }
-            checkDown();
+            FlyDown();
         }
     }
 
@@ -285,7 +285,7 @@ public class BallController : MonoBehaviour
             this.addInterpolation(position1, position2, speed);
             Vector3 position3 = new Vector3(position2.x + 0 - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0] + (float)direction[0] * (ballSize / 2), position2.y, position2.z + 0 - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2] + (float)direction[2] * (ballSize / 2));
             this.addInterpolation(position2, position3, speed / 100);
-            Down();
+            MoveDown();
             //checkMoveDown(getPositionIndex(position3 - new Vector3(direction[0] / 2, direction[1], direction[2] / 2)));
             //Vector3 position3 = new Vector3(position2.x + (float)direction[0] * ((float)1 / 2) - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0], position2.y, position2.z + (float)direction[2] * ((float)1 / 2) - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2]);
             //this.addInterpolation(position2, position3, speed / 2);
@@ -295,11 +295,11 @@ public class BallController : MonoBehaviour
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (ballSize / 2));
             this.addInterpolation(positionLast, position1, speed / 10);
-            Down();
+            MoveDown();
         }
     }
 
-    void Down()
+    void MoveDown()
     {
         for (int i = 0; i <= 20; i++)
         {
@@ -308,10 +308,10 @@ public class BallController : MonoBehaviour
 
             if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {
-                Vector3 position1 = new Vector3(vector1.x, vector1.y - (float)obstacleSize, vector1.z);
-                this.addInterpolation(vector1, position1, speed / 2);
-                Vector3 position2 = new Vector3(position1.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
-                this.addInterpolation(position1, position2, speed / 5);
+                //Vector3 position1 = new Vector3(vector1.x, vector1.y - (float)obstacleSize, vector1.z);
+                //this.addInterpolation(vector1, position1, speed / 2);
+                Vector3 position2 = new Vector3(vector1.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), vector1.y, vector1.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(vector1, position2, speed / 5);
                 numberMove = 0;
                 return;
             }
@@ -366,24 +366,24 @@ public class BallController : MonoBehaviour
         }
     }
 
-    void checkDown()
+    void FlyDown()
     {
         for (int i = 0; i <= 20; i++)
         {
-            Vector3 vector3 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
-            int[] positionIndex3 = getPositionIndex(vector3);
+            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+            int[] positionIndex = getPositionIndex(positionLast);
 
-            if (obstacleManager.checkBlockRoll(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }))
+            if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {
                 numberMove = 0;
                 return;
             }
 
-            int plane = obstacleManager.checkPlane(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] });
+            int plane = obstacleManager.checkPlane(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
             if (plane > 0)
             {
-                Vector3 position1 = new Vector3(vector3.x, vector3.y - (ballSize / 2) - (obstacleSize / 2) + (ballSize / 2) * Mathf.Sqrt(2), vector3.z);
-                this.addInterpolation(vector3, position1, speed / 5, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
+                Vector3 position1 = new Vector3(positionLast.x, positionLast.y - (ballSize / 2) - (obstacleSize / 2) + (ballSize / 2) * Mathf.Sqrt(2), positionLast.z);
+                this.addInterpolation(positionLast, position1, speed / 5, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
                 if (plane == 1)
                 {
                     direction = new int[] { 0, 0, 1 };
@@ -404,16 +404,14 @@ public class BallController : MonoBehaviour
                 this.addInterpolation(position1, position2, speed / 4);
                 Vector3 position3 = new Vector3(position2.x + (float)direction[0] * (obstacleSize / 2) - (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position2.y, position2.z + (float)direction[2] * (obstacleSize / 2) - (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
                 this.addInterpolation(position2, position3, speed / 4);
-                return;
-            }
-            if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex3[0], positionIndex3[1] - 1, positionIndex3[2] }) == false)
+            } else if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false)
             {
-                if (obstacleManager.checkObstacle(new int[] { positionIndex3[0], positionIndex3[1] - 2, positionIndex3[2] }) == false)
+                if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false)
                 {
-                    this.addInterpolation(vector3, new Vector3(vector3.x, vector3.y - obstacleSize, vector3.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
+                    this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
                 } else
                 {
-                    this.addInterpolation(vector3, new Vector3(vector3.x, vector3.y - obstacleSize, vector3.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
+                    this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
                 }
             }
             else
