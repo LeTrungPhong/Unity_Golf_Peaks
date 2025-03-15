@@ -10,6 +10,9 @@ public class LoadUILevel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textTitle;
     [SerializeField] private GameObject canvas;
     [SerializeField] private GameObject setting;
+    [SerializeField] private GameObject buttonContinueLevel;
+    [SerializeField] private GameObject buttonBackLevel;
+
     private SettingManager settingManager;
 
     private LevelManager levelManager;
@@ -31,6 +34,7 @@ public class LoadUILevel : MonoBehaviour
         heightItem = Screen.height / numberRow;
         //Debug.Log("Item: " + widthItem + " " + heightItem);
         setUpLevel();
+        settingManager.SetUpVolume();
         //StartCoroutine(WaitForScreenSize());
     }
 
@@ -54,9 +58,40 @@ public class LoadUILevel : MonoBehaviour
         settingManager.SetUpVolume();
     }
 
+    public void ButtonContinueLevelClick()
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+
+        int index = PlayerPrefs.GetInt(PlayerPrefsName.indexLevelPrefs, 0);
+
+        if (index + numberColumn * (numberRow - 1) < LevelManager.Instance.listPathLevelData.Count)
+        {
+            index = index + numberRow * (numberRow - 1);
+        }
+
+        PlayerPrefs.SetInt(PlayerPrefsName.indexLevelPrefs, index);
+
+        SceneManager.LoadScene("Level");
+    }
+
+    public void ButtonBackLevelClick()
+    {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+
+        int index = PlayerPrefs.GetInt(PlayerPrefsName.indexLevelPrefs, 0);
+
+        index = index - numberColumn * (numberRow - 1);
+
+        if (index < 0) index = 0;
+
+        PlayerPrefs.SetInt(PlayerPrefsName.indexLevelPrefs, index);
+
+        SceneManager.LoadScene("Level");
+    }
+
     public void setUpLevel()
     {
-        int index = indexLevel;
+        int index = PlayerPrefs.GetInt(PlayerPrefsName.indexLevelPrefs, 0);
         for (int i = 0; i < numberRow; ++i)
         {
             for (int j = 0; j < numberColumn; ++j)

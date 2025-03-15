@@ -11,4 +11,5 @@ public class PlayerPrefsName
     public static string playerPrefsUnlock = "UnlockLevel";
     public static string truePrefs = "true";
     public static string falsePrefs = "false";
+    public static string indexLevelPrefs = "IndexLevel";
 }

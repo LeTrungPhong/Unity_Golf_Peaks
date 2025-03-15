@@ -216,7 +216,11 @@ public class BallController : MonoBehaviour
             }
             return;
         }
-        if (obstacleManager.checkObstacle(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false)
+        if (
+            obstacleManager.checkObstacle(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            && obstacleManager.checkBlockRoll(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            && obstacleManager.checkDive(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            )
         {
             // move
             this.addInterpolation(positionLast, new Vector3(positionLast.x + (float)direction[0] * ((float)1 / 2), positionLast.y, positionLast.z + (float)direction[2] * ((float)1 / 2)), speed / 2);
@@ -274,18 +278,26 @@ public class BallController : MonoBehaviour
             return;
         }
 
-        int checkPlane = obstacleManager.checkPlane(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] });
-        if (checkPlane > 0)
+        int plane = obstacleManager.checkPlane(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] });
+        if (plane > 0)
         {
-            // only check all
-            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
-            Vector3 position1 = new Vector3(positionLast.x + (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0], positionLast.y, positionLast.z + ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2]);
-            this.addInterpolation(positionLast, position1, speed / 10);
-            Vector3 position2 = new Vector3(position1.x + (float)direction[0], position1.y - (float)obstacleSize, position1.z + (float)direction[2]);
-            this.addInterpolation(position1, position2, speed);
-            Vector3 position3 = new Vector3(position2.x + 0 - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0] + (float)direction[0] * (ballSize / 2), position2.y, position2.z + 0 - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2] + (float)direction[2] * (ballSize / 2));
-            this.addInterpolation(position2, position3, speed / 100);
-            MoveDown();
+            if ((plane == 1 && direction[2] > 0) || (plane == 2 && direction[0] > 0) || (plane == 3 && direction[2] < 0) || (plane == 4 && direction[0] < 0))
+            {
+                Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                Vector3 position1 = new Vector3(positionLast.x + (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0], positionLast.y, positionLast.z + ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2]);
+                this.addInterpolation(positionLast, position1, speed / 10);
+                Vector3 position2 = new Vector3(position1.x + (float)direction[0], position1.y - (float)obstacleSize, position1.z + (float)direction[2]);
+                this.addInterpolation(position1, position2, speed);
+                Vector3 position3 = new Vector3(position2.x + 0 - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0] + (float)direction[0] * (ballSize / 2), position2.y, position2.z + 0 - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2] + (float)direction[2] * (ballSize / 2));
+                this.addInterpolation(position2, position3, speed / 100);
+                MoveDown();
+            } else
+            {
+                Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (ballSize / 2));
+                this.addInterpolation(positionLast, position1, speed / 10);
+                MoveDown();
+            }
             //checkMoveDown(getPositionIndex(position3 - new Vector3(direction[0] / 2, direction[1], direction[2] / 2)));
             //Vector3 position3 = new Vector3(position2.x + (float)direction[0] * ((float)1 / 2) - (float)((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * direction[0], position2.y, position2.z + (float)direction[2] * ((float)1 / 2) - ((ballSize / 2) * (Mathf.Sqrt(2)) - ballSize / 2) * (float)direction[2]);
             //this.addInterpolation(position2, position3, speed / 2);
@@ -496,7 +508,7 @@ public class BallController : MonoBehaviour
     public void moveBack()
     {
         bool checkPause = true;
-        while (checkMove == false && interpolation.Count > 0)
+        while (interpolation.Count > 0)
         {
             if (checkPause == false && interpolation.Last().start == interpolation.Last().end && interpolation.Last().duration == 0)
             {
@@ -506,6 +518,7 @@ public class BallController : MonoBehaviour
             {
                 checkPause = false;
             }
+            StopLoopSound();
             player.transform.position = interpolation.Last().start;
             interpolation.RemoveAt(interpolation.Count - 1);
         }

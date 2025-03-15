@@ -118,6 +118,11 @@ public class GameManager : MonoBehaviour
 
     public void Back()
     {
+        if (isGameOver)
+        {
+            return;
+        }
+
         Debug.Log("Back");
         playerController.moveBack();
         DisplayButton();
@@ -247,8 +252,8 @@ public class GameManager : MonoBehaviour
     {
         if (listHiddenButton.Count > 0 && listHiddenButton[0] >= 0 && listHiddenButton[0] < listButton.Count)
         {
-            listButton[listHiddenButton[0]].gameObject.SetActive(true);
-            listHiddenButton.RemoveAt(0);
+            listButton[listHiddenButton[listHiddenButton.Count - 1]].gameObject.SetActive(true);
+            listHiddenButton.RemoveAt(listHiddenButton.Count - 1);
         }
     }
 }
