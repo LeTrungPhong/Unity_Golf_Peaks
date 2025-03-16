@@ -351,6 +351,17 @@ public class BallController : MonoBehaviour
             Vector3 vector1 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             int[] positionIndex = getPositionIndex(vector1);
 
+            if (obstacleManager.checkWater(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
+            {
+                Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                Vector3 position1 = new Vector3(positionLast.x, positionLast.y - (float)obstacleSize / 2, positionLast.z);
+                this.addInterpolation(positionLast, position1, speed / 5);
+                numberMove = 0;
+                numberUp = 0;
+                WaterMoveBack();
+                return;
+            }
+
             if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {
                 //Vector3 position1 = new Vector3(vector1.x, vector1.y - (float)obstacleSize, vector1.z);
