@@ -14,6 +14,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject blockRollPrefab;
     [SerializeField] private GameObject divePrefab;
+    [SerializeField] private GameObject waterPrefab;
     private GameObject player;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
@@ -24,9 +25,10 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnPlanes;
     public int[][] spawnChangeDirectionOb;
     public int[][] spawnBlockRoll;
+    public int[][] spawnDive;
+    public int[][] spawnWater;
     public int[][] spawnGoal;
     public int[][] spawnBall;
-    public int[][] spawnDive;
 
     private void Awake()
     {
@@ -81,6 +83,10 @@ public class ObstacleManager : MonoBehaviour
                 if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
                 {
                     Instantiate(divePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                }
+                if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
+                {
+                    Instantiate(waterPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
                 }
             }
         }
@@ -201,6 +207,23 @@ public class ObstacleManager : MonoBehaviour
             return false;
         }
         if (spawnDive != null && spawnDive.Length > positionIndex[0] && spawnDive[positionIndex[0]].Length > positionIndex[2] && spawnDive[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool checkWater(int[] positionIndex)
+    {
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (spawnWater != null && spawnWater.Length > positionIndex[0] && spawnWater[positionIndex[0]].Length > positionIndex[2] && spawnWater[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
         {
             return true;
         }

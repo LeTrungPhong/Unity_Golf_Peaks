@@ -263,6 +263,19 @@ public class BallController : MonoBehaviour
 
     void checkMoveDown(int[] positionIndex)
     {
+        if (obstacleManager.checkWater(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+        {
+            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (ballSize / 2));
+            this.addInterpolation(positionLast, position1, speed / 10);
+            Vector3 position2 = new Vector3(position1.x, position1.y - obstacleSize / 2, position1.z);
+            this.addInterpolation(position1, position2, speed / 5);
+            numberMove = 0;
+            numberUp = 0;
+            WaterMoveBack();
+            return;
+        }
+
         if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }) || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
@@ -308,6 +321,26 @@ public class BallController : MonoBehaviour
             Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (ballSize / 2));
             this.addInterpolation(positionLast, position1, speed / 10);
             MoveDown();
+        }
+    }
+
+    void WaterMoveBack()
+    {
+        Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+        for (int i = interpolation.Count - 1; i >= 0; --i)
+        {
+            Vector3 position = interpolation[i].start;
+            int[] index = getPositionIndex(position);
+            if (
+                obstacleManager.checkObstacle(new int[] { index[0], index[1] - 1, index[2] }) == true
+                && obstacleManager.checkPlane(index) == 0
+                && obstacleManager.checkWater(new int[] { index[0], index[1], index[2] }) == false
+                )
+            {
+                Vector3 position1 = new Vector3(index[0], index[1] - (float)1 / 2 + ballSize / 2, index[2]);
+                this.addInterpolation(positionLast, position1, speed / 5);
+                return;
+            }
         }
     }
 
@@ -384,6 +417,16 @@ public class BallController : MonoBehaviour
         {
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             int[] positionIndex = getPositionIndex(positionLast);
+
+            if (obstacleManager.checkWater(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
+            {
+                Vector3 position1 = new Vector3(positionLast.x, positionLast.y - (float)1 / 2, positionLast.z);
+                this.addInterpolation(positionLast, position1, speed / 5);
+                WaterMoveBack();
+                numberMove = 0;
+                numberUp = 0;
+                return;
+            }
 
             if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {

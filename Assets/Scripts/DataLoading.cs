@@ -55,6 +55,11 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnDive = ConvertListStringToArray2(spawnObstacleLevel.spawnDive);
         }
 
+        if (spawnObstacleLevel.spawnWater != null && spawnObstacleLevel.spawnWater.Count > 0)
+        {
+            obstacleManager.spawnWater = ConvertListStringToArray2(spawnObstacleLevel.spawnWater);
+        }
+
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 
         for (int i = 0; i < buttons.Length; ++i)
