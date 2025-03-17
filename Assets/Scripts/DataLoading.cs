@@ -62,10 +62,33 @@ public class DataLoading : MonoBehaviour
 
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 
+        //string[] parts = level.Split("_", ".");
+        //if (parts.Length > 1 && int.TryParse(parts[1], out int numberLevel))
+        //{
+        //    Debug.Log("Level: " + numberLevel);
+        //    if (numberLevel == 32)
+        //    {
+        //        obstacleManager.highFly = 5;
+        //    }
+        //} else
+        //{
+        //    Debug.Log(level + " khong hop le");
+        //}
+
+        if (LevelManager.Instance.levelSelected + 1 == 32)
+        {
+            obstacleManager.highFly = 5;
+        }
+
         for (int i = 0; i < buttons.Length; ++i)
         {
             gameManager.createButton(buttons[i]);
         }
+    }
+
+    void ChangeHighFly()
+    {
+
     }
 
     public List<string> ConvertArray2ToListString(int[][] list)

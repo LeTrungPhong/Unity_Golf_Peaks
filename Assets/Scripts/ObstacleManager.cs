@@ -16,9 +16,11 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject divePrefab;
     [SerializeField] private GameObject waterPrefab;
     private GameObject player;
+    private GameObject golfBall;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
     public float ballSize = 0.25f;
+    public int highFly = 3;
 
     // set up obstacle spawn points
     public int[][] spawnObstacles;
@@ -39,6 +41,7 @@ public class ObstacleManager : MonoBehaviour
     void Start()
     {
         player = GameObject.FindWithTag("Player").gameObject;
+        //golfBall = GameObject.FindWithTag("GolfBall").gameObject;
         obstacleSize = obstaclePrefab.transform.localScale.x;
         changeDirectionSize = obstacleSize / 2;
         Spawn();
@@ -73,7 +76,9 @@ public class ObstacleManager : MonoBehaviour
                 if (this.spawnBall[i][j] > 0)
                 {
                     // Spawn Ball
-                    player.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
+                    //golfBall.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
+                    float scaleSize = player.GetComponent<Renderer>().bounds.size.x;
+                    player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
                     player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
                 }
                 if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)

@@ -50,6 +50,7 @@ public class BallController : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         obstacleManager = GameObject.Find("ObstacleManager").GetComponent<ObstacleManager>();
         player = GameObject.FindWithTag("Player").gameObject;
+        Debug.Log(player.GetComponent<Renderer>().bounds.size);
         this.ballSize = obstacleManager.ballSize;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
@@ -242,7 +243,7 @@ public class BallController : MonoBehaviour
         if (numberUp > 0)
         {
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
-            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0], positionLast.y + 3, positionLast.z + (float)direction[2]);
+            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0], positionLast.y + obstacleManager.highFly, positionLast.z + (float)direction[2]);
             this.addInterpolation(positionLast, position1, speed, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
             numberUp--;
             while (numberUp > 0)
@@ -332,7 +333,10 @@ public class BallController : MonoBehaviour
             Vector3 position = interpolation[i].start;
             int[] index = getPositionIndex(position);
             if (
-                obstacleManager.checkObstacle(new int[] { index[0], index[1] - 1, index[2] }) == true
+                (
+                    obstacleManager.checkObstacle(new int[] { index[0], index[1] - 1, index[2] }) == true
+                    || obstacleManager.checkBlockRoll(new int[] { index[0], index[1] - 1, index[2] }) == true
+                )
                 && obstacleManager.checkPlane(index) == 0
                 && obstacleManager.checkWater(new int[] { index[0], index[1], index[2] }) == false
                 )
