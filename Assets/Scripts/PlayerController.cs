@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public enum SoundPlayerType
 {
@@ -50,7 +51,6 @@ public class BallController : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         obstacleManager = GameObject.Find("ObstacleManager").GetComponent<ObstacleManager>();
         player = GameObject.FindWithTag("Player").gameObject;
-        Debug.Log(player.GetComponent<Renderer>().bounds.size);
         this.ballSize = obstacleManager.ballSize;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
@@ -243,7 +243,7 @@ public class BallController : MonoBehaviour
         if (numberUp > 0)
         {
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
-            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0], positionLast.y + obstacleManager.highFly, positionLast.z + (float)direction[2]);
+            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * ((float)1 / 2 + ballSize / 2), positionLast.y + obstacleManager.highFly, positionLast.z + (float)direction[2] * ((float)1 / 2 + ballSize / 2));
             this.addInterpolation(positionLast, position1, speed, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
             numberUp--;
             while (numberUp > 0)
@@ -257,9 +257,9 @@ public class BallController : MonoBehaviour
         }
     }
 
-    void addInterpolation(Vector3 start, Vector3 end, float duration, SoundPlayerType LoopSound = SoundPlayerType.BALL_ROLL, SoundPlayerType ShotSound = SoundPlayerType.BALL_ROLL)
+    void addInterpolation(Vector3 start, Vector3 end, float duration, SoundPlayerType LoopSound = SoundPlayerType.BALL_ROLL, SoundPlayerType ShotSound = SoundPlayerType.BALL_ROLL, int typeMove = 0)
     {
-        interpolation.Add(new Interpolation(start, end, duration, 0, true, LoopSound, ShotSound));
+        interpolation.Add(new Interpolation(start, end, duration, 0, true, LoopSound, ShotSound, typeMove));
     }
 
     void checkMoveDown(int[] positionIndex)
@@ -428,32 +428,47 @@ public class BallController : MonoBehaviour
 
     void FlyDown()
     {
+        Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+        int[] positionIndex = getPositionIndex(positionLast);
+        Vector3 positionLastTemp = positionLast;
+        float numberDown = 0;
         for (int i = 0; i <= 20; i++)
         {
-            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
-            int[] positionIndex = getPositionIndex(positionLast);
-
             if (obstacleManager.checkWater(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {
-                Vector3 position1 = new Vector3(positionLast.x, positionLast.y - (float)1 / 2, positionLast.z);
-                this.addInterpolation(positionLast, position1, speed / 5);
+                Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSize * numberDown - (float)1 / 2, positionLastTemp.z);
+                this.addInterpolation(positionLastTemp, position1, speed / 5 + (speed / 4) * numberDown);
                 WaterMoveBack();
                 numberMove = 0;
                 numberUp = 0;
                 return;
             }
 
-            if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
-            {
-                numberMove = 0;
-                return;
-            }
+            //if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
+            //{
+            //    Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSize * numberDown, positionLastTemp.z);
+            //    this.addInterpolation(positionLastTemp, position1, (speed / 4) * numberDown, SoundPlayerType.BALL_FLY, numberDown == 0 ? SoundPlayerType.BALL_FLY : SoundPlayerType.BALL_FALLING);
+            //    Vector3 position2 = new Vector3(position1.x + (float)direction[0] * ((float)1 / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * ((float)1 / 2 - ballSize / 2));
+            //    this.addInterpolation(position1, position2, speed, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 1);
+            //    positionLast = position2;
+            //    positionIndex = getPositionIndex(positionLast);
+            //    numberMove = 0;
+            //    return;
+            //}
 
+            // (!)
+            
             int plane = obstacleManager.checkPlane(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
             if (plane > 0)
             {
-                Vector3 position1 = new Vector3(positionLast.x, positionLast.y - (ballSize / 2) - (obstacleSize / 2) + (ballSize / 2) * Mathf.Sqrt(2), positionLast.z);
-                this.addInterpolation(positionLast, position1, speed / 5, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
+                if (numberDown != 0)
+                {
+                    Vector3 position0 = new Vector3(positionLastTemp.x + (float)direction[0] * ((float)1 / 2 - ballSize / 2), positionLastTemp.y - obstacleSize * numberDown, positionLastTemp.z + (float)direction[2] * ((float)1 / 2 - ballSize / 2));
+                    this.addInterpolation(positionLastTemp, position0, (speed / 4) * numberDown, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
+                    positionLastTemp = position0;
+                }
+                Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - (ballSize / 2) - (obstacleSize / 2) + (ballSize / 2) * Mathf.Sqrt(2), positionLastTemp.z);
+                this.addInterpolation(positionLastTemp, position1, speed / 5, SoundPlayerType.BALL_FLY, numberDown == 0 ? SoundPlayerType.BALL_FLY : SoundPlayerType.BALL_FALLING);
                 if (plane == 1)
                 {
                     direction = new int[] { 0, 0, 1 };
@@ -471,23 +486,61 @@ public class BallController : MonoBehaviour
                     direction = new int[] { -1, 0, 0 };
                 }
                 Vector3 position2 = new Vector3(position1.x + (float)direction[0] * (obstacleSize / 2) + (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position1.y - (obstacleSize / 2) + (ballSize / 2) - (ballSize / 2) * Mathf.Sqrt(2), position1.z + (float)direction[2] * (obstacleSize / 2) + (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
-                this.addInterpolation(position1, position2, speed / 4);
+                this.addInterpolation(position1, position2, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 1);
                 Vector3 position3 = new Vector3(position2.x + (float)direction[0] * (obstacleSize / 2) - (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position2.y, position2.z + (float)direction[2] * (obstacleSize / 2) - (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
                 this.addInterpolation(position2, position3, speed / 4);
-            } else if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false)
+                positionLast = position3;
+                positionIndex = getPositionIndex(positionLast);
+                numberDown = 0;
+                positionLastTemp = positionLast;
+            } else if (
+                obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false 
+                && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                )
             {
-                if (obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false)
+                if (
+                    obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false 
+                    && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
+                    && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
+                    )
                 {
-                    this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
-                } else
+                    //this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
+                    numberDown = numberDown + 1;
+                    positionLast = new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z);
+                    positionIndex = getPositionIndex(positionLast);
+                }
+                else
                 {
-                    this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FALLING);
+                    numberDown = numberDown + 1;
+                    Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSize * numberDown, positionLastTemp.z);
+                    this.addInterpolation(positionLastTemp, position1, (speed / 4) * numberDown, SoundPlayerType.BALL_FLY, numberDown == 1 ? SoundPlayerType.BALL_FLY : SoundPlayerType.BALL_FALLING);
+                    Vector3 position2 = new Vector3(position1.x + (float)direction[0] * ((float)1 / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * ((float)1 / 2 - ballSize / 2));
+                    this.addInterpolation(position1, position2, speed, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 1);
+                    positionLast = position2;
+                    positionIndex = getPositionIndex(positionLast);
+                    positionLastTemp = positionLast;
+                    numberDown = 0;
+
+                    if (obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == true)
+                    {
+                        numberMove = 0;
+                        return;
+                    }
                 }
             }
             else
             {
                 return;
             }
+        }
+
+        if (numberDown > 0)
+        {
+            Debug.Log(numberDown);
+            Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSize * numberDown, positionLastTemp.z);
+            this.addInterpolation(positionLastTemp, position1, numberDown * (speed / 4), SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
+            numberDown = 0;
         }
     }
 
@@ -524,9 +577,23 @@ public class BallController : MonoBehaviour
                     if (inter.time == 0)
                     {   
                         PlayLoopSound(this.ListAudio[(int)inter.LoopSound]);
+                        //player.transform.DOKill();
+                        
+                        switch(inter.typeMove)
+                        {
+                            case 0:
+                                player.transform.DOMove(inter.end, inter.duration).SetEase(Ease.Linear);
+                                break;
+                            case 1:
+                                player.transform.DOJump(inter.end, 0.25f, 2, inter.duration).SetEase(Ease.Linear);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     inter.time += Time.deltaTime;
-                    player.transform.position = Vector3.Lerp(inter.start, inter.end, inter.time / inter.duration);
+                    //player.transform.position = Vector3.Lerp(inter.start, inter.end, inter.time / inter.duration);
+
                     checkMove = true;
                     if (inter.time >= inter.duration)
                     {
@@ -536,7 +603,7 @@ public class BallController : MonoBehaviour
                             PlayShotSound(this.ListAudio[(int)inter.ShotSound]);
                         }
                         inter.check = false;
-
+                        
 
                         if (inter.duration == 0)
                         {

@@ -19,7 +19,7 @@ public class ObstacleManager : MonoBehaviour
     private GameObject golfBall;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
-    public float ballSize = 0.25f;
+    public float ballSize = 0.4f;
     public int highFly = 3;
 
     // set up obstacle spawn points

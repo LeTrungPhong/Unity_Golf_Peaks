@@ -12,8 +12,9 @@ public class Interpolation
     public bool check;
     public SoundPlayerType LoopSound;
     public SoundPlayerType ShotSound;
+    public int typeMove;
 
-    public Interpolation(Vector3 start, Vector3 end, float duration, float time, bool check, SoundPlayerType loopSound = SoundPlayerType.BALL_ROLL, SoundPlayerType shotSound = SoundPlayerType.BALL_ROLL)
+    public Interpolation(Vector3 start, Vector3 end, float duration, float time, bool check, SoundPlayerType loopSound = SoundPlayerType.BALL_ROLL, SoundPlayerType shotSound = SoundPlayerType.BALL_ROLL, int typeMove = 0)
     {
         this.start = start;
         this.end = end;
@@ -22,5 +23,6 @@ public class Interpolation
         this.check = check;
         this.LoopSound = loopSound;
         this.ShotSound = shotSound;
+        this.typeMove = typeMove;
     }
 }
