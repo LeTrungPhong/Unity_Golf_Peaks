@@ -30,9 +30,9 @@ public class GameManager : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player").gameObject;
         canvas = GameObject.Find("Canvas").gameObject;
-        obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
+        obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
-        levelManager = GameObject.Find("LevelManager").gameObject.GetComponent<LevelManager>();
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").gameObject.GetComponent<LevelManager>();
         listButton = new List<Button>();
         listHiddenButton = new List<int>();
     }

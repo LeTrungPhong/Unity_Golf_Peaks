@@ -20,8 +20,8 @@ public class InputController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerController = GameObject.Find("Ball").GetComponent<BallController>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<BallController>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         imageSquareLine.SetActive(false);
         imageArrow.SetActive(false);
         rectTransformImageSquareLine = imageSquareLine.GetComponent<RectTransform>();

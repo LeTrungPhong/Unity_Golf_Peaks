@@ -13,8 +13,8 @@ public class DataLoading : MonoBehaviour
     private void Awake()
     {
         Debug.Log("Path level: " + LevelManager.Instance.levelSelected);
-        obstacleManager = GameObject.Find("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
-        gameManager = GameObject.Find("GameManager").gameObject.GetComponent<GameManager>();
+        obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").gameObject.GetComponent<GameManager>();
         LoadData(LevelManager.Instance.listPathLevelData[LevelManager.Instance.levelSelected]);
     }
     // Start is called before the first frame update

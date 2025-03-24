@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Setting/SettingStyle.uss?fileID=7433441132597879392&amp;guid=8cff57dca50253d4fb447d664a1bcc03&amp;type=3#SettingStyle" />
+    <ui:VisualElement name="Container" class="header container" style="flex-grow: 1; width: 367px; position: absolute; height: 412px; top: 72px; left: 95px; background-color: rgba(0, 0, 0, 0.45);">
+        <ui:VisualElement name="Audio" class="elementType" style="flex-grow: 1; align-items: auto; justify-content: flex-start; white-space: normal; text-overflow: clip; position: relative; width: auto; height: auto; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+            <ui:Label tabindex="-1" text="AUDIO" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" style="align-self: center; height: 10%; -unity-text-align: middle-center; font-size: 25px; color: rgb(255, 255, 255); -unity-font-style: bold;" />
+            <ui:VisualElement name="VisualElement" class="horizontal percent100 elementContent" style="flex-grow: 1; width: 100%; -unity-text-align: middle-left; justify-content: flex-start;">
+                <ui:Label tabindex="-1" text="MUSIC" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
+                <ui:VisualElement class="horizontal gravity" style="flex-grow: 1;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;); background-color: rgba(127, 127, 127, 0);" />
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="textVolume" style="-unity-text-align: middle-center; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px;" />
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="VisualElement" class="horizontal percent100 elementContent" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="SFX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="percentWidthTitle textTitle" />
+                <ui:VisualElement class="horizontal gravity" style="flex-grow: 1; align-items: flex-end; justify-content: center;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;);" />
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" class="textVolume" />
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="horizontal percent100 elementContent" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="MUTE" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
+                <ui:VisualElement class="center gravity" style="flex-grow: 1;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" text="ENABLED" class="button textVolume buttonText" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

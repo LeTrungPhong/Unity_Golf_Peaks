@@ -27,7 +27,7 @@ public class LoadUILevel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        levelManager = GameObject.FindGameObjectWithTag("LevelManager").GetComponent<LevelManager>();
         settingManager = setting.GetComponent<SettingManager>();
         //Debug.Log("Screen: " + Screen.width + " " + Screen.height);
         widthItem = Screen.width / numberColumn;

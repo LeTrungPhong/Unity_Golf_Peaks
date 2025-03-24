@@ -48,9 +48,9 @@ public class BallController : MonoBehaviour
     void Start()
     {
         //rb = GetComponent<Rigidbody>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        obstacleManager = GameObject.Find("ObstacleManager").GetComponent<ObstacleManager>();
-        player = GameObject.FindWithTag("Player").gameObject;
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").GetComponent<ObstacleManager>();
+        player = GameObject.FindGameObjectWithTag("Player").gameObject;
         this.ballSize = obstacleManager.ballSize;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
@@ -371,7 +371,7 @@ public class BallController : MonoBehaviour
                 //Vector3 position1 = new Vector3(vector1.x, vector1.y - (float)obstacleSize, vector1.z);
                 //this.addInterpolation(vector1, position1, speed / 2);
                 Vector3 position2 = new Vector3(vector1.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), vector1.y, vector1.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
-                this.addInterpolation(vector1, position2, speed / 5);
+                this.addInterpolation(vector1, position2, speed / 5, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
                 numberMove = 0;
                 return;
             }
@@ -383,7 +383,7 @@ public class BallController : MonoBehaviour
                 {
                     Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
                     Vector3 position1 = new Vector3(positionLast.x + (float)direction[0], positionLast.y - (float)obstacleSize, positionLast.z + (float)direction[2]);
-                    this.addInterpolation(positionLast, position1, speed / 2);
+                    this.addInterpolation(positionLast, position1, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
                 } else
                 {
                     Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
@@ -408,7 +408,7 @@ public class BallController : MonoBehaviour
                         direction = new int[] { -1, 0, 0 };
                     }
                     Vector3 position2 = new Vector3(position1.x + (float)direction[0] * (obstacleSize / 2) + (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position1.y - (obstacleSize / 2) + (ballSize / 2) - (ballSize / 2) * Mathf.Sqrt(2), position1.z + (float)direction[2] * (obstacleSize / 2) + (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
-                    this.addInterpolation(position1, position2, speed / 4);
+                    this.addInterpolation(position1, position2, speed / 4, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
                     Vector3 position3 = new Vector3(position2.x + (float)direction[0] * (ballSize / 2) - (float)direction[0] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1), position2.y, position2.z + (float)direction[2] * (ballSize / 2) - (float)direction[2] * (ballSize / 2) * (Mathf.Sqrt(2) - (float)1));
                     this.addInterpolation(position2, position3, speed / 4);
                 }
@@ -420,7 +420,7 @@ public class BallController : MonoBehaviour
             {
                 Vector3 positionLast2 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
                 Vector3 position2 = new Vector3(positionLast2.x + (float)direction[0] * ((float)1 / 2 - ballSize / 2), positionLast2.y, positionLast2.z + (float)direction[2] * ((float)1 / 2 - ballSize / 2));
-                this.addInterpolation(positionLast2, position2, speed / 2);
+                this.addInterpolation(positionLast2, position2, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
                 return;
             }
         }
@@ -586,6 +586,9 @@ public class BallController : MonoBehaviour
                                 break;
                             case 1:
                                 player.transform.DOJump(inter.end, 0.25f, 2, inter.duration).SetEase(Ease.Linear);
+                                break;
+                            case 2:
+                                player.transform.DOJump(inter.end, 0.1f, 1, inter.duration).SetEase(Ease.Linear);
                                 break;
                             default:
                                 break;
