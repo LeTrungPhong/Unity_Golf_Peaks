@@ -1,3 +1,7 @@
+:root {
+    --width-title-item: 30%;
+}
+
 .header {
 }
 
@@ -12,6 +16,10 @@
     background-color: rgba(0, 0, 0, 0);
     -unity-background-image-tint-color: rgb(255, 255, 255);
     cursor: initial;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
 }
 
 .horizontal {
@@ -68,6 +76,8 @@
     font-size: 20px;
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
+    width: 30%;
+    height: auto;
 }
 
 .text_infor {
@@ -107,10 +117,17 @@
     -unity-text-align: middle-center;
 }
 
-.button_h:hover {
+.button:hover {
     transform-origin: center;
-    translate: 0 4px;
-    transition-duration: 0.4s;
+    translate: 0 0;
+    transition-duration: 0.2s;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    transition-property: all;
+    transition-timing-function: ease;
+    background-color: rgb(176, 176, 176);
 }
 
 .text_type {
@@ -120,5 +137,30 @@
     -unity-text-align: middle-center;
 }
 
-.button:hover {
+.scroll-view-main {
+    overflow-x: hidden;
+}
+
+unityscroller {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+unityscroller > unitydragger {
+    background-color: rgb(76, 175, 80);
+    border-radius: 5px;
+}
+
+unityscroller > unitydragger:hover {
+    background-color: rgb(69, 160, 73);
+}
+
+unityscroller > unitydragger:active {
+    background-color: rgb(56, 142, 60);
+}
+
+.scroll-custom unityscroller {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+variable {
 }

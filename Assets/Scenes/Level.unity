@@ -1683,7 +1683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &798597483
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3248,6 +3248,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1059351834}
   - component: {fileID: 1059351833}
+  - component: {fileID: 1059351835}
   m_Layer: 5
   m_Name: SettingUI
   m_TagString: Untagged
@@ -3286,6 +3287,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1059351835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059351832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69f53b87bca52c9428ff9e41a0bccf16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1160562013
 GameObject:
   m_ObjectHideFlags: 0
