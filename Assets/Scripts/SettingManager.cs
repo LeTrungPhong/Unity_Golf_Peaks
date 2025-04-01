@@ -34,6 +34,12 @@ public class SettingManager : MonoBehaviour
         textSFX.color = colorGeneral;
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
     public void SetUpVolume()
     {
         float notFound = -100.0f;
@@ -86,12 +92,6 @@ public class SettingManager : MonoBehaviour
         {
             textControl.SetText("REGULAR");
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void HighMusic()

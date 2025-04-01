@@ -21,8 +21,10 @@ public class BallController : MonoBehaviour
     private GameManager gameManager;
     private ObstacleManager obstacleManager;
     private GameObject player;
+    private CanvasScript canvasScript;
     private List<Interpolation> interpolation = new List<Interpolation>();
     private float ballSize = 0;
+    private float scaleSize = 0;
     private float obstacleSize = 0;
 
     private int numberMove = 0;
@@ -51,7 +53,9 @@ public class BallController : MonoBehaviour
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").GetComponent<ObstacleManager>();
         player = GameObject.FindGameObjectWithTag("Player").gameObject;
+        canvasScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>();
         this.ballSize = obstacleManager.ballSize;
+        this.scaleSize = player.GetComponent<Renderer>().bounds.size.x;
         this.obstacleSize = obstacleManager.obstacleSize;
         //Debug.Log("ballSize: " + this.ballSize);
         spawnedParticalSystem = Instantiate(particleSystemBallMove, transform.position, Quaternion.identity);
@@ -111,6 +115,7 @@ public class BallController : MonoBehaviour
 
     void ballMove()
     {
+        canvasScript.HiddenHint();
         if (obstacleManager.spawnObstacles == null) return;
         if (turn == 0)
         {
@@ -420,7 +425,7 @@ public class BallController : MonoBehaviour
             {
                 Vector3 positionLast2 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
                 Vector3 position2 = new Vector3(positionLast2.x + (float)direction[0] * ((float)1 / 2 - ballSize / 2), positionLast2.y, positionLast2.z + (float)direction[2] * ((float)1 / 2 - ballSize / 2));
-                this.addInterpolation(positionLast2, position2, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
+                this.addInterpolation(positionLast2, position2, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 0);
                 return;
             }
         }
@@ -585,10 +590,18 @@ public class BallController : MonoBehaviour
                                 player.transform.DOMove(inter.end, inter.duration).SetEase(Ease.Linear);
                                 break;
                             case 1:
-                                player.transform.DOJump(inter.end, 0.25f, 2, inter.duration).SetEase(Ease.Linear);
+                                int numberJump = 2;
+                                player.transform.DOJump(inter.end, 0.25f, numberJump, inter.duration).SetEase(Ease.Linear);
+                                player.transform.DOScale(new Vector3(ballSize / scaleSize, (ballSize * 0.5f) / scaleSize, ballSize / scaleSize), inter.duration / (numberJump * 2))
+                                    .SetLoops(numberJump * 2, LoopType.Yoyo)
+                                    .SetEase(Ease.InOutSine);
                                 break;
                             case 2:
-                                player.transform.DOJump(inter.end, 0.1f, 1, inter.duration).SetEase(Ease.Linear);
+                                numberJump = 1;
+                                player.transform.DOJump(inter.end, 0.1f, numberJump, inter.duration).SetEase(Ease.Linear);
+                                player.transform.DOScale(new Vector3(ballSize / scaleSize, (ballSize * 0.5f) / scaleSize, ballSize / scaleSize), inter.duration / (numberJump * 2))
+                                    .SetLoops(numberJump * 2, LoopType.Yoyo)
+                                    .SetEase(Ease.InOutSine);
                                 break;
                             default:
                                 break;

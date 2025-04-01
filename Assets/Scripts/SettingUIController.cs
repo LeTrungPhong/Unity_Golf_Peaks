@@ -15,6 +15,7 @@ public class SettingUIController : MonoBehaviour
     // setting
     private Button _settingButton;
     private bool displaySetting = false;
+    private ScrollView _settingScrollView;
 
     // audio
 
@@ -47,6 +48,7 @@ public class SettingUIController : MonoBehaviour
 
         // button setting
         _settingButton = root.Q<Button>("button_setting");
+        _settingScrollView = root.Q<ScrollView>("scrollView_setting");
 
         // biding
         // audio
@@ -75,6 +77,14 @@ public class SettingUIController : MonoBehaviour
         _controlDirectionButton.RegisterCallback<ClickEvent>(Control);
         _unlockLevelButton.RegisterCallback<ClickEvent>(Unlock);
         _clearLevelButton.RegisterCallback<ClickEvent>(Clear);
+
+        //_settingScrollView.elasticity = 0.5f;
+        //_settingScrollView.scrollDecelerationRate = 0.01f;
+        //_settingScrollView.RegisterCallback<WheelEvent>(evt =>
+        //{
+        //    float scrollSpeed = 5f;
+        //    _settingScrollView.scrollOffset += new Vector2(0, evt.delta.y * scrollSpeed);
+        //});
 
         SetUpSetting();
     }

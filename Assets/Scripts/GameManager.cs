@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     private BallController playerController;
     private ObstacleManager obstacleManager;
     private LevelManager levelManager;
+    private CanvasScript canvasScript;
     public bool isGameOver = false;
     private float heigtButton = 50;
     private float widthButton = 200;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     private float transButtonY = 50;
     private float spaceButton = 10;
     private List<Button> listButton;
+    public int[][] hint;
     private List<int> listHiddenButton;
     private Button selectButton;
     private bool hiddenSoundButtonClickFirst = true;
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
         obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
         levelManager = GameObject.FindGameObjectWithTag("LevelManager").gameObject.GetComponent<LevelManager>();
+        canvasScript = GameObject.FindGameObjectWithTag("Canvas").gameObject.GetComponent<CanvasScript>();
         listButton = new List<Button>();
         listHiddenButton = new List<int>();
     }
@@ -255,5 +258,49 @@ public class GameManager : MonoBehaviour
             listButton[listHiddenButton[listHiddenButton.Count - 1]].gameObject.SetActive(true);
             listHiddenButton.RemoveAt(listHiddenButton.Count - 1);
         }
+    }
+
+    public void ButtonHintOnClick()
+    {
+        if (hint == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < listHiddenButton.Count; ++i)
+        {
+            Debug.Log(listHiddenButton[i]);
+        }
+            
+        for (int i = 0; i < hint.Length; ++i)
+        {
+            if (listHiddenButton.Count < hint[i].Length)
+            {
+                if (listHiddenButton.Count == 0 && hint[i].Length > 0)
+                {
+                    Debug.Log(hint[i][0]);
+                    canvasScript.HintToMove(listButton[hint[i][0]].transform.position);
+                    return;
+                }
+                for (int j = 0; j < listHiddenButton.Count; ++j)
+                {
+                    if (listHiddenButton[j] != hint[i][j])
+                    {
+                        Debug.Log(listHiddenButton[j] + " != " + hint[i][j]);
+                        break;
+                    }
+
+                    if (j == listHiddenButton.Count - 1)
+                    {
+                        Debug.Log(hint[i][j + 1]);
+                        canvasScript.HintToMove(listButton[hint[i][j + 1]].transform.position);
+                        return;
+                    }
+                }
+            }
+        }
+
+        Debug.Log("Reset");
+        canvasScript.HintToReset();
     }
 }

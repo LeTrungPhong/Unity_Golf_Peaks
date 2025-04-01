@@ -19,6 +19,7 @@ public class ObstacleManager : MonoBehaviour
     private GameObject golfBall;
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
+    public float scaleSize = 0;
     public float ballSize = 0.4f;
     public int highFly = 3;
 
@@ -31,6 +32,7 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnWater;
     public int[][] spawnGoal;
     public int[][] spawnBall;
+    public int[][] hint;
 
     private void Awake()
     {
@@ -77,7 +79,7 @@ public class ObstacleManager : MonoBehaviour
                 {
                     // Spawn Ball
                     //golfBall.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
-                    float scaleSize = player.GetComponent<Renderer>().bounds.size.x;
+                    scaleSize = player.GetComponent<Renderer>().bounds.size.x;
                     player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
                     player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
                 }

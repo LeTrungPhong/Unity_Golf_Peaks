@@ -14,4 +14,5 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public List<string> spawnGoal;
     public List<string> spawnBall;
     public List<string> itemMove;
+    public List<string> hint;
 }

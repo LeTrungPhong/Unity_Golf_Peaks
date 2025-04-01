@@ -60,6 +60,11 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnWater = ConvertListStringToArray2(spawnObstacleLevel.spawnWater);
         }
 
+        if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
+        {
+            gameManager.hint = ConvertListStringToArray2(spawnObstacleLevel.hint);
+        }
+
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 
         //string[] parts = level.Split("_", ".");
@@ -111,4 +116,5 @@ public class DataLoading : MonoBehaviour
 
         return result;
     }
+
 }

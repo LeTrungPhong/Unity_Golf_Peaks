@@ -30,6 +30,9 @@ MonoBehaviour:
   - 0,0,0,0,0
   - 0,0,0,0,0
   - 0,0,0,0,0
+  spawnBlockRoll: []
+  spawnDive: []
+  spawnWater: []
   spawnGoal:
   - 0,0,0,0,0
   - 0,0,0,0,0
@@ -47,3 +50,5 @@ MonoBehaviour:
   - 0,2,0
   - 0,3,0
   - 0,3,0
+  hint:
+  - 3,1,2,0

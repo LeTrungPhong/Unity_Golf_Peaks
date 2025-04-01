@@ -43,6 +43,7 @@
     justify-content: center;
     height: auto;
     align-items: stretch;
+    margin-bottom: 20px;
 }
 
 .elementContent {
@@ -135,6 +136,7 @@
     -unity-font-style: bold;
     color: rgb(255, 255, 255);
     -unity-text-align: middle-center;
+    margin-bottom: 20px;
 }
 
 .scroll-view-main {
