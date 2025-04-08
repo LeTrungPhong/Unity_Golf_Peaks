@@ -64,7 +64,7 @@ public class ObstacleManager : MonoBehaviour
             {
                 if (this.spawnObstacles[i][j] > 0)
                 {
-                    this.SpawnObstacle(i, this.spawnObstacles[i][j], j);
+                    this.Spawn(i, this.spawnObstacles[i][j], j, 0);
                 }
                 if (this.spawnPlanes[i][j] > 0)
                 {
@@ -89,111 +89,134 @@ public class ObstacleManager : MonoBehaviour
                     player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
                     player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
                 }
-                if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
+                //if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
+                //{
+                //    //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                //    this.Spawn(i, this.spawnObstacles[i][j], j, 1);
+                //}
+                //if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
+                //{
+                //    Instantiate(divePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                //}
+                //if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
+                //{
+                //    Instantiate(waterPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                //}
+            }
+        }
+
+        if (this.spawnBlockRoll != null)
+        {
+            for (int i = 0; i < this.spawnBlockRoll.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnBlockRoll[i].Length; ++j)
                 {
-                    Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                    if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
+                    {
+                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                        this.Spawn(i, this.spawnBlockRoll[i][j], j, 1);
+                    }
                 }
-                if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
+            }
+        }
+
+        if (this.spawnDive != null)
+        {
+            for (int i = 0; i < this.spawnDive.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnDive[i].Length; ++j)
                 {
-                    Instantiate(divePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                    if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
+                    {
+                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                        this.Spawn(i, this.spawnDive[i][j], j, 2);
+                    }
                 }
-                if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
+            }
+        }
+
+        if (this.spawnWater != null)
+        {
+            for (int i = 0; i < this.spawnWater.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnWater[i].Length; ++j)
                 {
-                    Instantiate(waterPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                    if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
+                    {
+                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                        this.Spawn(i, this.spawnWater[i][j], j, 3);
+                    }
                 }
             }
         }
     }
 
-    public void SpawnObstacle(int indexX, int high, int indexZ)
+    public void Spawn(int indexX, int high, int indexZ, int type)
     {
-        for (int i = 0; i < high; ++i)
+        switch(type)
         {
-            GameObject obstacle = Instantiate(obstaclePrefab, new Vector3(indexX * obstacleSize, i * obstacleSize, indexZ * obstacleSize), Quaternion.identity);
-
-            //if (!checkObstacle(new int[] { indexX, i + 1, indexZ }))
-            //{
-            //    if (checkObstacle(new int[] { indexX + 1, i + 1, indexZ }) || checkObstacle(new int[] { indexX + 1, i, indexZ }))
-            //    {
-            //        DrawLine(obstacle, 0, 1, lowColor);
-            //    } else
-            //    {
-            //        DrawLine(obstacle, 0, 1, highColor);
-            //    }
-            //}
-
-
-
-            //if (!checkObstacle(new int[] { indexX, i + 1, indexZ }))
-            //{
-            //    if (checkObstacle(new int[] { indexX, i + 1, indexZ - 1 }) || checkObstacle(new int[] { indexX, i, indexZ - 1 }))
-            //    {
-            //        DrawLine(obstacle, 1, 2, lowColor);
-            //    } else
-            //    {
-            //        DrawLine(obstacle, 1, 2, highColor);
-            //    }
-            //}
-
-
-
-            //if (!checkObstacle(new int[] { indexX, i + 1, indexZ }))
-            //{
-            //    if (checkObstacle(new int[] { indexX - 1, i + 1, indexZ }) || checkObstacle(new int[] { indexX - 1, i, indexZ }))
-            //    {
-            //        DrawLine(obstacle, 2, 3, lowColor);
-            //    } else
-            //    {
-            //        DrawLine(obstacle, 2, 3, highColor);
-            //    }
-            //}
-
-
-
-            //if (!checkObstacle(new int[] { indexX, i + 1, indexZ }))
-            //{
-            //    if (checkObstacle(new int[] { indexX, i + 1, indexZ + 1 }) || checkObstacle(new int[] { indexX, i, indexZ + 1 }))
-            //    {
-            //        DrawLine(obstacle, 3, 0, lowColor);
-            //    } else
-            //    {
-            //        DrawLine(obstacle, 3, 0, highColor);
-            //    }
-            //}
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 1, 0 }, 0, 1);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, -1 }, 1, 2);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 1, 0 }, 2, 3);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, 1 }, 3, 0);
-
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, -1, 0 }, 4, 5);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, -1, -1 }, 5, 6);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, -1, 0 }, 6, 7);
-            HandleDrawLine(0, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, -1, 1 }, 7, 4);
-
-            //DrawLine(obstacle, 4, 5);
-            //DrawLine(obstacle, 5, 6);
-            //DrawLine(obstacle, 6, 7);
-            //DrawLine(obstacle, 7, 4);
-
-            HandleDrawLine(1, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 0, 1 }, 0, 4);
-            HandleDrawLine(1, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 0, -1 }, 1, 5);
-            HandleDrawLine(1, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 0, -1 }, 2, 6);
-            HandleDrawLine(1, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 0, 1 }, 3, 7);
-
-            //DrawLine(obstacle, 0, 4);
-            //DrawLine(obstacle, 1, 5);
-            //DrawLine(obstacle, 2, 6);
-            //DrawLine(obstacle, 3, 7);
+            case 0:
+                SpawnObstacle(indexX, high, indexZ, type, obstaclePrefab, type);
+                break;
+            case 1:
+                SpawnObstacle(indexX, high, indexZ, type, blockRollPrefab, type);
+                break;
+            case 2:
+                SpawnObstacle(indexX, high, indexZ, type, divePrefab, type);
+                break;
+            case 3:
+                SpawnObstacle(indexX, high, indexZ, type, waterPrefab, type);
+                break;
         }
     }
 
-    public void HandleDrawLine(int typeCheck, GameObject obstacle, int[] post, int[] indexCheck, int startLine, int endLine)
+    public void SpawnObstacle(int indexX, int high, int indexZ, int type, GameObject gameObject, int typeObject)
     {
+        for (int i = 0; i < high; ++i)
+        {
+            GameObject obstacle = Instantiate(gameObject, new Vector3(indexX * obstacleSize, i * obstacleSize, indexZ * obstacleSize), Quaternion.identity);
+
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 1, 0 }, 0, 1);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, -1 }, 1, 2);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 1, 0 }, 2, 3);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, 1 }, 3, 0);
+
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, -1, 0 }, 4, 5);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, -1, -1 }, 5, 6);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, -1, 0 }, 6, 7);
+            HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, -1, 1 }, 7, 4);
+
+            HandleDrawLine(1, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 0, 1 }, 0, 4);
+            HandleDrawLine(1, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 0, -1 }, 1, 5);
+            HandleDrawLine(1, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 0, -1 }, 2, 6);
+            HandleDrawLine(1, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { -1, 0, 1 }, 3, 7);
+        }
+    }
+
+    public void HandleDrawLine(int typeCheck, int typeObject, GameObject obstacle, int[] post, int[] indexCheck, int startLine, int endLine)
+    {
+        int[][] spawnArray = new int[][] { };
+        switch (typeObject)
+        {
+            case 0:
+                spawnArray = spawnObstacles;
+                break;
+            case 1:
+                spawnArray = spawnBlockRoll;
+                break;
+            case 2:
+                spawnArray = spawnDive;
+                break;
+            case 3:
+                spawnArray = spawnWater;
+                break;
+        }
+
         if (typeCheck == 0)
         {
-            if (!checkObstacle(new int[] { post[0], post[1] + indexCheck[1], post[2] }))
+            if (!checkObject(new int[] { post[0], post[1] + indexCheck[1], post[2] }, spawnArray))
             {
-                if (checkObstacle(new int[] { post[0] + indexCheck[0], post[1] + indexCheck[1], post[2] + indexCheck[2] }) || checkObstacle(new int[] { post[0] + indexCheck[0], post[1], post[2] + indexCheck[2] }))
+                if (checkObject(new int[] { post[0] + indexCheck[0], post[1] + indexCheck[1], post[2] + indexCheck[2] }, spawnArray) || checkObject(new int[] { post[0] + indexCheck[0], post[1], post[2] + indexCheck[2] }, spawnArray))
                 {
                     DrawLine(obstacle, startLine, endLine, lowColor);
                 }
@@ -205,9 +228,9 @@ public class ObstacleManager : MonoBehaviour
         } else if (typeCheck == 1)
         {
             if (
-                !checkObstacle(new int[] { post[0] + indexCheck[0], post[1], post[2] })
-                && !checkObstacle(new int[] { post[0] + indexCheck[0], post[1], post[2] + indexCheck[2] })
-                && !checkObstacle(new int[] { post[0], post[1], post[2] + indexCheck[2] })
+                !checkObject(new int[] { post[0] + indexCheck[0], post[1], post[2] }, spawnArray)
+                && !checkObject(new int[] { post[0] + indexCheck[0], post[1], post[2] + indexCheck[2] }, spawnArray)
+                && !checkObject(new int[] { post[0], post[1], post[2] + indexCheck[2] }, spawnArray)
                 )
             {
                 DrawLine(obstacle, startLine, endLine, highColor);
@@ -216,6 +239,27 @@ public class ObstacleManager : MonoBehaviour
                 DrawLine(obstacle, startLine, endLine, lowColor);
             }
         }
+    }
+
+    public bool checkObject(int[] positionIndex, int[][] spawnObject)
+    {
+        //Debug.Log(positionIndex[0] + " " + positionIndex[1] + " " + positionIndex[2]);
+        //Debug.Log(spawnObstacles.Length);
+        if (positionIndex[0] >= spawnObject.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
+        if (positionIndex[2] >= spawnObject[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
+        if (positionIndex[1] >= spawnObject[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        {
+            return false;
+        }
+        return true;
     }
 
     public void DrawLine(GameObject obstacle, int pointStart, int pointEnd, Color color)
@@ -343,52 +387,106 @@ public class ObstacleManager : MonoBehaviour
 
     public bool checkBlockRoll(int[] positionIndex)
     {
-        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //{
+        //    return false;
+        //}
+        //if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //{
+        //    return false;
+        //}
+        //if (spawnBlockRoll != null && spawnBlockRoll.Length > positionIndex[0] && spawnBlockRoll[positionIndex[0]].Length > positionIndex[2] && spawnBlockRoll[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //{
+        //    return true;
+        //}
+        //return false;
+
+        if (spawnBlockRoll == null) return false;
+
+        if (positionIndex[0] >= spawnBlockRoll.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
+        if (positionIndex[2] >= spawnBlockRoll[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        if (spawnBlockRoll != null && spawnBlockRoll.Length > positionIndex[0] && spawnBlockRoll[positionIndex[0]].Length > positionIndex[2] && spawnBlockRoll[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
+        if (positionIndex[1] >= spawnBlockRoll[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public bool checkDive(int[] positionIndex)
     {
-        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //{
+        //    return false;
+        //}
+        //if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //{
+        //    return false;
+        //}
+        //if (spawnDive != null && spawnDive.Length > positionIndex[0] && spawnDive[positionIndex[0]].Length > positionIndex[2] && spawnDive[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //{
+        //    return true;
+        //}
+        //return false;
+
+        if (spawnDive == null) return false;
+
+        if (positionIndex[0] >= spawnDive.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
+        if (positionIndex[2] >= spawnDive[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        if (spawnDive != null && spawnDive.Length > positionIndex[0] && spawnDive[positionIndex[0]].Length > positionIndex[2] && spawnDive[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
+        if (positionIndex[1] >= spawnDive[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public bool checkWater(int[] positionIndex)
     {
-        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        //{
+        //    return false;
+        //}
+        //if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //{
+        //    return false;
+        //}
+        //if (spawnWater != null && spawnWater.Length > positionIndex[0] && spawnWater[positionIndex[0]].Length > positionIndex[2] && spawnWater[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //{
+        //    return true;
+        //}
+        //return false;
+
+        if (spawnWater == null) return false;
+
+        if (positionIndex[0] >= spawnWater.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
+        if (positionIndex[2] >= spawnWater[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        if (spawnWater != null && spawnWater.Length > positionIndex[0] && spawnWater[positionIndex[0]].Length > positionIndex[2] && spawnWater[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
+        if (positionIndex[1] >= spawnWater[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }
