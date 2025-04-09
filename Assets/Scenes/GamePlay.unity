@@ -2181,6 +2181,9 @@ MonoBehaviour:
   divePrefab: {fileID: 5979223474070749479, guid: 7d8f69105c16e9c4d859d0401209d656, type: 3}
   waterPrefab: {fileID: 1157940823364282410, guid: 36becdd7a4d4bdc46baf76338ba9da14, type: 3}
   obstacleSize: 1
+  obstacleSizeX: 1
+  obstacleSizeY: 0.5
+  obstacleSizeZ: 1
   scaleSize: 0
   ballSize: 0.25
   highFly: 3

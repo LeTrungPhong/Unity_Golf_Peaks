@@ -6,6 +6,14 @@ using System.Linq;
 using UnityEngine;
 using static LevelManager;
 
+public enum TypePrefab
+{
+    Obstacle,
+    BlockRoll,
+    Dive,
+    Water
+}
+
 public class ObstacleManager : MonoBehaviour
 {
     [SerializeField] private GameObject obstaclePrefab;
@@ -20,7 +28,7 @@ public class ObstacleManager : MonoBehaviour
     private float changeDirectionSize = 1;
     public float obstacleSize = 1;
     public float obstacleSizeX = 1;
-    public float obstacleSizeY = 1;
+    public float obstacleSizeY = 0.5f;
     public float obstacleSizeZ = 1;
     public float scaleSize = 0;
     public float ballSize = 0.4f;
@@ -64,22 +72,24 @@ public class ObstacleManager : MonoBehaviour
             {
                 if (this.spawnObstacles[i][j] > 0)
                 {
-                    this.Spawn(i, this.spawnObstacles[i][j], j, 0);
+                    this.Spawn(i, this.spawnObstacles[i][j], j, TypePrefab.Obstacle);
                 }
                 if (this.spawnPlanes[i][j] > 0)
                 {
-                    Instantiate(planePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.Euler(0, 90 * (this.spawnPlanes[i][j] + 2), 0));
+                    GameObject planeObject = Instantiate(planePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.Euler(0, 90 * (this.spawnPlanes[i][j] + 2), 0));
+                    planeObject.transform.localScale = new Vector3(1, obstacleSizeY, 1);
                 }
                 if (this.spawnChangeDirectionOb[i][j] > 0)
                 {
                     int numberDirection = this.spawnChangeDirectionOb[i][j];
                     int changeX = (numberDirection == 4) || (numberDirection == 3) ? 1 : -1;
                     int changeZ = (numberDirection == 3) || (numberDirection == 2) ? 1 : -1;
-                    Instantiate(changeDirectionPrefab, new Vector3(i * obstacleSize + (changeDirectionSize / 2) * changeX, (this.spawnObstacles[i][j]) * obstacleSize - changeDirectionSize / 2, j * obstacleSize + (changeDirectionSize / 2) * changeZ), Quaternion.Euler(0, 90 * (this.spawnChangeDirectionOb[i][j] + 2), 0));
+                    GameObject changeDirectionObject = Instantiate(changeDirectionPrefab, new Vector3(i * obstacleSize + (changeDirectionSize / 2) * changeX, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + 0.5f * obstacleSizeY / 2, j * obstacleSize + (changeDirectionSize / 2) * changeZ), Quaternion.Euler(0, 90 * (this.spawnChangeDirectionOb[i][j] + 2), 0));
+                    changeDirectionObject.transform.localScale = new Vector3(0.5f, 0.5f * obstacleSizeY, 0.5f);
                 }
                 if (this.spawnGoal[i][j] > 0)
                 {
-                    Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+                    Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
                 }
                 if (this.spawnBall[i][j] > 0)
                 {
@@ -87,7 +97,7 @@ public class ObstacleManager : MonoBehaviour
                     //golfBall.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
                     scaleSize = player.GetComponent<Renderer>().bounds.size.x;
                     player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
-                    player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize - ballSize / 2 - ballSize, j * obstacleSize);
+                    player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
                 }
                 //if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
                 //{
@@ -114,7 +124,7 @@ public class ObstacleManager : MonoBehaviour
                     if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
                     {
                         //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnBlockRoll[i][j], j, 1);
+                        this.Spawn(i, this.spawnBlockRoll[i][j], j, TypePrefab.BlockRoll);
                     }
                 }
             }
@@ -129,7 +139,7 @@ public class ObstacleManager : MonoBehaviour
                     if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
                     {
                         //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnDive[i][j], j, 2);
+                        this.Spawn(i, this.spawnDive[i][j], j, TypePrefab.Dive);
                     }
                 }
             }
@@ -144,37 +154,40 @@ public class ObstacleManager : MonoBehaviour
                     if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
                     {
                         //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnWater[i][j], j, 3);
+                        this.Spawn(i, this.spawnWater[i][j], j, TypePrefab.Water);
                     }
                 }
             }
         }
     }
 
-    public void Spawn(int indexX, int high, int indexZ, int type)
+    public void Spawn(int indexX, int high, int indexZ, TypePrefab type)
     {
         switch(type)
         {
-            case 0:
-                SpawnObstacle(indexX, high, indexZ, type, obstaclePrefab, type);
+            case TypePrefab.Obstacle:
+                SpawnObstacle(indexX, high, indexZ, obstaclePrefab, type);
                 break;
-            case 1:
-                SpawnObstacle(indexX, high, indexZ, type, blockRollPrefab, type);
+            case TypePrefab.BlockRoll:
+                SpawnObstacle(indexX, high, indexZ, blockRollPrefab, type);
                 break;
-            case 2:
-                SpawnObstacle(indexX, high, indexZ, type, divePrefab, type);
+            case TypePrefab.Dive:
+                SpawnObstacle(indexX, high, indexZ, divePrefab, type);
                 break;
-            case 3:
-                SpawnObstacle(indexX, high, indexZ, type, waterPrefab, type);
+            case TypePrefab.Water:
+                SpawnObstacle(indexX, high, indexZ, waterPrefab, type);
                 break;
         }
     }
 
-    public void SpawnObstacle(int indexX, int high, int indexZ, int type, GameObject gameObject, int typeObject)
+    public void SpawnObstacle(int indexX, int high, int indexZ, GameObject gameObject, TypePrefab typeObject)
     {
         for (int i = 0; i < high; ++i)
         {
-            GameObject obstacle = Instantiate(gameObject, new Vector3(indexX * obstacleSize, i * obstacleSize, indexZ * obstacleSize), Quaternion.identity);
+            GameObject obstacle = Instantiate(gameObject, new Vector3(indexX * obstacleSize, i * obstacleSizeY, indexZ * obstacleSize), Quaternion.identity);
+            obstacle.transform.localScale = new Vector3(1, obstacleSizeY, 1);
+            //GameObject obstacle = new GameObject("Obstacle");
+            //obstacle.transform.position = new Vector3(indexX * obstacleSize, i * obstacleSizeY, indexZ * obstacleSize);
 
             HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 1, 0 }, 0, 1);
             HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, -1 }, 1, 2);
@@ -193,21 +206,21 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    public void HandleDrawLine(int typeCheck, int typeObject, GameObject obstacle, int[] post, int[] indexCheck, int startLine, int endLine)
+    public void HandleDrawLine(int typeCheck, TypePrefab typeObject, GameObject obstacle, int[] post, int[] indexCheck, int startLine, int endLine)
     {
         int[][] spawnArray = new int[][] { };
         switch (typeObject)
         {
-            case 0:
+            case TypePrefab.Obstacle:
                 spawnArray = spawnObstacles;
                 break;
-            case 1:
+            case TypePrefab.BlockRoll:
                 spawnArray = spawnBlockRoll;
                 break;
-            case 2:
+            case TypePrefab.Dive:
                 spawnArray = spawnDive;
                 break;
-            case 3:
+            case TypePrefab.Water:
                 spawnArray = spawnWater;
                 break;
         }

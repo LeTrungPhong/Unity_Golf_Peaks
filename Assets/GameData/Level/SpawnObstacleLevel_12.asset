@@ -15,7 +15,7 @@ MonoBehaviour:
   spawnObstacles:
   - 0,0,0,0,0
   - 0,0,0,0,0
-  - 0,8,8,7,8
+  - 0,8,8,0,8
   - 0,0,0,0,0
   - 0,0,0,0,0
   spawnPlanes:
@@ -33,9 +33,11 @@ MonoBehaviour:
   spawnBlockRoll:
   - 0,0,0,0,0
   - 0,0,0,0,0
-  - 0,0,0,1,0
+  - 0,0,0,8,0
   - 0,0,0,0,0
   - 0,0,0,0,0
+  spawnDive: []
+  spawnWater: []
   spawnGoal:
   - 0,0,0,0,0
   - 0,0,0,0,0
@@ -51,3 +53,4 @@ MonoBehaviour:
   itemMove:
   - 1,1,1
   - 1,1,1
+  hint: []
