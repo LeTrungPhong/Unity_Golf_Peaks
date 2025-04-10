@@ -7,6 +7,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public struct Hint
+{
+    public int select;
+    public int direct;
+}
+
+public struct Move
+{
+    public int select;
+    public int direct;
+}
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI stateGame;
@@ -23,8 +35,8 @@ public class GameManager : MonoBehaviour
     private float transButtonY = 50;
     private float spaceButton = 10;
     private List<Button> listButton;
-    public int[][] hint;
-    private List<int> listHiddenButton;
+    public List<List<Hint>> hint;
+    private List<Move> listHiddenButton;
     private Button selectButton;
     private bool hiddenSoundButtonClickFirst = true;
 
@@ -37,7 +49,7 @@ public class GameManager : MonoBehaviour
         levelManager = GameObject.FindGameObjectWithTag("LevelManager").gameObject.GetComponent<LevelManager>();
         canvasScript = GameObject.FindGameObjectWithTag("Canvas").gameObject.GetComponent<CanvasScript>();
         listButton = new List<Button>();
-        listHiddenButton = new List<int>();
+        listHiddenButton = new List<Move>();
     }
 
     // Start is called before the first frame update
@@ -235,7 +247,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HiddenButton()
+    public void HiddenButton(int direction)
     {
         if (selectButton != null)
         {
@@ -243,7 +255,10 @@ public class GameManager : MonoBehaviour
             {
                 if (listButton[i] == selectButton)
                 {
-                    listHiddenButton.Add(i);
+                    Move move;
+                    move.select = i;
+                    move.direct = direction;
+                    listHiddenButton.Add(move);
                     selectButton.gameObject.SetActive(false);
                     return;
                 }
@@ -253,9 +268,9 @@ public class GameManager : MonoBehaviour
 
     public void DisplayButton()
     {
-        if (listHiddenButton.Count > 0 && listHiddenButton[0] >= 0 && listHiddenButton[0] < listButton.Count)
+        if (listHiddenButton.Count > 0 && listHiddenButton[0].select >= 0 && listHiddenButton[0].select < listButton.Count)
         {
-            listButton[listHiddenButton[listHiddenButton.Count - 1]].gameObject.SetActive(true);
+            listButton[listHiddenButton[listHiddenButton.Count - 1].select].gameObject.SetActive(true);
             listHiddenButton.RemoveAt(listHiddenButton.Count - 1);
         }
     }
@@ -272,19 +287,19 @@ public class GameManager : MonoBehaviour
             Debug.Log(listHiddenButton[i]);
         }
             
-        for (int i = 0; i < hint.Length; ++i)
+        for (int i = 0; i < hint.Count; ++i)
         {
-            if (listHiddenButton.Count < hint[i].Length)
+            if (listHiddenButton.Count < hint[i].Count)
             {
-                if (listHiddenButton.Count == 0 && hint[i].Length > 0)
+                if (listHiddenButton.Count == 0 && hint[i].Count > 0)
                 {
                     Debug.Log(hint[i][0]);
-                    canvasScript.HintToMove(listButton[hint[i][0]].transform.position);
+                    canvasScript.HintToMove(listButton[hint[i][0].select].transform.position);
                     return;
                 }
                 for (int j = 0; j < listHiddenButton.Count; ++j)
                 {
-                    if (listHiddenButton[j] != hint[i][j])
+                    if (listHiddenButton[j].select != hint[i][j].select || listHiddenButton[j].direct != hint[i][j].direct)
                     {
                         Debug.Log(listHiddenButton[j] + " != " + hint[i][j]);
                         break;
@@ -293,7 +308,7 @@ public class GameManager : MonoBehaviour
                     if (j == listHiddenButton.Count - 1)
                     {
                         Debug.Log(hint[i][j + 1]);
-                        canvasScript.HintToMove(listButton[hint[i][j + 1]].transform.position);
+                        canvasScript.HintToMove(listButton[hint[i][j + 1].select].transform.position);
                         return;
                     }
                 }

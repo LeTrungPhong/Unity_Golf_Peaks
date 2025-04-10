@@ -15,4 +15,5 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public List<string> spawnBall;
     public List<string> itemMove;
     public List<string> hint;
+    public int highFly;
 }

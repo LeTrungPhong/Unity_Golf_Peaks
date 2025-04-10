@@ -54,7 +54,9 @@ public class InputController : MonoBehaviour
                 return;
             }
 
-            gameManager.HiddenButton();
+            Debug.Log("Direction: " + direction);
+
+            gameManager.HiddenButton(direction);
 
             if (direction == 1)
             {
@@ -66,11 +68,11 @@ public class InputController : MonoBehaviour
             }
             else if (direction == 3)
             {
-                playerController.OnButtonTClick();
+                playerController.OnButtonLClick();
             }
             else if (direction == 4)
             {
-                playerController.OnButtonLClick();
+                playerController.OnButtonTClick();
             }
             direction = 0;
 
@@ -109,13 +111,13 @@ public class InputController : MonoBehaviour
                     // top
                     rectTransformArrow.anchoredPosition = localPointButtonDown + new Vector2(-moveArrow, moveArrow);
                     rectTransformArrow.rotation = Quaternion.Euler(0, 0, 135);
-                    direction = 3;
+                    direction = 4;
                 } else if (vectorDirection.x <= 0 && vectorDirection.y <= 0)
                 {
                     // left
                     rectTransformArrow.anchoredPosition = localPointButtonDown + new Vector2(-moveArrow, -moveArrow);
                     rectTransformArrow.rotation = Quaternion.Euler(0, 0, -135);
-                    direction = 4;
+                    direction = 3;
                 }
             } else
             {

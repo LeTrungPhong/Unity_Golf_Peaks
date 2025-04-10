@@ -53,4 +53,6 @@ MonoBehaviour:
   itemMove:
   - 0,3,0
   - 1,2,1
-  hint: []
+  hint:
+  - 0-2,1-1
+  highFly: 0

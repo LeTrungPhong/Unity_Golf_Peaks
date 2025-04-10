@@ -62,7 +62,7 @@ public class DataLoading : MonoBehaviour
 
         if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
         {
-            gameManager.hint = ConvertListStringToArray2(spawnObstacleLevel.hint);
+            gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
         }
 
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
@@ -80,20 +80,12 @@ public class DataLoading : MonoBehaviour
         //    Debug.Log(level + " khong hop le");
         //}
 
-        if (LevelManager.Instance.levelSelected + 1 == 32)
-        {
-            obstacleManager.highFly = 5;
-        }
+        obstacleManager.highFly = spawnObstacleLevel.highFly == 0 ? 3 : spawnObstacleLevel.highFly;
 
         for (int i = 0; i < buttons.Length; ++i)
         {
             gameManager.createButton(buttons[i]);
         }
-    }
-
-    void ChangeHighFly()
-    {
-
     }
 
     public List<string> ConvertArray2ToListString(int[][] list)
@@ -117,4 +109,26 @@ public class DataLoading : MonoBehaviour
         return result;
     }
 
+    public List<List<Hint>> ConvertListStringToHint(List<string> list)
+    {
+        List<List<Hint>> result = new List<List<Hint>>();
+
+        foreach (string strHintItem in list)
+        {
+            List<Hint> hintItem = new List<Hint>();
+            string[] pairs = strHintItem.Trim().Split(',');
+
+            foreach(string pair in pairs)
+            {
+                string[] parts = pair.Trim().Split('-');
+                Hint hint;
+                hint.select = int.Parse(parts[0]);
+                hint.direct = int.Parse(parts[1]);
+                hintItem.Add(hint);
+            }
+            result.Add(hintItem);
+        }
+
+        return result;    
+    }
 }

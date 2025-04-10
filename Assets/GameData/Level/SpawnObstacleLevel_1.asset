@@ -48,4 +48,5 @@ MonoBehaviour:
   itemMove:
   - 0,1,0
   hint:
-  - 0
+  - 0-1
+  highFly: 0
