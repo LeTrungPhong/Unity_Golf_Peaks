@@ -213,7 +213,19 @@ public class BallController : MonoBehaviour
                 // di chuyen den chan plane
                 this.addInterpolation(positionLast, position1, speed / 2);
                 // di chuyen den giua doc plane
+
                 this.addInterpolation(position1, new Vector3(position1.x + (float)direction[0] * obstacleSize / 2, position1.y + (float)obstacleSizeY / 2, position1.z + (float)direction[2] * obstacleSize / 2), speed / 2);
+
+                int indexPlaneContinue = 1;
+                while(obstacleManager.checkPlane(new int[] { positionIndexLast[0] + direction[0] * (1 + indexPlaneContinue), positionIndexLast[1] + direction[1] + indexPlaneContinue, positionIndexLast[2] + direction[2] * (1 + indexPlaneContinue) }) > 0 && numberMove > 0)
+                {
+                    Vector3 position5 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                    Vector3 position6 = new Vector3(position5.x + (float)direction[0] * (obstacleSize), position5.y + obstacleSizeY, position5.z + (float)direction[2] * obstacleSize);
+                    this.addInterpolation(position5, position6, speed);
+                    indexPlaneContinue += 1;
+                    numberMove--;
+                }
+
                 // vi tri hien tai
                 Vector3 position2 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
                 // vi tri index hien tai
@@ -538,6 +550,7 @@ public class BallController : MonoBehaviour
         int[] positionIndex = getPositionIndex(positionLast);
         Vector3 positionLastTemp = positionLast;
         float numberDown = 0;
+        int checkDownPlane = 0;
         for (int i = 0; i <= 100; i++)
         {
             
@@ -609,6 +622,7 @@ public class BallController : MonoBehaviour
                 positionIndex = getPositionIndex(positionLast);
                 numberDown = 0;
                 positionLastTemp = positionLast;
+                checkDownPlane = 1;
             } else if (
                 obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false 
                 && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
@@ -631,9 +645,18 @@ public class BallController : MonoBehaviour
                     numberDown = numberDown + 1;
                     Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSizeY * numberDown, positionLastTemp.z);
                     this.addInterpolation(positionLastTemp, position1, (speed / 4) * numberDown, SoundPlayerType.BALL_FLY, numberDown == 1 ? SoundPlayerType.BALL_FLY : SoundPlayerType.BALL_FALLING);
-                    Vector3 position2 = new Vector3(position1.x + (float)direction[0] * ((float)obstacleSize / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * ((float)obstacleSize / 2 - ballSize / 2));
-                    this.addInterpolation(position1, position2, speed, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 1);
-                    positionLast = position2;
+
+                    if (checkDownPlane == 0)
+                    {
+                        Vector3 position2 = new Vector3(position1.x + (float)direction[0] * ((float)obstacleSize / 2 - ballSize / 2), position1.y, position1.z + (float)direction[2] * ((float)obstacleSize / 2 - ballSize / 2));
+                        this.addInterpolation(position1, position2, speed, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 1);
+                        positionLast = position2;
+                    }
+                    else if (checkDownPlane == 1)
+                    {
+                        positionLast = position1;
+                    }
+
                     positionIndex = getPositionIndex(positionLast);
                     positionLastTemp = positionLast;
                     numberDown = 0;
