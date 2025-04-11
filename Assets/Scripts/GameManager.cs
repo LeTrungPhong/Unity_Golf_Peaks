@@ -94,13 +94,13 @@ public class GameManager : MonoBehaviour
         stateGame.color = Color.green;
         stateGame.text = "Game Win";
         stateGame.gameObject.SetActive(true);
-        PlayerPrefs.SetInt(levelManager.listPathLevelData[levelManager.levelSelected], 1);
+        PlayerPrefs.SetInt(levelManager.levelSelected.ToString(), 1);
         StartCoroutine(DelayToNextMap());
     }
 
     public void NextGame()
     {
-        levelManager.levelSelected = levelManager.levelSelected >= levelManager.listPathLevelData.Count - 1 ? levelManager.levelSelected : levelManager.levelSelected + 1;
+        levelManager.levelSelected = levelManager.levelSelected >= levelManager.listDataLevel.Count - 1 ? levelManager.levelSelected : levelManager.levelSelected + 1;
         SceneManager.LoadScene("GamePlay");
     }
 

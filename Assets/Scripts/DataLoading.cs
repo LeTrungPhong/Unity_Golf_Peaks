@@ -15,7 +15,8 @@ public class DataLoading : MonoBehaviour
         Debug.Log("Path level: " + LevelManager.Instance.levelSelected);
         obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").gameObject.GetComponent<GameManager>();
-        LoadData(LevelManager.Instance.listPathLevelData[LevelManager.Instance.levelSelected]);
+        LoadData(LevelManager.Instance.listDataLevel[LevelManager.Instance.levelSelected]);
+        //Debug.Log(LevelManager.Instance.levelSelected);
     }
     // Start is called before the first frame update
     void Start()
@@ -29,13 +30,13 @@ public class DataLoading : MonoBehaviour
         
     }
 
-    public void LoadData(string level)
+    public void LoadData(SpawnObstacleLevelScriptableObject spawnObstacleLevel)
     {
-        SpawnObstacleLevelScriptableObject spawnObstacleLevel = AssetDatabase.LoadAssetAtPath<SpawnObstacleLevelScriptableObject>($"Assets/GameData/Level/{level}");
+        //SpawnObstacleLevelScriptableObject spawnObstacleLevel = AssetDatabase.LoadAssetAtPath<SpawnObstacleLevelScriptableObject>($"Assets/GameData/Level/{level}");
         
         if (spawnObstacleLevel == null)
         {
-            Debug.Log($"Khong tim thay file {level}");
+            Debug.Log($"Khong tim thay file");
             return;
         }
 

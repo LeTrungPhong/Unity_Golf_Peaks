@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance;
     public List<string> listPathLevelData;
+    public List<SpawnObstacleLevelScriptableObject> listDataLevel;
     public int levelSelected;
     public int indexLevel;
 
@@ -26,7 +27,7 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        LoadLevel();
+        //LoadLevel();
     }
 
     void Start()
@@ -55,41 +56,21 @@ public class LevelManager : MonoBehaviour
 
     public void LoadLevel()
     {
-        //string path = Application.persistentDataPath + "/level.json";
+        //PathLevelScriptableObject pathLevel = AssetDatabase.LoadAssetAtPath<PathLevelScriptableObject>("Assets/GameData/Level/PathLevel.asset");
 
-        //if (File.Exists(path))
+        //if (pathLevel == null)
         //{
-        //    string json = File.ReadAllText(path);
-        //    LevelData data = JsonUtility.FromJson<LevelData>(json);
-
-        //    listPathLevelData = data.listPath;
-
-        //    //foreach (string item in listPathLevelData)
-        //    //{
-        //    //    Debug.Log($"src: {item}");
-        //    //}
-
-        //    Debug.Log($"Load file by {path}");
-        //} else
-        //{
-        //    Debug.Log($"Not found path {path}");
+        //    Debug.Log("Khong tim thay file PathLevel");
+        //    return;
         //}
 
-        PathLevelScriptableObject pathLevel = AssetDatabase.LoadAssetAtPath<PathLevelScriptableObject>("Assets/GameData/Level/PathLevel.asset");
-
-        if (pathLevel == null)
-        {
-            Debug.Log("Khong tim thay file PathLevel");
-            return;
-        }
-
-        //Debug.Log("Da load file PathLevel");
-        listPathLevelData = pathLevel.pathLevel;
+        ////Debug.Log("Da load file PathLevel");
+        //listPathLevelData = pathLevel.pathLevel;
     }
 
     public void SetLevel(int index)
     {
-        if (index >= 0 && index < listPathLevelData.Count)
+        if (index >= 0 && index < listDataLevel.Count)
         {
             levelSelected = index;
         }

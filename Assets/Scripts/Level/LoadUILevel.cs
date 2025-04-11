@@ -64,7 +64,7 @@ public class LoadUILevel : MonoBehaviour
 
         int index = PlayerPrefs.GetInt(PlayerPrefsName.indexLevelPrefs, 0);
 
-        if (index + numberColumn * (numberRow - 1) < LevelManager.Instance.listPathLevelData.Count)
+        if (index + numberColumn * (numberRow - 1) < LevelManager.Instance.listDataLevel.Count)
         {
             index = index + numberRow * (numberRow - 1);
         }
@@ -106,7 +106,7 @@ public class LoadUILevel : MonoBehaviour
                 }
                 else
                 {
-                    if (index >= LevelManager.Instance.listPathLevelData.Count) return;
+                    if (index >= LevelManager.Instance.listDataLevel.Count) return;
                     createButtonLevel(i, j, index);
                     index++;
                 }
@@ -116,8 +116,9 @@ public class LoadUILevel : MonoBehaviour
 
     public void createButtonLevel(int i, int j, int index)
     {
-        string pathLevel = index > 0 ? levelManager.listPathLevelData[index - 1] : levelManager.listPathLevelData[index];
-        int checkPassLevel = index == 0 ? 1 : PlayerPrefs.GetInt(pathLevel, 0);
+        //string pathLevel = index > 0 ? levelManager.listDataLevel[index - 1] : levelManager.listDataLevel[index];
+        int pathLevel = index > 0 ? index - 1 : index;
+        int checkPassLevel = index == 0 ? 1 : PlayerPrefs.GetInt(pathLevel.ToString(), 0);
         GameObject buttonLevel = new GameObject(nameButtonLevel);
         buttonLevel.transform.SetParent(canvas.transform);
 
