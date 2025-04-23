@@ -63,3 +63,6 @@ MonoBehaviour:
   - 2-2,0-3,1-4
   - 2-3,1-2,0-1
   highFly: 0
+  positionX: 8.9
+  positionY: 12.61
+  positionZ: 8.29

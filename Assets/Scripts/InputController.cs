@@ -14,6 +14,7 @@ public class InputController : MonoBehaviour
     private RectTransform rectTransformImageSquareLine;
     private RectTransform rectTransformArrow;
     private BallController playerController;
+    private float moveArrow = 15;
 
     private int direction = 0;
 
@@ -26,6 +27,23 @@ public class InputController : MonoBehaviour
         imageArrow.SetActive(false);
         rectTransformImageSquareLine = imageSquareLine.GetComponent<RectTransform>();
         rectTransformArrow = imageArrow.GetComponent<RectTransform>();
+
+        //if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        //{
+        //    Debug.Log("Đang chạy trên điện thoại.");
+
+        //} else
+        //{
+        //    Debug.Log("Khong phai chay tren dien thoai");
+        //}
+
+        RectTransform rectImageSquareLine = imageSquareLine.GetComponent<RectTransform>();
+        rectImageSquareLine.sizeDelta = new Vector2(250, 250);
+
+        RectTransform rectImageArrow = imageArrow.GetComponent<RectTransform>();
+        rectImageArrow.sizeDelta = new Vector2(100, 100);
+
+        moveArrow = 30;
     }
 
     // Update is called once per frame
@@ -77,6 +95,7 @@ public class InputController : MonoBehaviour
             direction = 0;
 
             gameManager.FocusButton();
+            gameManager.HiddenDirect();
         }
         if (Input.GetMouseButton(0) && confirmMove)
         {
@@ -89,7 +108,6 @@ public class InputController : MonoBehaviour
             if (lenghtVector > 50)
             {
                 imageArrow.SetActive(true);
-                const int moveArrow = 15;
                 if (PlayerPrefs.GetString(PlayerPrefsName.playerPrefsControl, PlayerPrefsName.falsePrefs) == PlayerPrefsName.truePrefs)
                 {
                     vectorDirection = new Vector2(vectorDirection.x * (-1), vectorDirection.y * (-1));

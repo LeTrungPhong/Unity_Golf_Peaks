@@ -286,9 +286,14 @@ public class SettingUIController : MonoBehaviour
     public void Clear(ClickEvent evt)
     {
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
-        foreach(string key in LevelManager.Instance.listPathLevelData)
+        //foreach(string key in LevelManager.Instance.listPathLevelData)
+        //{
+        //    PlayerPrefs.DeleteKey(key);
+        //}
+
+        for (int i = 0; i < LevelManager.Instance.listDataLevel.Count; ++i)
         {
-            PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.DeleteKey(i.ToString());
         }
         SceneManager.LoadScene("Level");
     }

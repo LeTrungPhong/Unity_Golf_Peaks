@@ -99,10 +99,24 @@ public class LoadUILevel : MonoBehaviour
                 if (i == 0)
                 {
                     RectTransform rectTransform = textTitle.GetComponent<RectTransform>();
-                    rectTransform.anchorMin = new Vector2(0, 1.0f);
-                    rectTransform.anchorMax = new Vector2(0, 1.0f);
+                    rectTransform.anchorMin = new Vector2(0.5f, 1.0f);
+                    rectTransform.anchorMax = new Vector2(0.5f, 1.0f);
                     rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                    rectTransform.anchoredPosition = new Vector2(Screen.width / 2, -((float)1 / 2) * heightItem);
+                    rectTransform.anchoredPosition = new Vector2(0, -((float)1 / 2) * heightItem);
+
+                    float gap = 40;
+
+                    RectTransform rectTransformBackLevel = buttonBackLevel.GetComponent<RectTransform>();
+                    rectTransformBackLevel.anchorMin = new Vector2(1.0f, 1.0f);
+                    rectTransformBackLevel.anchorMax = new Vector2(1.0f, 1.0f);
+                    rectTransformBackLevel.pivot = new Vector2(0.5f, 0.5f);
+                    rectTransformBackLevel.anchoredPosition = new Vector2(-((float)1 / 2) * widthItem - gap, -((float)1 / 2) * heightItem);
+
+                    RectTransform rectTransformContinueLevel = buttonContinueLevel.GetComponent<RectTransform>();
+                    rectTransformContinueLevel.anchorMin = new Vector2(1.0f, 1.0f);
+                    rectTransformContinueLevel.anchorMax = new Vector2(1.0f, 1.0f);
+                    rectTransformContinueLevel.pivot = new Vector2(0.5f, 0.5f);
+                    rectTransformContinueLevel.anchoredPosition = new Vector2(-((float)1 / 2) * widthItem + gap, -((float)1 / 2) * heightItem);
                 }
                 else
                 {
@@ -133,8 +147,11 @@ public class LoadUILevel : MonoBehaviour
         buttonText.text = $"{index + 1}";
         buttonText.alignment = TextAnchor.MiddleCenter;
         buttonText.color = Color.black;
-        buttonText.fontSize = 20;
+        buttonText.fontSize = 40;
         buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+        buttonWidth = (int)canvas.GetComponent<RectTransform>().sizeDelta.x / 7;
+        buttonHeight = (int)canvas.GetComponent<RectTransform>().sizeDelta.y / 10;
 
         RectTransform btnRect = buttonLevel.GetComponent<RectTransform>();
         btnRect.sizeDelta = new Vector2(buttonWidth, buttonHeight);

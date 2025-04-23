@@ -68,3 +68,6 @@ MonoBehaviour:
   hint:
   - 2-1,1-2,3-2,0-2
   highFly: 0
+  positionX: 7.8
+  positionY: 10.93
+  positionZ: 7.26

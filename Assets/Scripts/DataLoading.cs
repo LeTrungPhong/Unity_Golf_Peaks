@@ -8,13 +8,17 @@ using static ObstacleManager;
 
 public class DataLoading : MonoBehaviour
 {
+    [SerializeField] private GameObject cameraMain;
+    private Transform transformCamera;
     private ObstacleManager obstacleManager;
     private GameManager gameManager;
+
     private void Awake()
     {
         Debug.Log("Path level: " + LevelManager.Instance.levelSelected);
         obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").gameObject.GetComponent<GameManager>();
+        transformCamera = cameraMain.GetComponent<Transform>();
         LoadData(LevelManager.Instance.listDataLevel[LevelManager.Instance.levelSelected]);
         //Debug.Log(LevelManager.Instance.levelSelected);
     }
@@ -65,6 +69,14 @@ public class DataLoading : MonoBehaviour
         {
             gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
         }
+
+        Vector3 post = transformCamera.position;
+        post.x = spawnObstacleLevel.positionX;
+        post.y = spawnObstacleLevel.positionY;
+        post.z = spawnObstacleLevel.positionZ;
+        //transformCamera.position = post;
+
+        cameraMain.GetComponent<CameraMovement>().postCam = post;
 
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 

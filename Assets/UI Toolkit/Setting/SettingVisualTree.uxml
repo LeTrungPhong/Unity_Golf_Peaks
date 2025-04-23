@@ -1,54 +1,54 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Setting/SettingStyle.uss?fileID=7433441132597879392&amp;guid=8cff57dca50253d4fb447d664a1bcc03&amp;type=3#SettingStyle" />
-    <ui:VisualElement name="container_setting_visualElement" class="header container" style="flex-grow: 1; width: 485px; position: absolute; height: 487px; top: 50%; left: auto; background-color: rgb(85, 163, 168); translate: -100% -50%; bottom: auto; right: auto; transition-duration: 0.5s; transition-timing-function: ease-in-out;">
-        <ui:ScrollView name="scrollView_setting" class="scroll-view-main" style="height: 475px; overflow: visible;">
-            <ui:VisualElement name="audio" class="elementType" style="flex-grow: 1; align-items: auto; justify-content: flex-start; white-space: normal; text-overflow: clip; position: relative; width: auto; height: auto; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px; background-color: rgba(56, 56, 56, 0);">
-                <ui:Label tabindex="-1" text="AUDIO" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="text_type" style="align-self: center; height: 10%; -unity-text-align: middle-center; font-size: 25px; color: rgb(255, 255, 255); -unity-font-style: bold;" />
+    <ui:VisualElement name="container_setting_visualElement" class="header container" style="flex-grow: 1; width: 850px; position: absolute; height: 1500px; top: 50%; left: auto; background-color: rgb(85, 163, 168); translate: -100% -50%; bottom: auto; right: auto; transition-duration: 0.5s; transition-timing-function: ease-in-out;">
+        <ui:ScrollView name="scrollView_setting" class="scroll-view-main" style="height: 1500px; overflow: visible;">
+            <ui:VisualElement name="audio" class="elementType" style="flex-grow: 1; align-items: auto; justify-content: flex-start; white-space: normal; text-overflow: clip; position: relative; width: auto; height: 700px; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px; background-color: rgba(56, 56, 56, 0);">
+                <ui:Label tabindex="-1" text="AUDIO" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="text_type" style="align-self: center; height: 10%; -unity-text-align: middle-center; font-size: 35px; color: rgb(255, 255, 255); -unity-font-style: bold;" />
                 <ui:VisualElement name="volume_music_element" class="horizontal percent100 elementContent" style="flex-grow: 1; width: 100%; -unity-text-align: middle-left; justify-content: flex-start;">
-                    <ui:Label tabindex="-1" text="MUSIC" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="horizontal gravity" style="flex-grow: 1;">
-                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_low_music" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;);" />
-                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="label_val_music" class="textVolume text_infor" style="-unity-text-align: middle-center; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px;" />
-                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_high_music" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;);" />
+                    <ui:Label tabindex="-1" text="MUSIC" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle heightPercent" style="font-size: 30px;" />
+                    <ui:VisualElement class="horizontal gravity heightPercent" style="flex-grow: 1;">
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_low_music" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;); width: 70px; height: 70%;" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="label_val_music" class="textVolume text_infor button" style="-unity-text-align: middle-center; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; width: 180px; height: 70%; font-size: 30px;" />
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_high_music" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;); width: 70px; height: 70%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="volume_sfx_element" class="horizontal percent100 elementContent" style="flex-grow: 1;">
-                    <ui:Label tabindex="-1" text="SFX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="horizontal gravity" style="flex-grow: 1; align-items: flex-end; justify-content: center;">
-                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_low_SFX" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;);" />
-                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="label_val_SFX" class="textVolume text_infor" />
-                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_high_SFX" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;);" />
+                    <ui:Label tabindex="-1" text="SFX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="percentWidthTitle textTitle heightPercent" style="-unity-text-align: middle-left; font-size: 30px;" />
+                    <ui:VisualElement class="horizontal gravity heightPercent" style="flex-grow: 1; align-items: center; justify-content: center;">
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_low_SFX" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100.png?fileID=2800000&amp;guid=13ce8bb14d5d0c04b8c5dead684f3ac9&amp;type=3#icons8-back-100&quot;); height: 70%; width: 70px;" />
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="label_val_SFX" class="textVolume text_infor button" style="-unity-text-align: middle-center; font-size: 30px; height: 70%; width: 180px;" />
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_high_SFX" class="button" style="background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-back-100%20(2).png?fileID=2800000&amp;guid=00d81326a6a7aec4f84889adc0a00cf6&amp;type=3#icons8-back-100 (2)&quot;); width: 70px; height: 70%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="state_volume_element" class="horizontal percent100 elementContent" style="flex-grow: 1;">
-                    <ui:Label tabindex="-1" text="MUTE" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="center gravity" style="flex-grow: 1;">
-                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" text="ENABLED" name="button_mute" class="button textVolume buttonText text_infor" />
+                    <ui:Label tabindex="-1" text="MUTE" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle heightPercent" style="-unity-text-align: middle-left; font-size: 30px;" />
+                    <ui:VisualElement class="center gravity heightPercent" style="flex-grow: 1;">
+                        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" text="ENABLED" name="button_mute" class="button textVolume buttonText text_infor" style="font-size: 30px; height: 100%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="accessibility" class="elementType" style="flex-grow: 1;">
-                <ui:Label tabindex="-1" text="ACCESSIBILITY" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text_type" />
+            <ui:VisualElement name="accessibility" class="elementType" style="flex-grow: 1; height: 700px;">
+                <ui:Label tabindex="-1" text="ACCESSIBILITY" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text_type" style="font-size: 35px;" />
                 <ui:VisualElement name="control_direct_element" class="horizontal percent100 elementContent" style="flex-grow: 1;">
-                    <ui:Label tabindex="-1" text="CONTROLS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="gravity" style="flex-grow: 1;">
-                        <ui:Button text="REGULAR" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_control_direction" class="text_infor buttonText button" />
+                    <ui:Label tabindex="-1" text="CONTROLS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle heightPercent" style="-unity-text-align: middle-left; font-size: 30px;" />
+                    <ui:VisualElement class="gravity heightPercent" style="flex-grow: 1;">
+                        <ui:Button text="REGULAR" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_control_direction" class="text_infor buttonText button" style="height: 100%; font-size: 30px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="unlock_level_element" class="percent100 elementContent horizontal" style="flex-grow: 1;">
-                    <ui:Label tabindex="-1" text="UNLOCK &#10;ALL LEVELS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="gravity" style="flex-grow: 1;">
-                        <ui:Button text="ENABLED" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_unlock_level" class="text_infor button buttonText" />
+                    <ui:Label tabindex="-1" text="UNLOCK &#10;ALL LEVELS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle heightPercent" style="-unity-text-align: middle-left; font-size: 30px;" />
+                    <ui:VisualElement class="gravity heightPercent" style="flex-grow: 1;">
+                        <ui:Button text="ENABLED" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_unlock_level" class="text_infor button buttonText" style="height: 100%; font-size: 30px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="clear_level_element" class="horizontal percent100 elementContent" style="flex-grow: 1;">
-                    <ui:Label tabindex="-1" text="CLEAR ALL&#10;LEVELS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle" />
-                    <ui:VisualElement class="gravity" style="flex-grow: 1;">
-                        <ui:Button text="ENABLED" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_clear_level" class="text_infor buttonText button" />
+                    <ui:Label tabindex="-1" text="CLEAR ALL&#10;LEVELS" parse-escape-sequences="true" display-tooltip-when-elided="true" class="percentWidthTitle textTitle heightPercent" style="-unity-text-align: middle-left; font-size: 30px;" />
+                    <ui:VisualElement class="gravity heightPercent" style="flex-grow: 1;">
+                        <ui:Button text="ENABLED" parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_clear_level" class="text_infor buttonText button" style="height: 100%; font-size: 30px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:ScrollView>
     </ui:VisualElement>
-    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_setting" class="button_h" style="position: absolute; top: 3px; left: 0; width: 80px; height: 80px; background-color: rgb(177, 219, 211); background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-resume-button-96.png?fileID=2800000&amp;guid=53eec2a8555aff445a8c348c3409c777&amp;type=3#icons8-resume-button-96&quot;); border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; border-left-color: rgb(12, 134, 171); border-right-color: rgb(12, 134, 171); border-top-color: rgb(12, 134, 171); border-bottom-color: rgb(12, 134, 171); padding-right: 20px; padding-left: 20px; transition-duration: 0.5s; scale: 0.6 0.6; rotate: 0;" />
+    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="button_setting" class="button_h" style="position: absolute; top: 159px; left: 20px; width: 228px; height: 212px; background-color: rgb(177, 219, 211); background-image: url(&quot;project://database/Assets/MyAssets/Sprites/icons8-resume-button-96.png?fileID=2800000&amp;guid=53eec2a8555aff445a8c348c3409c777&amp;type=3#icons8-resume-button-96&quot;); border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; border-left-color: rgb(12, 134, 171); border-right-color: rgb(12, 134, 171); border-top-color: rgb(12, 134, 171); border-bottom-color: rgb(12, 134, 171); padding-right: 20px; padding-left: 20px; transition-duration: 0.5s; scale: 0.6 0.6; rotate: 0;" />
 </ui:UXML>

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,11 +15,14 @@ public class CameraMovement : MonoBehaviour
     float moveY = 0;
     private float sensitivity = 3;
     private float gravity = 3;
+    public Vector3 postCam;
+    private Vector3 postChange = new Vector3(0, 100, 0);
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameObject.transform.position = postCam + postChange;
+        gameObject.transform.DOMove(postCam, 1.5f).SetEase(Ease.OutQuad);
     }
 
     // Update is called once per frame
@@ -90,5 +94,10 @@ public class CameraMovement : MonoBehaviour
 
             transform.eulerAngles = angleCameraButtonDown + new Vector3(angleX, angleY, 0);
         }
+    }
+
+    public void CameraChangeLevel()
+    {
+        gameObject.transform.DOMove(postCam + postChange, 2).SetEase(Ease.InQuad);
     }
 }

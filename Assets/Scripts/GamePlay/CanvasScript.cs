@@ -10,8 +10,15 @@ public class CanvasScript : MonoBehaviour
     [SerializeField] private Image imageArrowHint;
     [SerializeField] private Button buttonReset;
     [SerializeField] private Image imageBreakHint;
+
+    private GameManager gameManager;
     private bool checkUseHint = false;
     //[SerializeField] private Image imageArrowSelect;
+
+    private void Awake()
+    {
+        gameManager = GameObject.FindWithTag("GameManager").gameObject.GetComponent<GameManager>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -59,12 +66,12 @@ public class CanvasScript : MonoBehaviour
 
     public void HintToReset()
     {
-        HintArrowUp(buttonReset.transform.position, - new Vector3(0, 150, 0), 50);
+        HintArrowUp(buttonReset.transform.position, - new Vector3(0, 200, 0), 50);
     }
 
     public void HintToMove(Vector3 postHint)
     {
-        HintArrowRight(postHint, - new Vector3(200, 0, 0), 50);
+        HintArrowRight(postHint, - new Vector3(gameManager.widthButton, 0, 0), 50);
     }
 
     public void HiddenHint()
@@ -75,5 +82,10 @@ public class CanvasScript : MonoBehaviour
             imageBreakHint.gameObject.SetActive(true);
             buttonHint.gameObject.SetActive(false);
         }
+    }
+
+    public void HintToDirect()
+    {
+        
     }
 }

@@ -71,7 +71,7 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (obstacleManager.spawnObstacles != null)
+        if (obstacleManager.spawnObstacles != null && gameManager.isGameOver == false)
         {
             movePlayer();
         }
@@ -693,7 +693,7 @@ public class BallController : MonoBehaviour
 
     void movePlayer()
     {
-        if (interpolation.Count > 0 && gameManager.isGameOver == false)
+        if (interpolation.Count > 0)
         {
             for (int i = 0; i < interpolation.Count; ++i)
             {

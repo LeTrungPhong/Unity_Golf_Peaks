@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening.Core.Easing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ public struct Move
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI stateGame;
+    [SerializeField] private GameObject gameObjectHintDirect;
+    [SerializeField] private GameObject gameObjectCamera;
+    private CameraMovement cameraMovement;
+    private Transform hintTransform;
     private GameObject canvas;
     private GameObject player;
     private BallController playerController;
@@ -29,11 +34,11 @@ public class GameManager : MonoBehaviour
     private LevelManager levelManager;
     private CanvasScript canvasScript;
     public bool isGameOver = false;
-    private float heigtButton = 50;
-    private float widthButton = 200;
-    private float transButtonX = 120;
-    private float transButtonY = 50;
-    private float spaceButton = 10;
+    public float heigtButton = 50;
+    public float widthButton = 200;
+    private float transButtonX = 200;
+    private float transButtonY = 100;
+    private float spaceButton = 20;
     private List<Button> listButton;
     public List<List<Hint>> hint;
     private List<Move> listHiddenButton;
@@ -44,12 +49,21 @@ public class GameManager : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player").gameObject;
         canvas = GameObject.Find("Canvas").gameObject;
+        hintTransform = gameObjectHintDirect.GetComponent<Transform>();
         obstacleManager = GameObject.FindGameObjectWithTag("ObstacleManager").gameObject.GetComponent<ObstacleManager>();
         playerController = player.GetComponent<BallController>();
         levelManager = GameObject.FindGameObjectWithTag("LevelManager").gameObject.GetComponent<LevelManager>();
         canvasScript = GameObject.FindGameObjectWithTag("Canvas").gameObject.GetComponent<CanvasScript>();
+        cameraMovement = gameObjectCamera.GetComponent<CameraMovement>();
         listButton = new List<Button>();
         listHiddenButton = new List<Move>();
+        transButtonX = canvas.GetComponent<RectTransform>().sizeDelta.x / 2.5f / 2 + 100;
+        transButtonY = canvas.GetComponent<RectTransform>().sizeDelta.y / 20;
+        widthButton = canvas.GetComponent<RectTransform>().sizeDelta.x / 2.5f;
+        heigtButton = canvas.GetComponent<RectTransform>().sizeDelta.y / 20;
+
+        hintTransform.localScale = new Vector3(2, 2, 2);
+        gameObjectHintDirect.SetActive(false);
     }
 
     // Start is called before the first frame update
@@ -73,7 +87,7 @@ public class GameManager : MonoBehaviour
 
     void checkState()
     {
-        if (player.transform.position.y < -5)
+        if (player.transform.position.y < -5 && isGameOver == false)
         {
             GameOver();
             isGameOver = true;
@@ -85,7 +99,8 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         stateGame.color = Color.red;
         stateGame.text = "Game Over";
-        stateGame.gameObject.SetActive(true);
+        canvasScript.HintToReset();
+        //stateGame.gameObject.SetActive(true);
     }
 
     public void GameWin()
@@ -93,8 +108,9 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         stateGame.color = Color.green;
         stateGame.text = "Game Win";
-        stateGame.gameObject.SetActive(true);
+        //stateGame.gameObject.SetActive(true);
         PlayerPrefs.SetInt(levelManager.levelSelected.ToString(), 1);
+        cameraMovement.CameraChangeLevel();
         StartCoroutine(DelayToNextMap());
     }
 
@@ -106,7 +122,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator DelayToNextMap()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         NextGame();
     }
 
@@ -164,9 +180,8 @@ public class GameManager : MonoBehaviour
         buttonText.text = index[0] == 0 ? $"Move {index[1]}, Fly {index[2]}" : $"Fly {index[2]}, Move {index[1]}";
         buttonText.alignment = TextAnchor.MiddleCenter;
         buttonText.color = Color.black;
-        buttonText.fontSize = 20;
+        buttonText.fontSize = 35;
         buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-
 
 //      (0, 0): Góc dưới trái.
 //      (1, 0): Góc dưới phải.
@@ -176,7 +191,7 @@ public class GameManager : MonoBehaviour
 
         // Chỉnh kích thước Button
         RectTransform btnRect = buttonObject.GetComponent<RectTransform>();
-        btnRect.sizeDelta = new Vector2(200, 50);
+        btnRect.sizeDelta = new Vector2(widthButton, heigtButton);
         btnRect.anchorMin = new Vector2(1, 0);
         btnRect.anchorMax = new Vector2(1, 0);
         btnRect.anchoredPosition = new Vector2(- transButtonX, transButtonY);
@@ -184,7 +199,7 @@ public class GameManager : MonoBehaviour
 
         // Chỉnh kích thước văn bản
         RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.sizeDelta = new Vector2(widthButton, heigtButton);
+        textRect.sizeDelta = new Vector2(widthButton * 2, heigtButton * 2);
         textRect.anchoredPosition = Vector2.zero;
 
         Outline outLine = buttonObject.AddComponent<Outline>();
@@ -277,6 +292,9 @@ public class GameManager : MonoBehaviour
 
     public void ButtonHintOnClick()
     {
+        gameObjectHintDirect.SetActive(true);
+        
+
         if (hint == null)
         {
             return;
@@ -293,8 +311,10 @@ public class GameManager : MonoBehaviour
             {
                 if (listHiddenButton.Count == 0 && hint[i].Count > 0)
                 {
-                    Debug.Log(hint[i][0]);
+                    // hint
+                    Debug.Log("Select: " + hint[i][0].select + ", direct: " + hint[i][0].direct);
                     canvasScript.HintToMove(listButton[hint[i][0].select].transform.position);
+                    HintToDirect(hint[i][0].direct);
                     return;
                 }
                 for (int j = 0; j < listHiddenButton.Count; ++j)
@@ -307,8 +327,10 @@ public class GameManager : MonoBehaviour
 
                     if (j == listHiddenButton.Count - 1)
                     {
-                        Debug.Log(hint[i][j + 1]);
+                        // hint
+                        Debug.Log("Select: " + hint[i][j + 1].select + ", direct: " + hint[i][j + 1].direct);
                         canvasScript.HintToMove(listButton[hint[i][j + 1].select].transform.position);
+                        HintToDirect(hint[i][j + 1].direct);
                         return;
                     }
                 }
@@ -317,5 +339,20 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Reset");
         canvasScript.HintToReset();
+        HiddenDirect();
+    }
+
+    public void HintToDirect(int direct)
+    {
+        Debug.Log("Hint arrow");
+        Vector3 transHint = new Vector3(0, obstacleManager.obstacleSizeY * 2, 0);
+        Vector3 rotateHint = new Vector3(0, 90 * (direct - 1 + 2), 0);
+        hintTransform.rotation = Quaternion.Euler(rotateHint);
+        hintTransform.position = player.GetComponent<Transform>().position + transHint;
+    }
+
+    public void HiddenDirect()
+    {
+        gameObjectHintDirect.SetActive(false);
     }
 }
