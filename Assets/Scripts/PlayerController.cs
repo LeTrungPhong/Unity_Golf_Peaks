@@ -33,9 +33,10 @@ public class BallController : MonoBehaviour
     private int numberMove = 0;
     private int numberUp = 0;
     private int turn = -1;
-    private bool checkMove = false;
+    public bool checkMove = false;
     private int[] direction = new int[] { 0, 0, 0 };
     private float speed = 0.5f;
+    public bool checkBallMove = false;
 
     [SerializeField] private ParticleSystem particleSystemBallMove;
     [SerializeField] private ParticleSystem particleSystemWinGame;
@@ -121,6 +122,7 @@ public class BallController : MonoBehaviour
 
     void ballMove()
     {
+        checkBallMove = true;
         canvasScript.HiddenHint();
         if (obstacleManager.spawnObstacles == null) return;
         if (turn == 0)
@@ -777,6 +779,7 @@ public class BallController : MonoBehaviour
             playParticalSystem = false;
         }
         checkMove = false;
+        checkBallMove = false;
         checkGameOver();
     }
 

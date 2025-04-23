@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using static LevelManager;
 
 public enum TypePrefab
@@ -177,6 +178,8 @@ public class ObstacleManager : MonoBehaviour
             case TypePrefab.Water:
                 SpawnObstacle(indexX, high, indexZ, waterPrefab, type);
                 break;
+            default:
+                break;
         }
     }
 
@@ -188,6 +191,20 @@ public class ObstacleManager : MonoBehaviour
             obstacle.transform.localScale = new Vector3(1, obstacleSizeY, 1);
             //GameObject obstacle = new GameObject("Obstacle");
             //obstacle.transform.position = new Vector3(indexX * obstacleSize, i * obstacleSizeY, indexZ * obstacleSize);
+
+            //Material materialObstacle = obstacle.gameObject.GetComponent<Renderer>().material;
+            //materialObstacle.SetFloat("_Mode", 3); // 3 = Transparent
+            //materialObstacle.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            //materialObstacle.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            //materialObstacle.SetInt("_ZWrite", 0);
+            //materialObstacle.DisableKeyword("_ALPHATEST_ON");
+            //materialObstacle.EnableKeyword("_ALPHABLEND_ON");
+            //materialObstacle.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            //materialObstacle.renderQueue = 3000;
+
+            //Color colorObstacle = materialObstacle.color;
+            //colorObstacle.a = ((float)(i + 10) / (high - 1)); // opacity = 50%
+            //materialObstacle.color = colorObstacle;
 
             HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 1, 1, 0 }, 0, 1);
             HandleDrawLine(0, typeObject, obstacle, new int[] { indexX, i, indexZ }, new int[] { 0, 1, -1 }, 1, 2);

@@ -70,13 +70,10 @@ public class DataLoading : MonoBehaviour
             gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
         }
 
-        Vector3 post = transformCamera.position;
-        post.x = spawnObstacleLevel.positionX;
-        post.y = spawnObstacleLevel.positionY;
-        post.z = spawnObstacleLevel.positionZ;
-        //transformCamera.position = post;
-
+        Vector3 post = new Vector3(spawnObstacleLevel.positionX, spawnObstacleLevel.positionY, spawnObstacleLevel.positionZ);
         cameraMain.GetComponent<CameraMovement>().postCam = post;
+
+        addObstacle();
 
         int[][] buttons = ConvertListStringToArray2(spawnObstacleLevel.itemMove);
 
@@ -99,6 +96,73 @@ public class DataLoading : MonoBehaviour
         {
             gameManager.createButton(buttons[i]);
         }
+    }
+
+    public void addObstacle()
+    {
+        int addNumberObstacle = 10;
+
+        for (int i = 0; i < obstacleManager.spawnObstacles.Length; i++)
+        {
+            for (int j = 0; j < obstacleManager.spawnObstacles[i].Length; j++)
+            {
+                if (obstacleManager.spawnObstacles[i][j] > 0)
+                {
+                    obstacleManager.spawnObstacles[i][j] += addNumberObstacle;
+                }
+            }
+        }
+
+        if (obstacleManager.spawnBlockRoll != null)
+        {
+            for (int i = 0; i < obstacleManager.spawnBlockRoll.Length; i++)
+            {
+                for (int j = 0; j < obstacleManager.spawnBlockRoll[i].Length; j++)
+                {
+                    if (obstacleManager.spawnBlockRoll[i][j] > 0)
+                    {
+                        obstacleManager.spawnBlockRoll[i][j] += addNumberObstacle;
+                    }
+                }
+            }
+        }
+
+        if (obstacleManager.spawnDive != null)
+        {
+            for (int i = 0; i < obstacleManager.spawnDive.Length; i++)
+            {
+                for (int j = 0; j < obstacleManager.spawnDive[i].Length; j++)
+                {
+                    if (obstacleManager.spawnDive[i][j] > 0)
+                    {
+                        obstacleManager.spawnDive[i][j] += addNumberObstacle;
+                    }
+                }
+            }
+        }
+
+        if (obstacleManager.spawnWater != null)
+        {
+            for (int i = 0; i < obstacleManager.spawnWater.Length; i++)
+            {
+                for (int j = 0; j < obstacleManager.spawnWater[i].Length; j++)
+                {
+                    if (obstacleManager.spawnWater[i][j] > 0)
+                    {
+                        obstacleManager.spawnWater[i][j] += addNumberObstacle;
+                    }
+                }
+            }
+        } 
+
+        ChangePostCamera(addNumberObstacle);
+    }
+
+    public void ChangePostCamera(int numberObstacleAdd)
+    {
+        Vector3 post = cameraMain.GetComponent<CameraMovement>().postCam;
+        post += new Vector3(0, numberObstacleAdd * obstacleManager.obstacleSizeY, 0);
+        cameraMain.GetComponent<CameraMovement>().postCam = post;
     }
 
     public List<string> ConvertArray2ToListString(int[][] list)

@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour
         stateGame.color = Color.red;
         stateGame.text = "Game Over";
         canvasScript.HintToReset();
+        playerController.checkMove = false;
         //stateGame.gameObject.SetActive(true);
     }
 
@@ -142,23 +143,38 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
+        if (playerController.checkMove == true)
+        {
+            return;
+        }
         Debug.Log("Reset game");
-        SceneManager.LoadScene("GamePlay");
+        //SceneManager.LoadScene("GamePlay");
+        isGameOver = false;
+        NumberBack(listButton.Count);
+        canvasScript.DisplayHint();
+        gameObjectHintDirect.SetActive(false);
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
     }
 
     public void Back()
     {
-        if (isGameOver)
+        if (isGameOver || playerController.checkMove == true)
         {
             return;
         }
-
+        NumberBack(1);
         Debug.Log("Back");
-        playerController.moveBack();
-        DisplayButton();
-        FocusButton();
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+    }
+
+    public void NumberBack(int number)
+    {
+        for (int i = 0; i < number; ++i)
+        {
+            playerController.moveBack();
+            DisplayButton();
+        }
+        FocusButton();
     }
 
     public void createButton(int[] index)
@@ -213,7 +229,7 @@ public class GameManager : MonoBehaviour
             SelectButton(button);
             if (hiddenSoundButtonClickFirst == false)
             {
-                SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+                //SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
             } else
             {
                 hiddenSoundButtonClickFirst = false;

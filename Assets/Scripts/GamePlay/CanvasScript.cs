@@ -84,6 +84,14 @@ public class CanvasScript : MonoBehaviour
         }
     }
 
+    public void DisplayHint()
+    {
+        imageArrowHint.gameObject.SetActive(false);
+        imageBreakHint.gameObject.SetActive(false);
+        buttonHint.gameObject.SetActive(true);
+        checkUseHint = false;
+    }
+
     public void HintToDirect()
     {
         

@@ -16,12 +16,12 @@ public class CameraMovement : MonoBehaviour
     private float sensitivity = 3;
     private float gravity = 3;
     public Vector3 postCam;
-    private Vector3 postChange = new Vector3(0, 100, 0);
+    private Vector3 postChange = new Vector3(20, 0, 0);
 
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.transform.position = postCam + postChange;
+        gameObject.transform.position = postCam - postChange;
         gameObject.transform.DOMove(postCam, 1.5f).SetEase(Ease.OutQuad);
     }
 
