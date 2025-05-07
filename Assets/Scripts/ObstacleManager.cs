@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using static LevelManager;
@@ -12,7 +13,8 @@ public enum TypePrefab
     Obstacle,
     BlockRoll,
     Dive,
-    Water
+    Water,
+    Jump
 }
 
 public class ObstacleManager : MonoBehaviour
@@ -24,6 +26,7 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject blockRollPrefab;
     [SerializeField] private GameObject divePrefab;
     [SerializeField] private GameObject waterPrefab;
+    [SerializeField] private GameObject jumpPrefab;
     private GameObject player;
     private GameObject golfBall;
     private float changeDirectionSize = 1;
@@ -44,6 +47,7 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnWater;
     public int[][] spawnGoal;
     public int[][] spawnBall;
+    public int[][] spawnJump;
     public int[][] hint;
 
     Color lowColor = new Color(106f / 255, 106f / 255, 106f / 255, 1f);
@@ -160,6 +164,20 @@ public class ObstacleManager : MonoBehaviour
                 }
             }
         }
+
+        if (this.spawnJump != null)
+        {
+            for (int i = 0; i < this.spawnJump.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnJump[i].Length; ++j)
+                {
+                    if (this.spawnJump != null && spawnJump.Length > i && spawnJump[i].Length > j && this.spawnJump[i][j] > 0)
+                    {
+                        this.Spawn(i, this.spawnJump[i][j], j, TypePrefab.Jump);
+                    }
+                }
+            }
+        }
     }
 
     public void Spawn(int indexX, int high, int indexZ, TypePrefab type)
@@ -177,6 +195,9 @@ public class ObstacleManager : MonoBehaviour
                 break;
             case TypePrefab.Water:
                 SpawnObstacle(indexX, high, indexZ, waterPrefab, type);
+                break;
+            case TypePrefab.Jump:
+                SpawnObstacle(indexX, high, indexZ, jumpPrefab, type);
                 break;
             default:
                 break;
@@ -199,7 +220,7 @@ public class ObstacleManager : MonoBehaviour
             //materialObstacle.SetInt("_ZWrite", 0);
             //materialObstacle.DisableKeyword("_ALPHATEST_ON");
             //materialObstacle.EnableKeyword("_ALPHABLEND_ON");
-            //materialObstacle.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            //materialObstacle.DisableKeyword("_ALPHAPREMULTIPLY_ON")   ;
             //materialObstacle.renderQueue = 3000;
 
             //Color colorObstacle = materialObstacle.color;
@@ -239,6 +260,9 @@ public class ObstacleManager : MonoBehaviour
                 break;
             case TypePrefab.Water:
                 spawnArray = spawnWater;
+                break;
+            case TypePrefab.Jump:
+                spawnArray = spawnJump;
                 break;
         }
 
@@ -514,6 +538,25 @@ public class ObstacleManager : MonoBehaviour
         }
         //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
         if (positionIndex[1] >= spawnWater[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public bool checkJump(int[] positionIndex)
+    {
+        if (spawnJump == null) return false;
+
+        if (positionIndex[0] >= spawnJump.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnJump[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[1] >= spawnJump[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
         {
             return false;
         }

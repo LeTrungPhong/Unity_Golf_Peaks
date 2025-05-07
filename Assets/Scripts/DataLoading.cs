@@ -49,6 +49,7 @@ public class DataLoading : MonoBehaviour
         obstacleManager.spawnChangeDirectionOb = ConvertListStringToArray2(spawnObstacleLevel.spawnChangeDirectionOb);
         obstacleManager.spawnGoal = ConvertListStringToArray2(spawnObstacleLevel.spawnGoal);
         obstacleManager.spawnBall = ConvertListStringToArray2(spawnObstacleLevel.spawnBall);
+        obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
 
         if (spawnObstacleLevel.spawnBlockRoll != null && spawnObstacleLevel.spawnBlockRoll.Count > 0)
         {
@@ -65,13 +66,23 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnWater = ConvertListStringToArray2(spawnObstacleLevel.spawnWater);
         }
 
+        if (spawnObstacleLevel.spawnJump != null && spawnObstacleLevel.spawnJump.Count > 0)
+        {
+            obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
+        }
+
         if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
         {
             gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
         }
 
         Vector3 post = new Vector3(spawnObstacleLevel.positionX, spawnObstacleLevel.positionY, spawnObstacleLevel.positionZ);
-        cameraMain.GetComponent<CameraMovement>().postCam = post;
+
+        if (post.x != 0 && post.y != 0 && post.z != 0)
+        {
+            Debug.Log("Check camera setting");
+            cameraMain.GetComponent<CameraMovement>().postCam = post;
+        }
 
         addObstacle();
 
@@ -153,7 +164,21 @@ public class DataLoading : MonoBehaviour
                     }
                 }
             }
-        } 
+        }
+
+        if (obstacleManager.spawnJump != null)
+        {
+            for (int i = 0; i < obstacleManager.spawnJump.Length; ++i)
+            {
+                for (int j = 0; j < obstacleManager.spawnJump[i].Length; ++j)
+                {
+                    if (obstacleManager.spawnJump[i][j] > 0)
+                    {
+                        obstacleManager.spawnJump[i][j] += addNumberObstacle;
+                    }
+                }
+            }
+        }
 
         ChangePostCamera(addNumberObstacle);
     }

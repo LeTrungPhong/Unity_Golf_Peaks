@@ -2245,6 +2245,7 @@ MonoBehaviour:
   blockRollPrefab: {fileID: 8098078448101118788, guid: f88397d4f9480144a8521212374b96a5, type: 3}
   divePrefab: {fileID: 5979223474070749479, guid: 7d8f69105c16e9c4d859d0401209d656, type: 3}
   waterPrefab: {fileID: 1157940823364282410, guid: 36becdd7a4d4bdc46baf76338ba9da14, type: 3}
+  jumpPrefab: {fileID: 261593353211870302, guid: bb0ab5e9a393fa044b4f1acb3ee93366, type: 3}
   obstacleSize: 1
   obstacleSizeX: 1
   obstacleSizeY: 0.5

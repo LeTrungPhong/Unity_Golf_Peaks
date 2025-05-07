@@ -69,6 +69,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        QualitySettings.vSyncCount = 0; // Tắt VSync để Application.targetFrameRate hoạt động
+        Application.targetFrameRate = 60; // Giới hạn FPS về mức cinematic
+
         if (obstacleManager.spawnObstacles == null)
         {
             GameNotData();

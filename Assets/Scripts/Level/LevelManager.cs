@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +36,9 @@ public class LevelManager : MonoBehaviour
         {
             indexLevel = 0;
         }
+
+        QualitySettings.vSyncCount = 0; // Tắt VSync để Application.targetFrameRate hoạt động
+        Application.targetFrameRate = 60; // Giới hạn FPS về mức cinematic
     }
 
     // Update is called once per frame

@@ -159,6 +159,14 @@ public class BallController : MonoBehaviour
         Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
         int[] positionIndexLast = getPositionIndex(positionLast);
 
+        if (obstacleManager.checkJump(new int[] { positionIndexLast[0], positionIndexLast[1] - 1, positionIndexLast[2] }))
+        {
+            numberUp += numberMove;
+            numberMove = 0;
+            addFlyValid();
+            return;
+        }
+
         // kiem tra co dung tren block roll khong
         if (obstacleManager.checkBlockRoll(new int[] { positionIndexLast[0], positionIndexLast[1] - 1, positionIndexLast[2] }))
         {
@@ -275,6 +283,7 @@ public class BallController : MonoBehaviour
             obstacleManager.checkObstacle(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkBlockRoll(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkDive(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            && obstacleManager.checkJump(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             )
         {
             // khong co thi di tiep
@@ -328,6 +337,22 @@ public class BallController : MonoBehaviour
 
     void checkMoveDown(int[] positionIndex)
     {
+        // kiem tra co jump tai duoi diem ke tiep khong
+        if (obstacleManager.checkJump(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+        {
+            // co
+            // vi tri hien tai
+            Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+            // vi tri nhay
+            Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2));
+            // di chuyen den
+            this.addInterpolation(positionLast, position1, speed / 2);
+            numberUp += numberMove - 1;
+            numberMove = 0;
+            addFlyValid();
+            return;
+        }
+
         // kiem tra co nuoc tai duoi diem ke tiep khong
         if (obstacleManager.checkWater(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
@@ -555,7 +580,6 @@ public class BallController : MonoBehaviour
         int checkDownPlane = 0;
         for (int i = 0; i <= 100; i++)
         {
-            
             // kiem tra co nuoc phia duoi khong
             if (obstacleManager.checkWater(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
             {
@@ -565,6 +589,16 @@ public class BallController : MonoBehaviour
                 numberMove = 0;
                 numberUp = 0;
                 Debug.Log(i);
+                return;
+            }
+
+            if (obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }))
+            {
+                Vector3 position1 = new Vector3(positionLastTemp.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLastTemp.y - obstacleSizeY * numberDown, positionLastTemp.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(positionLastTemp, position1, (speed / 4) * numberDown);
+                numberUp = numberMove;
+                numberMove = 0;
+                addFlyValid();
                 return;
             }
 
