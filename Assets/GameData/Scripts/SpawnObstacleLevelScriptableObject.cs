@@ -19,12 +19,12 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public List<string> spawnDive;
     public List<string> spawnWater;
     public List<string> spawnJump;
+    public List<string> spawnPortal;
     public List<string> spawnGoal;
     public List<string> spawnBall;
     public List<string> itemMove;
     public List<string> hint;
     public int highFly;
-
     public float positionX;
     public float positionY;
     public float positionZ;

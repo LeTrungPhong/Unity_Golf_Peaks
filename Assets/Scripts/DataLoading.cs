@@ -71,6 +71,11 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
         }
 
+        if (spawnObstacleLevel.spawnPortal != null && spawnObstacleLevel.spawnPortal.Count > 0)
+        {
+            obstacleManager.spawnPortal = ConvertListStringToArray2(spawnObstacleLevel.spawnPortal);
+        }
+
         if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
         {
             gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
@@ -80,7 +85,7 @@ public class DataLoading : MonoBehaviour
 
         if (post.x != 0 && post.y != 0 && post.z != 0)
         {
-            Debug.Log("Check camera setting");
+            //Debug.Log("Check camera setting");
             cameraMain.GetComponent<CameraMovement>().postCam = post;
         }
 
@@ -179,6 +184,8 @@ public class DataLoading : MonoBehaviour
                 }
             }
         }
+
+        
 
         ChangePostCamera(addNumberObstacle);
     }

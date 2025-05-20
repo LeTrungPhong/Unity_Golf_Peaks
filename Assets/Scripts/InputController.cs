@@ -72,7 +72,7 @@ public class InputController : MonoBehaviour
                 return;
             }
 
-            Debug.Log("Direction: " + direction);
+            //Debug.Log("Direction: " + direction);
 
             gameManager.HiddenButton(direction);
 

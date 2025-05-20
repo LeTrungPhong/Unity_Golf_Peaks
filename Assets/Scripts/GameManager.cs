@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stateGame;
     [SerializeField] private GameObject gameObjectHintDirect;
     [SerializeField] private GameObject gameObjectCamera;
+    [SerializeField] private EffectSurfaceManager effectSurfaceManager;
     private CameraMovement cameraMovement;
     private Transform hintTransform;
     private GameObject canvas;
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     private List<Move> listHiddenButton;
     private Button selectButton;
     private bool hiddenSoundButtonClickFirst = true;
+    public float positionEndY = -5.0f;
 
     private void Awake()
     {
@@ -90,8 +92,9 @@ public class GameManager : MonoBehaviour
 
     void checkState()
     {
-        if (player.transform.position.y < -5 && isGameOver == false)
+        if (player.transform.position.y < positionEndY && isGameOver == false)
         {
+            //Debug.Log("Game Over");
             GameOver();
             isGameOver = true;
         }
@@ -104,6 +107,7 @@ public class GameManager : MonoBehaviour
         stateGame.text = "Game Over";
         canvasScript.HintToReset();
         playerController.checkMove = false;
+        //playerController.checkBallMove = false;
         //stateGame.gameObject.SetActive(true);
     }
 
@@ -146,17 +150,27 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
-        if (playerController.checkMove == true)
-        {
-            return;
-        }
-        Debug.Log("Reset game");
-        //SceneManager.LoadScene("GamePlay");
-        isGameOver = false;
-        NumberBack(listButton.Count);
-        canvasScript.DisplayHint();
-        gameObjectHintDirect.SetActive(false);
+        Debug.Log(playerController.checkMove + " " + playerController.checkBallMove);
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
+        if (playerController.checkMove == false && playerController.checkBallMove == false)
+        {
+            //StartCoroutine(DelayedReset());
+            Debug.Log("Reset game");
+            //SceneManager.LoadScene("GamePlay");
+            isGameOver = false;
+            //Debug.Log(listButton.Count);
+            NumberBack(listButton.Count);
+            canvasScript.DisplayHint();
+            effectSurfaceManager.StopEffectConveyor();
+            gameObjectHintDirect.SetActive(false);
+        }
+    }
+
+    public IEnumerator DelayedReset()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        
     }
 
     public void Back()
@@ -268,7 +282,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator FocusAfterDelay()
     {
         yield return new WaitForEndOfFrame();
-        Debug.Log("Focus button");
+        //Debug.Log("Focus button");
         Button[] allButtons = FindObjectsOfType<Button>().Where(btn => btn.gameObject.name == "MyButton" && btn.gameObject != null).ToArray();
 
         if (allButtons.Length != 0)
@@ -333,7 +347,8 @@ public class GameManager : MonoBehaviour
                     // hint
                     Debug.Log("Select: " + hint[i][0].select + ", direct: " + hint[i][0].direct);
                     canvasScript.HintToMove(listButton[hint[i][0].select].transform.position);
-                    HintToDirect(hint[i][0].direct);
+                    //HintToDirect(hint[i][0].direct);
+                    effectSurfaceManager.PlayEffectConveyor(playerController.getIndex(), hint[i][0].direct);
                     return;
                 }
                 for (int j = 0; j < listHiddenButton.Count; ++j)
@@ -349,7 +364,8 @@ public class GameManager : MonoBehaviour
                         // hint
                         Debug.Log("Select: " + hint[i][j + 1].select + ", direct: " + hint[i][j + 1].direct);
                         canvasScript.HintToMove(listButton[hint[i][j + 1].select].transform.position);
-                        HintToDirect(hint[i][j + 1].direct);
+                        //HintToDirect(hint[i][j + 1].direct);
+                        effectSurfaceManager.PlayEffectConveyor(playerController.getIndex(), hint[i][j + 1].direct);
                         return;
                     }
                 }
@@ -372,6 +388,7 @@ public class GameManager : MonoBehaviour
 
     public void HiddenDirect()
     {
-        gameObjectHintDirect.SetActive(false);
+        //gameObjectHintDirect.SetActive(false);
+        effectSurfaceManager.StopEffectConveyor();
     }
 }

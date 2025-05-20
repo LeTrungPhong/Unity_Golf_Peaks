@@ -412,6 +412,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 29d9674d9e530a247b94af5404c71647, type: 3}
   - {fileID: 8300000, guid: 0bc8e2e65c3a2dc408b5ecfad450c9cb, type: 3}
   - {fileID: 8300000, guid: a1279ac4a0779034abcc225d413f9ff4, type: 3}
+  effectSurfaceManager: {fileID: 2040465911}
 --- !u!1001 &75805841
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -533,9 +534,11 @@ MonoBehaviour:
   stateGame: {fileID: 2032356603}
   gameObjectHintDirect: {fileID: 75805842}
   gameObjectCamera: {fileID: 963194225}
+  effectSurfaceManager: {fileID: 2040465911}
   isGameOver: 0
   heigtButton: 50
   widthButton: 200
+  positionEndY: -5
 --- !u!1 &269369683
 GameObject:
   m_ObjectHideFlags: 0
@@ -2238,6 +2241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8bc4b860719f648aeb11028b167c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effectSurfaceManager: {fileID: 2040465911}
   obstaclePrefab: {fileID: 6332702502486906646, guid: aa53dd9c3124459448de384412bf8e6c, type: 3}
   planePrefab: {fileID: 1918964778487139147, guid: 098362a7e882cd14f9932e73c8b7235b, type: 3}
   changeDirectionPrefab: {fileID: 7444671658643919707, guid: c95abb0259ccf7a4caa91d40192d9d8a, type: 3}
@@ -2246,6 +2250,7 @@ MonoBehaviour:
   divePrefab: {fileID: 5979223474070749479, guid: 7d8f69105c16e9c4d859d0401209d656, type: 3}
   waterPrefab: {fileID: 1157940823364282410, guid: 36becdd7a4d4bdc46baf76338ba9da14, type: 3}
   jumpPrefab: {fileID: 261593353211870302, guid: bb0ab5e9a393fa044b4f1acb3ee93366, type: 3}
+  goalGameObjectPrefab: {fileID: 6733928537817103150, guid: cb0e6329be05da541a9a19b94b19505d, type: 3}
   obstacleSize: 1
   obstacleSizeX: 1
   obstacleSizeY: 0.5
@@ -2253,6 +2258,8 @@ MonoBehaviour:
   scaleSize: 0
   ballSize: 0.25
   highFly: 3
+  highBlockJump: 0.25
+  timeBlockJump: 0.15
 --- !u!4 &1791446003
 Transform:
   m_ObjectHideFlags: 0
@@ -2649,6 +2656,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032356601}
   m_CullTransparentMesh: 1
+--- !u!1 &2040465910
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2040465912}
+  - component: {fileID: 2040465911}
+  m_Layer: 0
+  m_Name: EffectSurfaceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2040465911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040465910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 230dc123563f6e84682bc56fc2877116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  obstacleManager: {fileID: 1791446002}
+  effectSurfacePrefab: {fileID: 4759257435916533660, guid: aa2c9338b18d0c94e881a095f8941f3e, type: 3}
+  effectWater: {fileID: 2800000, guid: 452577882a0a826448dfb5289e1f15d5, type: 3}
+  effectQuickSand: {fileID: 2800000, guid: d411e184d2c638243a40a5e875a39bc6, type: 3}
+  effectConveyor: {fileID: 2800000, guid: 85141ab49b65e0c4a89fc127474dae0a, type: 3}
+  effectPortal: {fileID: 2800000, guid: ad577cdaa5b83c94a968e80e18fdbddb, type: 3}
+  effectRippleWater: {fileID: 2800000, guid: f9f1513d7ee996d4f8a8106c01a91595, type: 3}
+  effectWood: {fileID: 2800000, guid: da31e4d3d7b484746a734158a8c0de5d, type: 3}
+  effectJump: {fileID: 2800000, guid: 6f7ec3bb96b77784ab2ecc4565e164eb, type: 3}
+--- !u!4 &2040465912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040465910}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 103.70959, y: 151.4829, z: 236.11143}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2075181951
 GameObject:
   m_ObjectHideFlags: 0
@@ -2846,3 +2906,4 @@ SceneRoots:
   - {fileID: 44078368}
   - {fileID: 2101168814}
   - {fileID: 75805841}
+  - {fileID: 2040465912}
