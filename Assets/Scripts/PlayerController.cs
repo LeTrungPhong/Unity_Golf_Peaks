@@ -508,14 +508,15 @@ public class BallController : MonoBehaviour
             int[] positionIndex = getPositionIndex(vector1);
 
             //kiem tra phia duoi co portal khong
-            int checkPortal = obstacleManager.checkPortal(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
+            int checkPortal = obstacleManager.checkPortal(new int[] { positionIndex[0], positionIndex[1], positionIndex[2] });
+            //int checkPortal1 = obstacleManager.checkPortal(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] });
+            //Debug.Log(positionIndex[0] +  " " + positionIndex[1] + " " + positionIndex[2]);
+            Debug.Log(checkPortal);
             if (checkPortal > 0)
             {
                 Debug.Log("Check portal");
-                Vector3 position2 = new Vector3(vector1.x, vector1.y - obstacleSizeY, vector1.z);
-                this.addInterpolation(vector1, position2, speed / 2);
-                Vector3 position3 = new Vector3(position2.x + (float)direction[0] * obstacleSize / 2, position2.y, position2.z + (float)direction[2] * obstacleSize / 2);
-                this.addInterpolation(position2, position3, speed / 2);
+                Vector3 position2 = new Vector3(vector1.x + (float)direction[0] * ((float)obstacleSize / 2 - ballSize / 2), vector1.y, vector1.z + (float)direction[2] * ((float)obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(vector1, position2, speed / 2, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 0);
                 //this.addInterpolation(vector1, position2, speed / 5, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_ROLL, 2);
                 tele(checkPortal);
                 return;

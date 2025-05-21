@@ -325,8 +325,7 @@ public class GameManager : MonoBehaviour
 
     public void ButtonHintOnClick()
     {
-        gameObjectHintDirect.SetActive(true);
-        
+        //gameObjectHintDirect.SetActive(true);
 
         if (hint == null)
         {

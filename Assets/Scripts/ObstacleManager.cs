@@ -492,7 +492,6 @@ public class ObstacleManager : MonoBehaviour
     {
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
-
             return 0;
         }
         if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
@@ -503,6 +502,7 @@ public class ObstacleManager : MonoBehaviour
         {
             return spawnPortal[positionIndex[0]][positionIndex[2]];
         }
+        Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]] + "  " + positionIndex[1]);
         return 0;
     }
 
