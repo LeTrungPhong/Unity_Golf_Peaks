@@ -2250,6 +2250,8 @@ MonoBehaviour:
   divePrefab: {fileID: 5979223474070749479, guid: 7d8f69105c16e9c4d859d0401209d656, type: 3}
   waterPrefab: {fileID: 1157940823364282410, guid: 36becdd7a4d4bdc46baf76338ba9da14, type: 3}
   jumpPrefab: {fileID: 261593353211870302, guid: bb0ab5e9a393fa044b4f1acb3ee93366, type: 3}
+  conveyorPrefab: {fileID: 6307014020633352699, guid: 56389ff6553464b4392e328f43282945, type: 3}
+  icePrefab: {fileID: 3924835748309039303, guid: 633dc4aa650c0054da660a54ee7eac38, type: 3}
   goalGameObjectPrefab: {fileID: 6733928537817103150, guid: cb0e6329be05da541a9a19b94b19505d, type: 3}
   obstacleSize: 1
   obstacleSizeX: 1
@@ -2690,10 +2692,12 @@ MonoBehaviour:
   effectWater: {fileID: 2800000, guid: 452577882a0a826448dfb5289e1f15d5, type: 3}
   effectQuickSand: {fileID: 2800000, guid: d411e184d2c638243a40a5e875a39bc6, type: 3}
   effectConveyor: {fileID: 2800000, guid: 85141ab49b65e0c4a89fc127474dae0a, type: 3}
+  effectConveyor_Tile: {fileID: 0}
   effectPortal: {fileID: 2800000, guid: ad577cdaa5b83c94a968e80e18fdbddb, type: 3}
   effectRippleWater: {fileID: 2800000, guid: f9f1513d7ee996d4f8a8106c01a91595, type: 3}
   effectWood: {fileID: 2800000, guid: da31e4d3d7b484746a734158a8c0de5d, type: 3}
   effectJump: {fileID: 2800000, guid: 6f7ec3bb96b77784ab2ecc4565e164eb, type: 3}
+  effectIce: {fileID: 2800000, guid: cc09fb2f9ce64b94b83f9d50b73dd4e4, type: 3}
 --- !u!4 &2040465912
 Transform:
   m_ObjectHideFlags: 0

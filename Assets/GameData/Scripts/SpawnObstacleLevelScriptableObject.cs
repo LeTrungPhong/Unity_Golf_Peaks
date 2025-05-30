@@ -20,6 +20,8 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public List<string> spawnWater;
     public List<string> spawnJump;
     public List<string> spawnPortal;
+    public List<string> spawnConveyor;
+    public List<string> spawnIce;
     public List<string> spawnGoal;
     public List<string> spawnBall;
     public List<string> itemMove;
@@ -28,4 +30,5 @@ public class SpawnObstacleLevelScriptableObject : ScriptableObject
     public float positionX;
     public float positionY;
     public float positionZ;
+    public float obstacleSizeY;
 }

@@ -45,11 +45,17 @@ public class DataLoading : MonoBehaviour
         }
 
         obstacleManager.spawnObstacles = ConvertListStringToArray2(spawnObstacleLevel.spawnObstacles);
-        obstacleManager.spawnPlanes = ConvertListStringToArray2(spawnObstacleLevel.spawnPlanes);
-        obstacleManager.spawnChangeDirectionOb = ConvertListStringToArray2(spawnObstacleLevel.spawnChangeDirectionOb);
+        if (spawnObstacleLevel.spawnPlanes != null && spawnObstacleLevel.spawnPlanes.Count > 0)
+        {
+            obstacleManager.spawnPlanes = ConvertListStringToArray2(spawnObstacleLevel.spawnPlanes);
+        }
+        if (spawnObstacleLevel.spawnChangeDirectionOb != null && spawnObstacleLevel.spawnChangeDirectionOb.Count > 0)
+        {
+            obstacleManager.spawnChangeDirectionOb = ConvertListStringToArray2(spawnObstacleLevel.spawnChangeDirectionOb);
+        }
         obstacleManager.spawnGoal = ConvertListStringToArray2(spawnObstacleLevel.spawnGoal);
         obstacleManager.spawnBall = ConvertListStringToArray2(spawnObstacleLevel.spawnBall);
-        obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
+        //obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
 
         if (spawnObstacleLevel.spawnBlockRoll != null && spawnObstacleLevel.spawnBlockRoll.Count > 0)
         {
@@ -76,6 +82,16 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnPortal = ConvertListStringToArray2(spawnObstacleLevel.spawnPortal);
         }
 
+        if (spawnObstacleLevel.spawnConveyor != null && spawnObstacleLevel.spawnConveyor.Count > 0)
+        {
+            obstacleManager.spawnConveyor = ConvertListStringToArray2(spawnObstacleLevel.spawnConveyor);
+        }
+
+        if (spawnObstacleLevel.spawnIce != null && spawnObstacleLevel.spawnIce.Count > 0)
+        {
+            obstacleManager.spawnIce = ConvertListStringToArray2(spawnObstacleLevel.spawnIce);
+        }
+
         if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
         {
             gameManager.hint = ConvertListStringToHint(spawnObstacleLevel.hint);
@@ -87,6 +103,11 @@ public class DataLoading : MonoBehaviour
         {
             //Debug.Log("Check camera setting");
             cameraMain.GetComponent<CameraMovement>().postCam = post;
+        }
+
+        if (spawnObstacleLevel.obstacleSizeY != 0)
+        {
+            obstacleManager.obstacleSizeY = spawnObstacleLevel.obstacleSizeY;
         }
 
         addObstacle();
@@ -185,7 +206,19 @@ public class DataLoading : MonoBehaviour
             }
         }
 
-        
+        if (obstacleManager.spawnIce != null)
+        {
+            for (int i = 0; i < obstacleManager.spawnIce.Length; ++i)
+            {
+                for (int j = 0; j < obstacleManager.spawnIce[i].Length; ++j)
+                {
+                    if (obstacleManager.spawnIce[i][j] > 0)
+                    {
+                        obstacleManager.spawnIce[i][j] += addNumberObstacle;
+                    }
+                }
+            }
+        }
 
         ChangePostCamera(addNumberObstacle);
     }

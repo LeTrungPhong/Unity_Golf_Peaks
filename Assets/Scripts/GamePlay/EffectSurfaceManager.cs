@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -13,6 +13,8 @@ public enum SurfaceType
     RippleWater,
     Wood,
     Jump,
+    Conveyor_Tile,
+    Ice
 }
 
 public class EffectSurfaceManager : MonoBehaviour
@@ -22,10 +24,12 @@ public class EffectSurfaceManager : MonoBehaviour
     [SerializeField] private Texture effectWater;
     [SerializeField] private Texture effectQuickSand;
     [SerializeField] private Texture effectConveyor;
+    [SerializeField] private Texture effectConveyor_Tile;
     [SerializeField] private Texture effectPortal;
     [SerializeField] private Texture effectRippleWater;
     [SerializeField] private Texture effectWood;
     [SerializeField] private Texture effectJump;
+    [SerializeField] private Texture effectIce;
 
     public GameObject[][] effectGameObjectJump;
 
@@ -55,6 +59,10 @@ public class EffectSurfaceManager : MonoBehaviour
     // jump
     Vector2 scaleJump = new Vector2(2.5f, 2.5f);
 
+    // conveyor_tile
+    float scrollSpeedConveyor_TileX = 1.0f;
+    float scrollSpeedConveyor_TileY = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,11 +75,11 @@ public class EffectSurfaceManager : MonoBehaviour
 
     }
 
-    public void SpawnEffectSurface(SurfaceType type, int[] index)
+    public void SpawnEffectSurface(SurfaceType type, int[] index, int numberPortal = 0)
     {
         GameObject effectSurface = SpawnByIndex(index);
 
-        PlayEffect(effectSurface, type);
+        PlayEffect(effectSurface, type, numberPortal);
 
         if (type == SurfaceType.Jump)
         {
@@ -79,7 +87,7 @@ public class EffectSurfaceManager : MonoBehaviour
         }
     }
 
-    public void PlayEffect(GameObject effectSurface,SurfaceType type)
+    public void PlayEffect(GameObject effectSurface,SurfaceType type, int number = 0)
     {
         Material mat = new Material(Shader.Find("UI/Default"));
 
@@ -89,6 +97,7 @@ public class EffectSurfaceManager : MonoBehaviour
         {
             case SurfaceType.Water:
                 mat.mainTexture = effectWater;
+                mat.color = new Color(0f, 0f, 0f, 0.3f);
                 StartCoroutine(ScrollTexture(effectSurface.GetComponent<Renderer>().material, scrollSpeedX, scrollSpeedY));
                 break;
             case SurfaceType.QuickSand:
@@ -97,16 +106,26 @@ public class EffectSurfaceManager : MonoBehaviour
                 break;
             case SurfaceType.Conveyor:
                 mat.mainTexture = effectConveyor;
+                //mat.color = new Color(1f, 1f, 1f, 0.5f);
+                mat.color = Color.red;
                 if (directionEffectSurfaceConveyor != 0)
                 {
                     effectSurface.transform.rotation = Quaternion.Euler(90, 90 * (directionEffectSurfaceConveyor - 1), 0);
                     StartCoroutine(ScrollTexture(effectSurface.GetComponent<Renderer>().material, scrollSpeedConveyorX, scrollSpeedConveyorY));
                 }
                 break;
+            case SurfaceType.Conveyor_Tile:
+                mat.mainTexture = effectConveyor;
+                mat.color = new Color(1f, 1f, 1f, 0.5f);
+                effectSurface.transform.rotation = Quaternion.Euler(90, 90 * (number - 1), 0);
+                StartCoroutine(ScrollTexture(effectSurface.GetComponent<Renderer>().material, scrollSpeedConveyor_TileX, scrollSpeedConveyor_TileY));
+                break;
             case SurfaceType.Portal:
+                //effectPortal.colo
                 mat.mainTexture = effectPortal;
                 mat.mainTextureScale = scalePortal;
                 mat.mainTextureOffset = (Vector2.one - scalePortal) / 2;
+                mat.color = PickColor(number);
                 break;
             case SurfaceType.RippleWater:
                 mat.mainTexture = effectRippleWater;
@@ -120,7 +139,34 @@ public class EffectSurfaceManager : MonoBehaviour
                 mat.mainTextureScale = scaleJump;
                 mat.mainTextureOffset = (Vector2.one - scaleJump) / 2;
                 break;
+            case SurfaceType.Ice:
+                mat.mainTexture = effectIce;
+                mat.color = new Color(1f, 1f, 1f, 0.5f);
+                break;
         }
+    }
+    Color PickColor(int index)
+    {
+        switch (index)
+        {
+            case 1:
+                return Color.red;
+            case 2:
+                return Color.green;
+            case 3:
+                return Color.blue;
+            case 4:
+                return Color.yellow;
+            case 5:
+                return Color.grey;
+            case 6:
+                return Color.magenta;
+            case 7:
+                return Color.black;
+            case 8:
+                return Color.cyan;
+        }
+        return Color.white;
     }
 
     GameObject SpawnByIndex(int[] index)

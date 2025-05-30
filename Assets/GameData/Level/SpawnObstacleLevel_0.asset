@@ -18,33 +18,16 @@ MonoBehaviour:
   - 0,0,0,0,0
   - 0,0,0,0,0
   - 0,0,0,0,0
-  spawnPlanes:
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  spawnChangeDirectionOb:
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
+  spawnPlanes: []
+  spawnChangeDirectionOb: []
   spawnBlockRoll: []
   spawnDive: []
   spawnWater: []
-  spawnGoal:
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  spawnBall:
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
-  - 0,0,0,0,0
+  spawnJump: []
+  spawnPortal: []
+  spawnConveyor: []
+  spawnGoal: []
+  spawnBall: []
   itemMove:
   - 0,0,0
   hint: []
@@ -52,3 +35,4 @@ MonoBehaviour:
   positionX: 0
   positionY: 0
   positionZ: 0
+  obstacleSizeY: 0

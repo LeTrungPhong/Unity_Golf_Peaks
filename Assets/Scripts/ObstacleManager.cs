@@ -15,7 +15,8 @@ public enum TypePrefab
     BlockRoll,
     Dive,
     Water,
-    Jump
+    Jump,
+    Ice
 }
 
 public class ObstacleManager : MonoBehaviour
@@ -29,6 +30,8 @@ public class ObstacleManager : MonoBehaviour
     [SerializeField] private GameObject divePrefab;
     [SerializeField] private GameObject waterPrefab;
     [SerializeField] private GameObject jumpPrefab;
+    [SerializeField] private GameObject conveyorPrefab;
+    [SerializeField] private GameObject icePrefab;
     [SerializeField] private GameObject goalGameObjectPrefab;
     private GameObject player;
     private GameObject golfBall;
@@ -56,6 +59,8 @@ public class ObstacleManager : MonoBehaviour
     public int[][] spawnBall;
     public int[][] spawnJump;
     public int[][] spawnPortal;
+    public int[][] spawnConveyor;
+    public int[][] spawnIce;
     public int[][] hint;
     public GameObject[][] spawnGameObjectJump;
 
@@ -88,12 +93,12 @@ public class ObstacleManager : MonoBehaviour
                 {
                     this.Spawn(i, this.spawnObstacles[i][j], j, TypePrefab.Obstacle);
                 }
-                if (this.spawnPlanes[i][j] > 0)
+                if (this.spawnPlanes != null && this.spawnPlanes[i][j] > 0)
                 {
                     GameObject planeObject = Instantiate(planePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.Euler(0, 90 * (this.spawnPlanes[i][j] + 2), 0));
                     planeObject.transform.localScale = new Vector3(1, obstacleSizeY, 1);
                 }
-                if (this.spawnChangeDirectionOb[i][j] > 0)
+                if (this.spawnChangeDirectionOb != null && this.spawnChangeDirectionOb[i][j] > 0)
                 {
                     int numberDirection = this.spawnChangeDirectionOb[i][j];
                     int changeX = (numberDirection == 4) || (numberDirection == 3) ? 1 : -1;
@@ -104,7 +109,7 @@ public class ObstacleManager : MonoBehaviour
                 if (this.spawnGoal[i][j] > 0)
                 {
                     //Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
-                    effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j });
+                    effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j }, 0);
                     GameObject goalGameObject = Instantiate(goalGameObjectPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j] - 1) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
                     goalGameObject.transform.localScale = new Vector3(scaleGameObjectGoal, scaleGameObjectGoal, scaleGameObjectGoal);
                 }
@@ -203,6 +208,21 @@ public class ObstacleManager : MonoBehaviour
             }
         }
 
+        if (this.spawnIce != null)
+        {
+            for (int i = 0; i < this.spawnIce.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnIce[i].Length; ++j)
+                {
+                    if (this.spawnIce[i][j] > 0)
+                    {
+                        //this.Spawn(i, this.spawnIce[i][j], j, TypePrefab.Ice);
+                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Ice, new int[] { i, this.spawnObstacles[i][j], j });
+                    }
+                }
+            }
+        }
+
         if (this.spawnPortal != null)
         {
             for (int i = 0; i < this.spawnPortal.Length; ++i)
@@ -212,7 +232,21 @@ public class ObstacleManager : MonoBehaviour
                     if (this.spawnPortal[i][j] > 0)
                     {
                         //Debug.Log("Check Spawn Portal");
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j });
+                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j }, this.spawnPortal[i][j]);
+                    }
+                }
+            }
+        }
+
+        if (this.spawnConveyor != null)
+        {
+            for (int i = 0; i < this.spawnConveyor.Length; ++i)
+            {
+                for (int j = 0; j < this.spawnConveyor[i].Length; ++j)
+                {
+                    if (this.spawnConveyor[i][j] > 0)
+                    {
+                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Conveyor_Tile, new int[] { i, this.spawnObstacles[i][j], j }, this.spawnConveyor[i][j]);
                     }
                 }
             }
@@ -276,6 +310,9 @@ public class ObstacleManager : MonoBehaviour
                 break;
             case TypePrefab.Jump:
                 SpawnObstacle(indexX, high, indexZ, jumpPrefab, type);
+                break;
+            case TypePrefab.Ice:
+                SpawnObstacle(indexX, high, indexZ, icePrefab, type);
                 break;
             default:
                 break;
@@ -346,6 +383,9 @@ public class ObstacleManager : MonoBehaviour
                 break;
             case TypePrefab.Jump:
                 spawnArray = spawnJump;
+                break;
+            case TypePrefab.Ice:
+                spawnArray = spawnIce;
                 break;
         }
 
@@ -473,6 +513,10 @@ public class ObstacleManager : MonoBehaviour
 
     public int checkPlane(int[] positionIndex)
     {
+        if (spawnPlanes == null)
+        {
+            return 0;
+        }
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return 0;
@@ -490,6 +534,10 @@ public class ObstacleManager : MonoBehaviour
 
     public int checkPortal(int[] positionIndex)
     {
+        if (spawnPortal == null)
+        {
+            return 0;
+        }
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return 0;
@@ -506,13 +554,34 @@ public class ObstacleManager : MonoBehaviour
         return 0;
     }
 
+    public int checkConveyor(int[] positionIndex)
+    {
+        if (spawnConveyor == null)
+        {
+            return 0;
+        }
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return 0;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return 0;
+        }
+        if (spawnConveyor[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return spawnConveyor[positionIndex[0]][positionIndex[2]];
+        }
+        return 0;
+    }
+
     public Vector3 tele(int number, int indexX, int indexZ)
     {
         for (int i = 0; i < this.spawnPortal.Length; ++i)
         {
             for (int j = 0; j < this.spawnPortal[i].Length; ++j)
             {
-                if (this.spawnPortal[i][j] == number && i != indexX && j != indexZ)
+                if (this.spawnPortal[i][j] == number && (i != indexX || j != indexZ))
                 {
                     return new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
                 }
@@ -524,6 +593,10 @@ public class ObstacleManager : MonoBehaviour
 
     public int checkChangeDirection(int[] positionIndex)
     {
+        if (spawnChangeDirectionOb == null)
+        {
+            return 0;
+        }
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return 0;
@@ -678,5 +751,42 @@ public class ObstacleManager : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    public bool checkIce(int[] positionIndex)
+    {
+        //if (spawnIce == null) return false;
+
+        //if (positionIndex[0] >= spawnIce.Length || positionIndex[0] < 0)
+        //{
+        //    return false;
+        //}
+        //if (positionIndex[2] >= spawnIce[positionIndex[0]].Length || positionIndex[2] < 0)
+        //{
+        //    return false;
+        //}
+        //if (positionIndex[1] >= spawnIce[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        //{
+        //    return false;
+        //}
+        //return true;
+
+        if (spawnIce == null)
+        {
+            return false;
+        }
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
+        {
+            return false;
+        }
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
+        {
+            return false;
+        }
+        if (spawnIce[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        {
+            return true;
+        }
+        return false;
     }
 }

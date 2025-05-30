@@ -38,6 +38,7 @@ public class BallController : MonoBehaviour
     private int[] direction = new int[] { 0, 0, 0 };
     private float speed = 0.35f;
     public bool checkBallMove = false;
+    private bool checkMoveIce = true;
 
     [SerializeField] private ParticleSystem particleSystemBallMove;
     [SerializeField] private ParticleSystem particleSystemWinGame;
@@ -138,6 +139,53 @@ public class BallController : MonoBehaviour
             addMoveValid();
         }
 
+        {
+            int[] positionIndex = getIndex();
+            int checkConveyor = obstacleManager.checkConveyor(positionIndex);
+            while (checkConveyor > 0)
+            {
+                //Debug.Log()
+                numberMove++;
+
+                switch (checkConveyor)
+                {
+                    case 1:
+                        direction = new int[] { -1, 0, 0 };
+                        break;
+                    case 2:
+                        direction = new int[] { 0, 0, 1 };
+                        break;
+                    case 3:
+                        direction = new int[] { 1, 0, 0 };
+                        break;
+                    case 4:
+                        direction = new int[] { 0, 0, -1 };
+                        break;
+                    default:
+                        break;
+                }
+
+                addMoveValid();
+                positionIndex = getIndex();
+                checkConveyor = obstacleManager.checkConveyor(positionIndex);
+            }
+        }
+
+        {
+            int[] positionIndex = getIndex();
+            //positionIndex[1] = positionIndex[1] - 1;
+            Debug.Log(obstacleManager.checkIce(positionIndex));
+            while (obstacleManager.checkIce(positionIndex) && (checkMoveIce))
+            {
+                numberMove++;
+                addMoveValid();
+                positionIndex = getIndex();
+                //positionIndex[1] = positionIndex[1] - 1;
+            }
+        }
+
+        checkMoveIce = true;
+
         this.addInterpolation(interpolation.Last().end, interpolation.Last().end, 0);
     }
 
@@ -235,11 +283,10 @@ public class BallController : MonoBehaviour
                 // di chuyen den chan plane
                 this.addInterpolation(positionLast, position1, speed / 2);
                 // di chuyen den giua doc plane
-
                 this.addInterpolation(position1, new Vector3(position1.x + (float)direction[0] * obstacleSize / 2, position1.y + (float)obstacleSizeY / 2, position1.z + (float)direction[2] * obstacleSize / 2), speed / 2);
 
                 int indexPlaneContinue = 1;
-                while(obstacleManager.checkPlane(new int[] { positionIndexLast[0] + direction[0] * (1 + indexPlaneContinue), positionIndexLast[1] + direction[1] + indexPlaneContinue, positionIndexLast[2] + direction[2] * (1 + indexPlaneContinue) }) > 0 && numberMove > 0)
+                while(obstacleManager.checkPlane(new int[] { positionIndexLast[0] + direction[0] * (1 + indexPlaneContinue), positionIndexLast[1] + direction[1] + indexPlaneContinue, positionIndexLast[2] + direction[2] * (1 + indexPlaneContinue) }) > 0 && numberMove > 1)
                 {
                     Vector3 position5 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
                     Vector3 position6 = new Vector3(position5.x + (float)direction[0] * (obstacleSize), position5.y + obstacleSizeY, position5.z + (float)direction[2] * obstacleSize);
@@ -276,6 +323,12 @@ public class BallController : MonoBehaviour
                     // xuong lai vi tri ban dau
                     this.addInterpolation(position1, positionLast, speed / 2);
                     direction = new int[] { -direction[0], direction[1], -direction[2] };
+
+                    int checkPortal = this.obstacleManager.checkPortal(getPositionIndex(positionLast));
+                    if (checkPortal > 0)
+                    {
+                        tele(checkPortal);
+                    }
                 }
             }
             else
@@ -289,7 +342,70 @@ public class BallController : MonoBehaviour
             }
             return;
         }
-        
+
+        int checkChangeDirectionContinue = obstacleManager.checkChangeDirection(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1], positionIndexLast[2] + direction[2] });
+
+        if (checkChangeDirectionContinue > 0)
+        {
+            // co
+            //Debug.Log(checkChangeDirectionContinue)
+            if ((checkChangeDirectionContinue == 1 || checkChangeDirectionContinue == 2) && (direction[0] > 0))
+            {
+                Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(positionLast, position1, speed / 4);
+                this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
+                this.addInterpolation(position1, positionLast, speed / 4);
+                direction = new int[] { -1, 0, 0 };
+
+                //if (numberMove < 1)
+                //{
+                //    checkMoveIce = false;
+                //}
+
+            } else if ((checkChangeDirectionContinue == 2 || checkChangeDirectionContinue == 3) && (direction[2] < 0))
+            {
+                Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(positionLast, position1, speed / 4);
+                this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
+                this.addInterpolation(position1, positionLast, speed / 4);
+                direction = new int[] { 0, 0, 1 };
+
+                Debug.Log(numberMove + " " + checkMoveIce);
+
+                if (numberMove < 1)
+                {
+                    checkMoveIce = false;
+                }
+
+                Debug.Log(numberMove + " " + checkMoveIce);
+            } else if ((checkChangeDirectionContinue == 3 || checkChangeDirectionContinue == 4) && (direction[0] < 0))
+            {
+                Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(positionLast, position1, speed / 4);
+                this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
+                this.addInterpolation(position1, positionLast, speed / 4);
+                direction = new int[] { 1, 0, 0 };
+
+                //if (numberMove < 1)
+                //{
+                //    checkMoveIce = false;
+                //}
+
+            } else if ((checkChangeDirectionContinue == 4 || checkChangeDirectionContinue == 1) && (direction[2] > 0)) {
+                Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
+                this.addInterpolation(positionLast, position1, speed / 4);
+                this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
+                this.addInterpolation(position1, positionLast, speed / 4);
+                direction = new int[] { 0, 0, -1 };
+
+                //if (numberMove < 1)
+                //{
+                //    checkMoveIce = false;
+                //}
+
+            }
+        }
+
         // kiem tra vi tri tiep theo co obstacle, blockroll, dive, jump, water khong
         if (
             obstacleManager.checkObstacle(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
@@ -297,6 +413,7 @@ public class BallController : MonoBehaviour
             && obstacleManager.checkDive(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkJump(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkWater(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            //&& obstacleManager.checkIce(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             )
         {
             // khong co thi di tiep
@@ -315,6 +432,8 @@ public class BallController : MonoBehaviour
             this.addInterpolation(interpolation[interpolation.Count - 1].end, positionLast, speed / 2);
             // doi huong
             direction = new int[] { -direction[0], direction[1], -direction[2] };
+
+            checkMoveIce = false;
 
             int checkPortal = this.obstacleManager.checkPortal(getPositionIndex(positionLast));
             if (checkPortal > 0)
@@ -357,8 +476,6 @@ public class BallController : MonoBehaviour
 
     void checkMoveDown(int[] positionIndex)
     {
-        
-
         // kiem tra co jump tai duoi diem ke tiep khong
         if (obstacleManager.checkJump(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
@@ -397,7 +514,9 @@ public class BallController : MonoBehaviour
         }
 
         // kiem tra co obstacle tai duoi diem ke tiep khong
-        if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }) || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+        if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }) 
+            || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+            //|| obstacleManager.checkIce(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
             // vi tri hien tai
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
@@ -617,7 +736,10 @@ public class BallController : MonoBehaviour
                     // di chuyen
                     this.addInterpolation(position2, position3, speed / 4);
                 }
-            } else if(obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false)
+            } else if(obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false 
+                && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                )
             {
                 this.addInterpolation(vector1, new Vector3(vector1.x, vector1.y - obstacleSizeY, vector1.z), speed / 4);
             }
@@ -740,11 +862,21 @@ public class BallController : MonoBehaviour
                 numberDown = 0;
                 positionLastTemp = positionLast;
                 checkDownPlane = 1;
+
+                int checkPortal1 = obstacleManager.checkPortal(positionIndex);
+                if (checkPortal1 > 0)
+                {
+                    tele(checkPortal1);
+                    Vector3 positionLast1 = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
+                    positionIndex = getPositionIndex(positionLast1);
+                    positionLastTemp = positionLast1;
+                }
             } else if (
                 obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false 
                 && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 && obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 )
             {
                 if (
@@ -752,6 +884,7 @@ public class BallController : MonoBehaviour
                     && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     && obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
+                    //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     )
                 {
                     //this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
