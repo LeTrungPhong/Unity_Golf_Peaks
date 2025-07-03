@@ -76,7 +76,7 @@ public class BallController : MonoBehaviour
     void Update()
     {
         //Debug.Log(obstacleManager.spawnObstacles);
-        Debug.Log(gameManager.isGameOver);
+        //Debug.Log(gameManager.isGameOver);
         if (obstacleManager.spawnObstacles != null && gameManager.isGameOver == false)
         {
             movePlayer();
@@ -963,7 +963,7 @@ public class BallController : MonoBehaviour
         //    return;
         //}
 
-        Debug.Log("Move player");
+        //Debug.Log("Move player");
 
         if (interpolation.Count > 0)
         {

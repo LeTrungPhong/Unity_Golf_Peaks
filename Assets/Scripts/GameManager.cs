@@ -28,6 +28,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameObjectHintDirect;
     [SerializeField] private GameObject gameObjectCamera;
     [SerializeField] private EffectSurfaceManager effectSurfaceManager;
+    [SerializeField] private GameObject touch;
+    private bool touchValid = false;
+    private Vector3 touchPosition;
+    [SerializeField] private GameObject touchText;
+    [SerializeField] private GameObject hintFirstText;
 
     // image turn
     [SerializeField] private Texture2D textureTurnRoll;
@@ -55,6 +60,7 @@ public class GameManager : MonoBehaviour
     private Button selectButton;
     private bool hiddenSoundButtonClickFirst = true;
     public float positionEndY = -5.0f;
+    private bool checkShowTouch = false;
 
     private void Awake()
     {
@@ -75,8 +81,6 @@ public class GameManager : MonoBehaviour
 
         hintTransform.localScale = new Vector3(2, 2, 2);
         gameObjectHintDirect.SetActive(false);
-
-
     }
 
     // Start is called before the first frame update
@@ -90,6 +94,52 @@ public class GameManager : MonoBehaviour
             GameNotData();
         }
         FocusButton();
+
+        Debug.Log("Level: " + levelManager.levelSelected);
+
+        if (levelManager.levelSelected == 0)
+        {
+            StartCoroutine(DelayHint());
+        }
+    }
+
+    void StartTouch()
+    {
+        touch.transform.position = touch.transform.position + new Vector3(-100, -100, 0);
+        touchPosition = touch.transform.position;
+
+        touch.SetActive(true);
+        touch.transform.DOMove(touch.transform.position + new Vector3(200, 200, 0), 1.2f)
+            .SetLoops(-1);
+        touchText.SetActive(true);
+        touchText.transform.position = new Vector3(touchPosition.x + 200 / 2, touchPosition.y + 350, 0);
+    }
+
+    IEnumerator DelayHint()
+    {
+        yield return new WaitForSeconds(2.0f);
+        StartHint();
+    }
+
+    public void StopTouch()
+    {
+        touch.SetActive(false);
+        touch.transform.DOKill();
+        touchText.SetActive(false);
+    }
+
+    void StartHint()
+    {
+        Vector3 vectorHint = listButton[hint[0][0].select].transform.position;
+        canvasScript.HintToMove(vectorHint);
+        hintFirstText.SetActive(true);
+        hintFirstText.transform.position = new Vector3(vectorHint.x + 120 / 2, vectorHint.y + heigtButton + 200 + 150, 0);
+    }
+
+    public void StopHint()
+    {
+        hintFirstText.SetActive(false);
+        canvasScript.HiddenHint();
     }
 
     // Update is called once per frame
@@ -284,6 +334,20 @@ public class GameManager : MonoBehaviour
         rectFly.pivot = new Vector2(0.5f, 0.5f);
         rectFly.sizeDelta = new Vector2(100, 100);
 
+        GameObject bgFly = new GameObject("BG Fly");
+        bgFly.transform.SetParent(objectTurnFly.transform);
+
+        Vector2 positionFly = new Vector2(textTurnFly.width / 2, textTurnFly.height / 2);
+
+        RectTransform rectBG = bgFly.AddComponent<RectTransform>();
+        rectBG.anchorMin = rectBG.anchorMax = new Vector2(0.5f, 0.5f);
+        rectBG.pivot = new Vector2(0.5f, 0.5f);
+        rectBG.sizeDelta = new Vector2(100, 100);
+        rectBG.anchoredPosition = new Vector2(positionFly.x, positionFly.y);
+
+        Image bgImage = bgFly.AddComponent<Image>();
+        bgImage.color = Color.white;
+
         Sprite spriteFly = Sprite.Create(textTurnFly, new Rect(0, 0, textTurnFly.width, textTurnFly.height), new Vector2(0.5f, 0.5f));
 
         GameObject imageObjectFly = new GameObject("Image Fly");
@@ -291,7 +355,7 @@ public class GameManager : MonoBehaviour
 
         RectTransform rectFlyImage = imageObjectFly.AddComponent<RectTransform>();
         rectFlyImage.localRotation = Quaternion.Euler(0, 0, -90.0f);
-        rectFlyImage.anchoredPosition = new Vector2(textTurnFly.width / 2, textTurnFly.height);
+        rectFlyImage.anchoredPosition = new Vector2(positionFly.x, positionFly.y);
 
         Image imageTurnFly = imageObjectFly.AddComponent<Image>();
         imageTurnFly.sprite = spriteFly;
@@ -300,7 +364,7 @@ public class GameManager : MonoBehaviour
         textObjectFly.transform.SetParent(objectTurnFly.transform);
 
         RectTransform rectFlyText = textObjectFly.AddComponent<RectTransform>();
-        rectFlyText.anchoredPosition = new Vector2(textureTurnRoll.width / 2 - 5, textureTurnRoll.height);
+        rectFlyText.anchoredPosition = new Vector2(positionFly.x - 5, positionFly.y);
 
         Text textFly = textObjectFly.AddComponent<Text>();
         textFly.text = value[2].ToString();
@@ -308,6 +372,8 @@ public class GameManager : MonoBehaviour
         textFly.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         textFly.fontSize = 50;
         textFly.alignment = TextAnchor.MiddleCenter;
+
+        
 
         //Text textFly = textObjectTurnFly.AddComponent<Text>();
         //textFly.text = value[2].ToString();
@@ -371,6 +437,12 @@ public class GameManager : MonoBehaviour
             playerController.setNumber(value[0], value[1], value[2]);
             selectButton = button;
             SelectButton(button);
+            if (levelManager.levelSelected == 0 && hiddenSoundButtonClickFirst == false && checkShowTouch == false)
+            {
+                StopHint();
+                StartTouch();
+                checkShowTouch = true;
+            }
             if (hiddenSoundButtonClickFirst == false)
             {
                 //SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);

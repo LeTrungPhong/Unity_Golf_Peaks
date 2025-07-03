@@ -20,17 +20,12 @@ MonoBehaviour:
   - 0,0,0,0,0
   spawnPlanes: []
   spawnChangeDirectionOb: []
-  spawnBlockRoll: []
-  spawnDive: []
-  spawnWater: []
-  spawnJump: []
   spawnPortal: []
   spawnConveyor: []
-  spawnIce: []
-  spawnGoal: []
-  spawnBall: []
   itemMove:
   - 0,1,0
+  - 0,2,0
+  - 0,3,0
   hint:
   - 0-1
   highFly: 0

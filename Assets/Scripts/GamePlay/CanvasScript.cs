@@ -8,6 +8,7 @@ public class CanvasScript : MonoBehaviour
 {
     [SerializeField] private Button buttonHint;
     [SerializeField] private Image imageArrowHint;
+    private RectTransform rectImageArrow;
     [SerializeField] private Button buttonReset;
     [SerializeField] private Image imageBreakHint;
 
@@ -31,6 +32,8 @@ public class CanvasScript : MonoBehaviour
         //    .SetLoops(-1, LoopType.Yoyo)
         //    .SetEase(Ease.Linear);
 
+        rectImageArrow = imageArrowHint.GetComponent<RectTransform>();
+
         imageArrowHint.gameObject.SetActive(false);
     }
 
@@ -52,13 +55,13 @@ public class CanvasScript : MonoBehaviour
         checkUseHint = true;
     }
 
-    void HintArrowRight(Vector3 postHint, Vector3 trans, int MoveX)
+    void HintArrowDown(Vector3 postHint, Vector3 trans, int MoveY)
     {
         imageArrowHint.gameObject.SetActive(true);
         imageArrowHint.gameObject.transform.position = postHint + trans;
-        imageArrowHint.gameObject.transform.eulerAngles = new Vector3(0, 0, -90);
+        imageArrowHint.gameObject.transform.eulerAngles = new Vector3(0, 0, 180);
         imageArrowHint.rectTransform.DOKill();
-        imageArrowHint.rectTransform.DOMoveX(imageArrowHint.rectTransform.position.x + MoveX, 0.5f)
+        imageArrowHint.rectTransform.DOMoveY(imageArrowHint.rectTransform.position.y + MoveY, 0.5f)
             .SetLoops(-1, LoopType.Yoyo)
             .SetEase(Ease.Linear);
         checkUseHint = true;
@@ -71,7 +74,7 @@ public class CanvasScript : MonoBehaviour
 
     public void HintToMove(Vector3 postHint)
     {
-        HintArrowRight(postHint, - new Vector3(gameManager.widthButton, 0, 0), 50);
+        HintArrowDown(postHint, new Vector3(-gameManager.widthButton / 2 + rectImageArrow.sizeDelta.x / 2, +gameManager.heigtButton + rectImageArrow.sizeDelta.y / 2 + 200, 0), -50);
     }
 
     public void HiddenHint()
