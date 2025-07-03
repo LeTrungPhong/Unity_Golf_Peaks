@@ -75,6 +75,8 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(obstacleManager.spawnObstacles);
+        Debug.Log(gameManager.isGameOver);
         if (obstacleManager.spawnObstacles != null && gameManager.isGameOver == false)
         {
             movePlayer();
@@ -125,11 +127,16 @@ public class BallController : MonoBehaviour
 
     void ballMove()
     {
+        Debug.Log("Ball move");
+        Debug.Log(turn);
+        Debug.Log(numberMove);
+        Debug.Log(numberUp);
         checkBallMove = true;
         canvasScript.HiddenHint();
         if (obstacleManager.spawnObstacles == null) return;
         if (turn == 0)
         {
+            Debug.Log("Turn = 0");
             addMoveValid();
             addFlyValid();
         }
@@ -142,45 +149,42 @@ public class BallController : MonoBehaviour
         {
             int[] positionIndex = getIndex();
             int checkConveyor = obstacleManager.checkConveyor(positionIndex);
-            while (checkConveyor > 0)
+            bool checkIce = obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
+            while (checkConveyor > 0 || (checkIce && checkMoveIce))
             {
-                //Debug.Log()
                 numberMove++;
 
-                switch (checkConveyor)
+                if (checkConveyor > 0)
                 {
-                    case 1:
-                        direction = new int[] { -1, 0, 0 };
-                        break;
-                    case 2:
-                        direction = new int[] { 0, 0, 1 };
-                        break;
-                    case 3:
-                        direction = new int[] { 1, 0, 0 };
-                        break;
-                    case 4:
-                        direction = new int[] { 0, 0, -1 };
-                        break;
-                    default:
-                        break;
+                    switch (checkConveyor)
+                    {
+                        case 1:
+                            direction = new int[] { -1, 0, 0 };
+                            break;
+                        case 2:
+                            direction = new int[] { 0, 0, 1 };
+                            break;
+                        case 3:
+                            direction = new int[] { 1, 0, 0 };
+                            break;
+                        case 4:
+                            direction = new int[] { 0, 0, -1 };
+                            break;
+                        default:
+                            break;
+                    }
+
+                    addMoveValid();
+                    positionIndex = getIndex();
+                    checkConveyor = obstacleManager.checkConveyor(positionIndex);
+                    checkIce = obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
+                } else if (checkIce && checkMoveIce)
+                {
+                    addMoveValid();
+                    positionIndex = getIndex();
+                    checkIce = obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] });
+                    checkConveyor = obstacleManager.checkConveyor(positionIndex);
                 }
-
-                addMoveValid();
-                positionIndex = getIndex();
-                checkConveyor = obstacleManager.checkConveyor(positionIndex);
-            }
-        }
-
-        {
-            int[] positionIndex = getIndex();
-            //positionIndex[1] = positionIndex[1] - 1;
-            Debug.Log(obstacleManager.checkIce(positionIndex));
-            while (obstacleManager.checkIce(positionIndex) && (checkMoveIce))
-            {
-                numberMove++;
-                addMoveValid();
-                positionIndex = getIndex();
-                //positionIndex[1] = positionIndex[1] - 1;
             }
         }
 
@@ -207,6 +211,7 @@ public class BallController : MonoBehaviour
 
     void handleMoveValid(bool checkOnJump)
     {
+        Debug.Log("Handle move valid");
         // vi tri index hien tai
         Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
         int[] positionIndexLast = getPositionIndex(positionLast);
@@ -356,53 +361,34 @@ public class BallController : MonoBehaviour
                 this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
                 this.addInterpolation(position1, positionLast, speed / 4);
                 direction = new int[] { -1, 0, 0 };
-
-                //if (numberMove < 1)
-                //{
-                //    checkMoveIce = false;
-                //}
-
-            } else if ((checkChangeDirectionContinue == 2 || checkChangeDirectionContinue == 3) && (direction[2] < 0))
+                return;
+            }
+            else if ((checkChangeDirectionContinue == 2 || checkChangeDirectionContinue == 3) && (direction[2] < 0))
             {
                 Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
                 this.addInterpolation(positionLast, position1, speed / 4);
                 this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
                 this.addInterpolation(position1, positionLast, speed / 4);
                 direction = new int[] { 0, 0, 1 };
-
-                Debug.Log(numberMove + " " + checkMoveIce);
-
-                if (numberMove < 1)
-                {
-                    checkMoveIce = false;
-                }
-
-                Debug.Log(numberMove + " " + checkMoveIce);
-            } else if ((checkChangeDirectionContinue == 3 || checkChangeDirectionContinue == 4) && (direction[0] < 0))
+                return;
+            }
+            else if ((checkChangeDirectionContinue == 3 || checkChangeDirectionContinue == 4) && (direction[0] < 0))
             {
                 Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
                 this.addInterpolation(positionLast, position1, speed / 4);
                 this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
                 this.addInterpolation(position1, positionLast, speed / 4);
                 direction = new int[] { 1, 0, 0 };
-
-                //if (numberMove < 1)
-                //{
-                //    checkMoveIce = false;
-                //}
-
-            } else if ((checkChangeDirectionContinue == 4 || checkChangeDirectionContinue == 1) && (direction[2] > 0)) {
+                return;
+            }
+            else if ((checkChangeDirectionContinue == 4 || checkChangeDirectionContinue == 1) && (direction[2] > 0))
+            {
                 Vector3 position1 = new Vector3(positionLast.x + (float)direction[0] * (obstacleSize / 2 - ballSize / 2), positionLast.y, positionLast.z + (float)direction[2] * (obstacleSize / 2 - ballSize / 2));
                 this.addInterpolation(positionLast, position1, speed / 4);
                 this.addInterpolation(position1, position1, 0.01f, SoundPlayerType.BALL_ROLL, SoundPlayerType.BALL_RECOIL);
                 this.addInterpolation(position1, positionLast, speed / 4);
                 direction = new int[] { 0, 0, -1 };
-
-                //if (numberMove < 1)
-                //{
-                //    checkMoveIce = false;
-                //}
-
+                return;
             }
         }
 
@@ -413,11 +399,12 @@ public class BallController : MonoBehaviour
             && obstacleManager.checkDive(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkJump(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             && obstacleManager.checkWater(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
-            //&& obstacleManager.checkIce(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
+            && obstacleManager.checkIce(new int[] { positionIndexLast[0] + direction[0], positionIndexLast[1] + direction[1], positionIndexLast[2] + direction[2] }) == false
             )
         {
             // khong co thi di tiep
             // di chuyen
+            Debug.Log("Kiem tra obstacle, blockroll, dive, jump, water: true");
             this.addInterpolation(positionLast, new Vector3(positionLast.x + (float)direction[0] * ((float)obstacleSize / 2), positionLast.y, positionLast.z + (float)direction[2] * ((float)obstacleSize / 2)), speed / 2);
             // kiem tra roi xuong
             checkMoveDown(this.getPositionIndex(positionLast));
@@ -433,7 +420,10 @@ public class BallController : MonoBehaviour
             // doi huong
             direction = new int[] { -direction[0], direction[1], -direction[2] };
 
-            checkMoveIce = false;
+            if (numberMove <= 1)
+            {
+                checkMoveIce = false;
+            }
 
             int checkPortal = this.obstacleManager.checkPortal(getPositionIndex(positionLast));
             if (checkPortal > 0)
@@ -512,12 +502,13 @@ public class BallController : MonoBehaviour
             WaterMoveBack();
             return;
         }
-
+        Debug.Log("Checck ice");
         // kiem tra co obstacle tai duoi diem ke tiep khong
         if (obstacleManager.checkObstacle(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }) 
-            || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
-            //|| obstacleManager.checkIce(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
+            || obstacleManager.checkDive(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] })
+            || obstacleManager.checkIce(new int[] { positionIndex[0] + direction[0], positionIndex[1] - 1, positionIndex[2] + direction[2] }))
         {
+            Debug.Log("Checck ice2");
             // vi tri hien tai
             Vector3 positionLast = interpolation.Count == 0 ? player.transform.position : interpolation[interpolation.Count - 1].end;
             // di chuyen tiep
@@ -604,11 +595,13 @@ public class BallController : MonoBehaviour
                     obstacleManager.checkObstacle(new int[] { index[0], index[1] - 1, index[2] }) == true
                     || obstacleManager.checkBlockRoll(new int[] { index[0], index[1] - 1, index[2] }) == true
                     || obstacleManager.checkJump(new int[] { index[0], index[1] - 1, index[2] }) == true
+                    || obstacleManager.checkIce(new int[] { index[0], index[1] - 1, index[2] }) == true
                 )
                 && obstacleManager.checkPlane(index) == 0
-                && obstacleManager.checkWater(new int[] { index[0], index[1], index[2] }) == false
+                && obstacleManager.checkWater(new int[] { index[0], index[1] - 1, index[2] }) == false
                 )
             {
+                checkMoveIce = false;
                 // vi tri thuc te
                 Vector3 position1 = new Vector3(index[0] * obstacleSize, index[1] * obstacleSizeY - (float)obstacleSizeY / 2 + ballSize / 2, index[2] * obstacleSize);
                 // di chuyen
@@ -738,7 +731,7 @@ public class BallController : MonoBehaviour
                 }
             } else if(obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false 
                 && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
-                //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                && obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 )
             {
                 this.addInterpolation(vector1, new Vector3(vector1.x, vector1.y - obstacleSizeY, vector1.z), speed / 4);
@@ -876,7 +869,7 @@ public class BallController : MonoBehaviour
                 && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 && obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
-                //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
+                && obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 1, positionIndex[2] }) == false
                 )
             {
                 if (
@@ -884,7 +877,7 @@ public class BallController : MonoBehaviour
                     && obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     && obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     && obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
-                    //&& obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
+                    && obstacleManager.checkIce(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }) == false
                     )
                 {
                     //this.addInterpolation(positionLast, new Vector3(positionLast.x, positionLast.y - obstacleSize, positionLast.z), speed / 4, SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
@@ -894,6 +887,10 @@ public class BallController : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log(obstacleManager.checkObstacle(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }));
+                    Debug.Log(obstacleManager.checkDive(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }));
+                    Debug.Log(obstacleManager.checkBlockRoll(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }));
+                    Debug.Log(obstacleManager.checkJump(new int[] { positionIndex[0], positionIndex[1] - 2, positionIndex[2] }));
                     numberDown = numberDown + 1;
                     Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSizeY * numberDown, positionLastTemp.z);
                     this.addInterpolation(positionLastTemp, position1, (speed / 4) * numberDown, SoundPlayerType.BALL_FLY, numberDown == 1 ? SoundPlayerType.BALL_FLY : SoundPlayerType.BALL_FALLING);
@@ -932,6 +929,7 @@ public class BallController : MonoBehaviour
             Vector3 position1 = new Vector3(positionLastTemp.x, positionLastTemp.y - obstacleSizeY * numberDown, positionLastTemp.z);
             this.addInterpolation(positionLastTemp, position1, numberDown * (speed / 4), SoundPlayerType.BALL_FLY, SoundPlayerType.BALL_FLY);
             numberDown = 0;
+            Debug.Log("CHeck");
         }
     }
 
@@ -964,6 +962,8 @@ public class BallController : MonoBehaviour
         //    //Debug.Log("Game over");
         //    return;
         //}
+
+        Debug.Log("Move player");
 
         if (interpolation.Count > 0)
         {

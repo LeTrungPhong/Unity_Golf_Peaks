@@ -535,6 +535,8 @@ MonoBehaviour:
   gameObjectHintDirect: {fileID: 75805842}
   gameObjectCamera: {fileID: 963194225}
   effectSurfaceManager: {fileID: 2040465911}
+  textureTurnRoll: {fileID: 2800000, guid: ce6cf539fd6c7884bb054a0f040f5fa2, type: 3}
+  textTurnFly: {fileID: 2800000, guid: 5d3ba50ab752f62428f18384ee9fe3de, type: 3}
   isGameOver: 0
   heigtButton: 50
   widthButton: 200

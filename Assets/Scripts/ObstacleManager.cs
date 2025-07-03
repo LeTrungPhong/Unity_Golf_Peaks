@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -16,7 +17,11 @@ public enum TypePrefab
     Dive,
     Water,
     Jump,
-    Ice
+    Portal,
+    Conveyor,
+    Ice,
+    Ball,
+    Goal,
 }
 
 public class ObstacleManager : MonoBehaviour
@@ -49,7 +54,7 @@ public class ObstacleManager : MonoBehaviour
     private float scaleGameObjectGoal = 0.5f;
 
     // set up obstacle spawn points
-    public int[][] spawnObstacles;
+    public ObstacleColume[][] spawnObstacles;
     public int[][] spawnPlanes;
     public int[][] spawnChangeDirectionOb;
     public int[][] spawnBlockRoll;
@@ -85,17 +90,67 @@ public class ObstacleManager : MonoBehaviour
     public void Spawn()
     {
         if (spawnObstacles == null) return;
+
+        this.spawnGameObjectJump = new GameObject[this.spawnObstacles.Length][];
+        this.effectSurfaceManager.effectGameObjectJump = new GameObject[this.spawnObstacles.Length][];
+        for (int k = 0; k < this.spawnGameObjectJump.Length; ++k)
+        {
+            this.spawnGameObjectJump[k] = new GameObject[this.spawnObstacles[k].Length];
+            this.effectSurfaceManager.effectGameObjectJump[k] = new GameObject[this.spawnObstacles[k].Length];
+        }
+
         for (int i = 0; i < this.spawnObstacles.Length; ++i)
         {
             for (int j = 0; j < this.spawnObstacles[i].Length; ++j)
             {
-                if (this.spawnObstacles[i][j] > 0)
+                if (this.spawnObstacles[i][j].number > 0)
                 {
-                    this.Spawn(i, this.spawnObstacles[i][j], j, TypePrefab.Obstacle);
+                    switch (this.spawnObstacles[i][j].type)
+                    {
+                        case TypePrefab.Obstacle:
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Obstacle);
+                            break;
+                        case TypePrefab.Jump:
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Jump);
+                            this.SpawnJump(i, this.spawnObstacles[i][j].number - 1, j);
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.Jump, new int[] { i, this.spawnObstacles[i][j].number, j });
+                            break;
+                        case TypePrefab.BlockRoll:
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.BlockRoll);
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.Wood, new int[] { i, this.spawnObstacles[i][j].number, j });
+                            break;
+                        case TypePrefab.Dive:
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Dive);
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.QuickSand, new int[] { i, this.spawnObstacles[i][j].number, j });
+                            break;
+                        case TypePrefab.Water:
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Water);
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.Water, new int[] { i, this.spawnObstacles[i][j].number, j });
+                            break;
+                        case TypePrefab.Ice:
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.Ice, new int[] { i, this.spawnObstacles[i][j].number, j });
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Ice);
+                            break;
+                        case TypePrefab.Ball:
+                            scaleSize = player.GetComponent<Renderer>().bounds.size.x;
+                            player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
+                            player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Obstacle);
+                            break;
+                        case TypePrefab.Goal:
+                            effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j].number, j }, 0);
+                            GameObject goalGameObject = Instantiate(goalGameObjectPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number - 1) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
+                            goalGameObject.transform.localScale = new Vector3(scaleGameObjectGoal, scaleGameObjectGoal, scaleGameObjectGoal);
+                            this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Obstacle);
+                            break;
+                        //default:
+                        //    this.Spawn(i, this.spawnObstacles[i][j].number, j, TypePrefab.Obstacle);
+                        //    break;
+                    }
                 }
                 if (this.spawnPlanes != null && this.spawnPlanes[i][j] > 0)
                 {
-                    GameObject planeObject = Instantiate(planePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.Euler(0, 90 * (this.spawnPlanes[i][j] + 2), 0));
+                    GameObject planeObject = Instantiate(planePrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number) * obstacleSizeY, j * obstacleSize), Quaternion.Euler(0, 90 * (this.spawnPlanes[i][j] + 2), 0));
                     planeObject.transform.localScale = new Vector3(1, obstacleSizeY, 1);
                 }
                 if (this.spawnChangeDirectionOb != null && this.spawnChangeDirectionOb[i][j] > 0)
@@ -103,24 +158,24 @@ public class ObstacleManager : MonoBehaviour
                     int numberDirection = this.spawnChangeDirectionOb[i][j];
                     int changeX = (numberDirection == 4) || (numberDirection == 3) ? 1 : -1;
                     int changeZ = (numberDirection == 3) || (numberDirection == 2) ? 1 : -1;
-                    GameObject changeDirectionObject = Instantiate(changeDirectionPrefab, new Vector3(i * obstacleSize + (changeDirectionSize / 2) * changeX, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + 0.5f * obstacleSizeY / 2, j * obstacleSize + (changeDirectionSize / 2) * changeZ), Quaternion.Euler(0, 90 * (this.spawnChangeDirectionOb[i][j] + 2), 0));
+                    GameObject changeDirectionObject = Instantiate(changeDirectionPrefab, new Vector3(i * obstacleSize + (changeDirectionSize / 2) * changeX, (this.spawnObstacles[i][j].number) * obstacleSizeY - obstacleSizeY / 2 + 0.5f * obstacleSizeY / 2, j * obstacleSize + (changeDirectionSize / 2) * changeZ), Quaternion.Euler(0, 90 * (this.spawnChangeDirectionOb[i][j] + 2), 0));
                     changeDirectionObject.transform.localScale = new Vector3(0.5f, 0.5f * obstacleSizeY, 0.5f);
                 }
-                if (this.spawnGoal[i][j] > 0)
-                {
-                    //Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
-                    effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j }, 0);
-                    GameObject goalGameObject = Instantiate(goalGameObjectPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j] - 1) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
-                    goalGameObject.transform.localScale = new Vector3(scaleGameObjectGoal, scaleGameObjectGoal, scaleGameObjectGoal);
-                }
-                if (this.spawnBall[i][j] > 0)
-                {
-                    // Spawn Ball
-                    //golfBall.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
-                    scaleSize = player.GetComponent<Renderer>().bounds.size.x;
-                    player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
-                    player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
-                }
+                //if (this.spawnGoal[i][j] > 0)
+                //{
+                //    //Instantiate(goalPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
+                //    effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j].number, j }, 0);
+                //    GameObject goalGameObject = Instantiate(goalGameObjectPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number - 1) * obstacleSizeY, j * obstacleSize), Quaternion.identity);
+                //    goalGameObject.transform.localScale = new Vector3(scaleGameObjectGoal, scaleGameObjectGoal, scaleGameObjectGoal);
+                //}
+                //if (this.spawnBall[i][j] > 0)
+                //{
+                //    // Spawn Ball
+                //    //golfBall.transform.localScale = new Vector3(ballSize, ballSize, ballSize);
+                //    scaleSize = player.GetComponent<Renderer>().bounds.size.x;
+                //    player.transform.localScale = new Vector3(ballSize / scaleSize, ballSize / scaleSize, ballSize / scaleSize);
+                //    player.transform.position = new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
+                //}
                 //if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
                 //{
                 //    //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
@@ -137,91 +192,91 @@ public class ObstacleManager : MonoBehaviour
             }
         }
 
-        if (this.spawnBlockRoll != null)
-        {
-            for (int i = 0; i < this.spawnBlockRoll.Length; ++i)
-            {
-                for (int j = 0; j < this.spawnBlockRoll[i].Length; ++j)
-                {
-                    if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
-                    {
-                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnBlockRoll[i][j], j, TypePrefab.BlockRoll);
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Wood, new int[] { i, this.spawnBlockRoll[i][j], j });
-                    }
-                }
-            }
-        }
+        //if (this.spawnBlockRoll != null)
+        //{
+        //    for (int i = 0; i < this.spawnBlockRoll.Length; ++i)
+        //    {
+        //        for (int j = 0; j < this.spawnBlockRoll[i].Length; ++j)
+        //        {
+        //            if (this.spawnBlockRoll != null && spawnBlockRoll.Length > i && spawnBlockRoll[i].Length > j && this.spawnBlockRoll[i][j] > 0)
+        //            {
+        //                //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+        //                this.Spawn(i, this.spawnBlockRoll[i][j], j, TypePrefab.BlockRoll);
+        //                effectSurfaceManager.SpawnEffectSurface(SurfaceType.Wood, new int[] { i, this.spawnBlockRoll[i][j], j });
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (this.spawnDive != null)
-        {
-            for (int i = 0; i < this.spawnDive.Length; ++i)
-            {
-                for (int j = 0; j < this.spawnDive[i].Length; ++j)
-                {
-                    if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
-                    {
-                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnDive[i][j], j, TypePrefab.Dive);
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.QuickSand, new int[] { i, this.spawnDive[i][j], j });
-                    }
-                }
-            }
-        }
+        //if (this.spawnDive != null)
+        //{
+        //    for (int i = 0; i < this.spawnDive.Length; ++i)
+        //    {
+        //        for (int j = 0; j < this.spawnDive[i].Length; ++j)
+        //        {
+        //            if (this.spawnDive != null && spawnDive.Length > i && spawnDive[i].Length > j && this.spawnDive[i][j] > 0)
+        //            {
+        //                //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+        //                this.Spawn(i, this.spawnDive[i][j], j, TypePrefab.Dive);
+        //                effectSurfaceManager.SpawnEffectSurface(SurfaceType.QuickSand, new int[] { i, this.spawnDive[i][j], j });
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (this.spawnWater != null)
-        {
-            for (int i = 0; i < this.spawnWater.Length; ++i)
-            {
-                for (int j = 0; j < this.spawnWater[i].Length; ++j)
-                {
-                    if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
-                    {
-                        //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
-                        this.Spawn(i, this.spawnWater[i][j], j, TypePrefab.Water);
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Water, new int[] { i, this.spawnWater[i][j], j });
-                    }
-                }
-            }
-        }
+        //if (this.spawnWater != null)
+        //{
+        //    for (int i = 0; i < this.spawnWater.Length; ++i)
+        //    {
+        //        for (int j = 0; j < this.spawnWater[i].Length; ++j)
+        //        {
+        //            if (this.spawnWater != null && spawnWater.Length > i && spawnWater[i].Length > j && this.spawnWater[i][j] > 0)
+        //            {
+        //                //Instantiate(blockRollPrefab, new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSize, j * obstacleSize), Quaternion.identity);
+        //                this.Spawn(i, this.spawnWater[i][j], j, TypePrefab.Water);
+        //                effectSurfaceManager.SpawnEffectSurface(SurfaceType.Water, new int[] { i, this.spawnWater[i][j], j });
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (this.spawnJump != null)
-        {
-            this.spawnGameObjectJump = new GameObject[this.spawnJump.Length][];
-            this.effectSurfaceManager.effectGameObjectJump = new GameObject[this.spawnJump.Length][];
-            for (int i = 0; i < this.spawnGameObjectJump.Length; ++i)
-            {
-                this.spawnGameObjectJump[i] = new GameObject[this.spawnJump[i].Length];
-                this.effectSurfaceManager.effectGameObjectJump[i] = new GameObject[this.spawnJump[i].Length];
-            }
-            for (int i = 0; i < this.spawnJump.Length; ++i)
-            {
-                for (int j = 0; j < this.spawnJump[i].Length; ++j)
-                {
-                    if (this.spawnJump != null && spawnJump.Length > i && spawnJump[i].Length > j && this.spawnJump[i][j] > 0)
-                    {
-                        this.Spawn(i, this.spawnJump[i][j], j, TypePrefab.Jump);
-                        this.SpawnJump(i, this.spawnJump[i][j] - 1, j);
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Jump, new int[] { i, this.spawnJump[i][j], j });
-                    }
-                }
-            }
-        }
+        //if (this.spawnJump != null)
+        //{
+        //    this.spawnGameObjectJump = new GameObject[this.spawnJump.Length][];
+        //    this.effectSurfaceManager.effectGameObjectJump = new GameObject[this.spawnJump.Length][];
+        //    for (int i = 0; i < this.spawnGameObjectJump.Length; ++i)
+        //    {
+        //        this.spawnGameObjectJump[i] = new GameObject[this.spawnJump[i].Length];
+        //        this.effectSurfaceManager.effectGameObjectJump[i] = new GameObject[this.spawnJump[i].Length];
+        //    }
+        //    for (int i = 0; i < this.spawnJump.Length; ++i)
+        //    {
+        //        for (int j = 0; j < this.spawnJump[i].Length; ++j)
+        //        {
+        //            if (this.spawnJump != null && spawnJump.Length > i && spawnJump[i].Length > j && this.spawnJump[i][j] > 0)
+        //            {
+        //                this.Spawn(i, this.spawnJump[i][j], j, TypePrefab.Jump);
+        //                this.SpawnJump(i, this.spawnJump[i][j] - 1, j);
+        //                effectSurfaceManager.SpawnEffectSurface(SurfaceType.Jump, new int[] { i, this.spawnJump[i][j], j });
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (this.spawnIce != null)
-        {
-            for (int i = 0; i < this.spawnIce.Length; ++i)
-            {
-                for (int j = 0; j < this.spawnIce[i].Length; ++j)
-                {
-                    if (this.spawnIce[i][j] > 0)
-                    {
-                        //this.Spawn(i, this.spawnIce[i][j], j, TypePrefab.Ice);
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Ice, new int[] { i, this.spawnObstacles[i][j], j });
-                    }
-                }
-            }
-        }
+        //if (this.spawnIce != null)
+        //{
+        //    for (int i = 0; i < this.spawnIce.Length; ++i)
+        //    {
+        //        for (int j = 0; j < this.spawnIce[i].Length; ++j)
+        //        {
+        //            if (this.spawnIce[i][j] > 0)
+        //            {
+        //                //this.Spawn(i, this.spawnIce[i][j], j, TypePrefab.Ice);
+        //                effectSurfaceManager.SpawnEffectSurface(SurfaceType.Ice, new int[] { i, this.spawnObstacles[i][j].number, j });
+        //            }
+        //        }
+        //    }
+        //}
 
         if (this.spawnPortal != null)
         {
@@ -232,7 +287,7 @@ public class ObstacleManager : MonoBehaviour
                     if (this.spawnPortal[i][j] > 0)
                     {
                         //Debug.Log("Check Spawn Portal");
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j], j }, this.spawnPortal[i][j]);
+                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Portal, new int[] { i, this.spawnObstacles[i][j].number, j }, this.spawnPortal[i][j]);
                     }
                 }
             }
@@ -246,7 +301,7 @@ public class ObstacleManager : MonoBehaviour
                 {
                     if (this.spawnConveyor[i][j] > 0)
                     {
-                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Conveyor_Tile, new int[] { i, this.spawnObstacles[i][j], j }, this.spawnConveyor[i][j]);
+                        effectSurfaceManager.SpawnEffectSurface(SurfaceType.Conveyor_Tile, new int[] { i, this.spawnObstacles[i][j].number, j }, this.spawnConveyor[i][j]);
                     }
                 }
             }
@@ -366,26 +421,43 @@ public class ObstacleManager : MonoBehaviour
 
     public void HandleDrawLine(int typeCheck, TypePrefab typeObject, GameObject obstacle, int[] post, int[] indexCheck, int startLine, int endLine)
     {
-        int[][] spawnArray = new int[][] { };
+        int[][] spawnArray = new int[this.spawnObstacles.Length][];
+
+        for (int i = 0; i < spawnObstacles.Length; i++)
+        {
+            List<int> temp = new List<int>();
+
+            foreach (ObstacleColume col in spawnObstacles[i])
+            {
+                if (col.type == typeObject 
+                    || (typeObject == TypePrefab.Obstacle && (col.type == TypePrefab.Goal || col.type == TypePrefab.Ball)))
+                {
+                    temp.Add(col.number);
+                }
+                else
+                {
+                    temp.Add(0);
+                }
+            }
+
+            spawnArray[i] = temp.ToArray();
+        }
+
         switch (typeObject)
         {
             case TypePrefab.Obstacle:
-                spawnArray = spawnObstacles;
                 break;
             case TypePrefab.BlockRoll:
-                spawnArray = spawnBlockRoll;
                 break;
             case TypePrefab.Dive:
-                spawnArray = spawnDive;
                 break;
             case TypePrefab.Water:
-                spawnArray = spawnWater;
                 break;
             case TypePrefab.Jump:
-                spawnArray = spawnJump;
                 break;
             case TypePrefab.Ice:
-                spawnArray = spawnIce;
+                break;
+            default:
                 break;
         }
 
@@ -402,7 +474,8 @@ public class ObstacleManager : MonoBehaviour
                     DrawLine(obstacle, startLine, endLine, highColor);
                 }
             }
-        } else if (typeCheck == 1)
+        }
+        else if (typeCheck == 1)
         {
             if (
                 !checkObject(new int[] { post[0] + indexCheck[0], post[1], post[2] }, spawnArray)
@@ -411,7 +484,8 @@ public class ObstacleManager : MonoBehaviour
                 )
             {
                 DrawLine(obstacle, startLine, endLine, highColor);
-            } else
+            }
+            else
             {
                 DrawLine(obstacle, startLine, endLine, lowColor);
             }
@@ -493,7 +567,9 @@ public class ObstacleManager : MonoBehaviour
     public bool checkObstacle(int[] positionIndex)
     {
         //Debug.Log(positionIndex[0] + " " + positionIndex[1] + " " + positionIndex[2]);
-        //Debug.Log(spawnObstacles.Length);
+        //Debug.Log(positionIndex[0]);
+        //Debug.Log(positionIndex[2]);
+        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
@@ -504,7 +580,11 @@ public class ObstacleManager : MonoBehaviour
             return false;
         }
         //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
-        if (positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        if (((spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Obstacle) 
+            && (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Goal)
+            && (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Ball))
+            || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number 
+            || positionIndex[1] < 0)
         {
             return false;
         }
@@ -525,7 +605,7 @@ public class ObstacleManager : MonoBehaviour
         {
             return 0;
         }
-        if (spawnPlanes[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnPlanes[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]].number == positionIndex[1])
         {
             return spawnPlanes[positionIndex[0]][positionIndex[2]];
         }
@@ -546,11 +626,10 @@ public class ObstacleManager : MonoBehaviour
         {
             return 0;
         }
-        if (spawnPortal[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnPortal[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]].number == positionIndex[1])
         {
             return spawnPortal[positionIndex[0]][positionIndex[2]];
         }
-        Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]] + "  " + positionIndex[1]);
         return 0;
     }
 
@@ -568,7 +647,7 @@ public class ObstacleManager : MonoBehaviour
         {
             return 0;
         }
-        if (spawnConveyor[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnConveyor[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]].number == positionIndex[1])
         {
             return spawnConveyor[positionIndex[0]][positionIndex[2]];
         }
@@ -583,7 +662,7 @@ public class ObstacleManager : MonoBehaviour
             {
                 if (this.spawnPortal[i][j] == number && (i != indexX || j != indexZ))
                 {
-                    return new Vector3(i * obstacleSize, (this.spawnObstacles[i][j]) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
+                    return new Vector3(i * obstacleSize, (this.spawnObstacles[i][j].number) * obstacleSizeY - obstacleSizeY / 2 + ballSize / 2, j * obstacleSize);
                 }
             }
         }
@@ -605,7 +684,7 @@ public class ObstacleManager : MonoBehaviour
         {
             return 0;
         }
-        if (spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]].number == positionIndex[1])
         {
             return spawnChangeDirectionOb[positionIndex[0]][positionIndex[2]];
         }
@@ -622,7 +701,7 @@ public class ObstacleManager : MonoBehaviour
         {
             return false;
         }
-        if (spawnGoal[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type == TypePrefab.Goal && spawnObstacles[positionIndex[0]][positionIndex[2]].number > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]].number == positionIndex[1])
         {
             return true;
         }
@@ -645,19 +724,15 @@ public class ObstacleManager : MonoBehaviour
         //}
         //return false;
 
-        if (spawnBlockRoll == null) return false;
-
-        if (positionIndex[0] >= spawnBlockRoll.Length || positionIndex[0] < 0)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
-        if (positionIndex[2] >= spawnBlockRoll[positionIndex[0]].Length || positionIndex[2] < 0)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
-        if (positionIndex[1] >= spawnBlockRoll[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.BlockRoll || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number || positionIndex[1] < 0)
         {
             return false;
         }
@@ -680,19 +755,15 @@ public class ObstacleManager : MonoBehaviour
         //}
         //return false;
 
-        if (spawnDive == null) return false;
-
-        if (positionIndex[0] >= spawnDive.Length || positionIndex[0] < 0)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
-        if (positionIndex[2] >= spawnDive[positionIndex[0]].Length || positionIndex[2] < 0)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
-        if (positionIndex[1] >= spawnDive[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Dive || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number || positionIndex[1] < 0)
         {
             return false;
         }
@@ -715,19 +786,15 @@ public class ObstacleManager : MonoBehaviour
         //}
         //return false;
 
-        if (spawnWater == null) return false;
-
-        if (positionIndex[0] >= spawnWater.Length || positionIndex[0] < 0)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]].Length);
-        if (positionIndex[2] >= spawnWater[positionIndex[0]].Length || positionIndex[2] < 0)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        //Debug.Log(spawnObstacles[positionIndex[0]][positionIndex[2]]);
-        if (positionIndex[1] >= spawnWater[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Water || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number || positionIndex[1] < 0)
         {
             return false;
         }
@@ -736,17 +803,15 @@ public class ObstacleManager : MonoBehaviour
 
     public bool checkJump(int[] positionIndex)
     {
-        if (spawnJump == null) return false;
-
-        if (positionIndex[0] >= spawnJump.Length || positionIndex[0] < 0)
+        if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
         }
-        if (positionIndex[2] >= spawnJump[positionIndex[0]].Length || positionIndex[2] < 0)
+        if (positionIndex[2] >= spawnObstacles[positionIndex[0]].Length || positionIndex[2] < 0)
         {
             return false;
         }
-        if (positionIndex[1] >= spawnJump[positionIndex[0]][positionIndex[2]] || positionIndex[1] < 0)
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Jump || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number || positionIndex[1] < 0)
         {
             return false;
         }
@@ -771,10 +836,6 @@ public class ObstacleManager : MonoBehaviour
         //}
         //return true;
 
-        if (spawnIce == null)
-        {
-            return false;
-        }
         if (positionIndex[0] >= spawnObstacles.Length || positionIndex[0] < 0)
         {
             return false;
@@ -783,10 +844,10 @@ public class ObstacleManager : MonoBehaviour
         {
             return false;
         }
-        if (spawnIce[positionIndex[0]][positionIndex[2]] > 0 && spawnObstacles[positionIndex[0]][positionIndex[2]] == positionIndex[1])
+        if (spawnObstacles[positionIndex[0]][positionIndex[2]].type != TypePrefab.Ice || positionIndex[1] >= spawnObstacles[positionIndex[0]][positionIndex[2]].number || positionIndex[1] < 0)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }

@@ -2,9 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using static ObstacleManager;
+
+public struct ObstacleColume
+{
+    public int number;
+    public TypePrefab type;
+}
 
 public class DataLoading : MonoBehaviour
 {
@@ -43,8 +50,10 @@ public class DataLoading : MonoBehaviour
             Debug.Log($"Khong tim thay file");
             return;
         }
-
-        obstacleManager.spawnObstacles = ConvertListStringToArray2(spawnObstacleLevel.spawnObstacles);
+        if (spawnObstacleLevel.spawnObstacles != null && spawnObstacleLevel.spawnObstacles.Count > 0)
+        {
+            obstacleManager.spawnObstacles = ConvertListStringToObstacleColume(spawnObstacleLevel.spawnObstacles);
+        }
         if (spawnObstacleLevel.spawnPlanes != null && spawnObstacleLevel.spawnPlanes.Count > 0)
         {
             obstacleManager.spawnPlanes = ConvertListStringToArray2(spawnObstacleLevel.spawnPlanes);
@@ -53,29 +62,29 @@ public class DataLoading : MonoBehaviour
         {
             obstacleManager.spawnChangeDirectionOb = ConvertListStringToArray2(spawnObstacleLevel.spawnChangeDirectionOb);
         }
-        obstacleManager.spawnGoal = ConvertListStringToArray2(spawnObstacleLevel.spawnGoal);
-        obstacleManager.spawnBall = ConvertListStringToArray2(spawnObstacleLevel.spawnBall);
+        //obstacleManager.spawnGoal = ConvertListStringToArray2(spawnObstacleLevel.spawnGoal);
+        //obstacleManager.spawnBall = ConvertListStringToArray2(spawnObstacleLevel.spawnBall);
         //obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
 
-        if (spawnObstacleLevel.spawnBlockRoll != null && spawnObstacleLevel.spawnBlockRoll.Count > 0)
-        {
-            obstacleManager.spawnBlockRoll = ConvertListStringToArray2(spawnObstacleLevel.spawnBlockRoll);
-        }
+        //if (spawnObstacleLevel.spawnBlockRoll != null && spawnObstacleLevel.spawnBlockRoll.Count > 0)
+        //{
+        //    obstacleManager.spawnBlockRoll = ConvertListStringToArray2(spawnObstacleLevel.spawnBlockRoll);
+        //}
 
-        if (spawnObstacleLevel.spawnDive != null && spawnObstacleLevel.spawnDive.Count > 0)
-        {
-            obstacleManager.spawnDive = ConvertListStringToArray2(spawnObstacleLevel.spawnDive);
-        }
+        //if (spawnObstacleLevel.spawnDive != null && spawnObstacleLevel.spawnDive.Count > 0)
+        //{
+        //    obstacleManager.spawnDive = ConvertListStringToArray2(spawnObstacleLevel.spawnDive);
+        //}
 
-        if (spawnObstacleLevel.spawnWater != null && spawnObstacleLevel.spawnWater.Count > 0)
-        {
-            obstacleManager.spawnWater = ConvertListStringToArray2(spawnObstacleLevel.spawnWater);
-        }
+        //if (spawnObstacleLevel.spawnWater != null && spawnObstacleLevel.spawnWater.Count > 0)
+        //{
+        //    obstacleManager.spawnWater = ConvertListStringToArray2(spawnObstacleLevel.spawnWater);
+        //}
 
-        if (spawnObstacleLevel.spawnJump != null && spawnObstacleLevel.spawnJump.Count > 0)
-        {
-            obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
-        }
+        //if (spawnObstacleLevel.spawnJump != null && spawnObstacleLevel.spawnJump.Count > 0)
+        //{
+        //    obstacleManager.spawnJump = ConvertListStringToArray2(spawnObstacleLevel.spawnJump);
+        //}
 
         if (spawnObstacleLevel.spawnPortal != null && spawnObstacleLevel.spawnPortal.Count > 0)
         {
@@ -87,10 +96,10 @@ public class DataLoading : MonoBehaviour
             obstacleManager.spawnConveyor = ConvertListStringToArray2(spawnObstacleLevel.spawnConveyor);
         }
 
-        if (spawnObstacleLevel.spawnIce != null && spawnObstacleLevel.spawnIce.Count > 0)
-        {
-            obstacleManager.spawnIce = ConvertListStringToArray2(spawnObstacleLevel.spawnIce);
-        }
+        //if (spawnObstacleLevel.spawnIce != null && spawnObstacleLevel.spawnIce.Count > 0)
+        //{
+        //    obstacleManager.spawnIce = ConvertListStringToArray2(spawnObstacleLevel.spawnIce);
+        //}
 
         if (spawnObstacleLevel.hint != null && spawnObstacleLevel.hint.Count > 0)
         {
@@ -131,7 +140,7 @@ public class DataLoading : MonoBehaviour
 
         for (int i = 0; i < buttons.Length; ++i)
         {
-            gameManager.createButton(buttons[i]);
+            gameManager.createButton(buttons[i], i, buttons.Length);
         }
     }
 
@@ -143,26 +152,26 @@ public class DataLoading : MonoBehaviour
         {
             for (int j = 0; j < obstacleManager.spawnObstacles[i].Length; j++)
             {
-                if (obstacleManager.spawnObstacles[i][j] > 0)
+                if (obstacleManager.spawnObstacles[i][j].number > 0)
                 {
-                    obstacleManager.spawnObstacles[i][j] += addNumberObstacle;
+                    obstacleManager.spawnObstacles[i][j].number += addNumberObstacle;
                 }
             }
         }
 
-        if (obstacleManager.spawnBlockRoll != null)
-        {
-            for (int i = 0; i < obstacleManager.spawnBlockRoll.Length; i++)
-            {
-                for (int j = 0; j < obstacleManager.spawnBlockRoll[i].Length; j++)
-                {
-                    if (obstacleManager.spawnBlockRoll[i][j] > 0)
-                    {
-                        obstacleManager.spawnBlockRoll[i][j] += addNumberObstacle;
-                    }
-                }
-            }
-        }
+        //if (obstacleManager.spawnBlockRoll != null)
+        //{
+        //    for (int i = 0; i < obstacleManager.spawnBlockRoll.Length; i++)
+        //    {
+        //        for (int j = 0; j < obstacleManager.spawnBlockRoll[i].Length; j++)
+        //        {
+        //            if (obstacleManager.spawnBlockRoll[i][j] > 0)
+        //            {
+        //                obstacleManager.spawnBlockRoll[i][j] += addNumberObstacle;
+        //            }
+        //        }
+        //    }
+        //}
 
         if (obstacleManager.spawnDive != null)
         {
@@ -192,33 +201,33 @@ public class DataLoading : MonoBehaviour
             }
         }
 
-        if (obstacleManager.spawnJump != null)
-        {
-            for (int i = 0; i < obstacleManager.spawnJump.Length; ++i)
-            {
-                for (int j = 0; j < obstacleManager.spawnJump[i].Length; ++j)
-                {
-                    if (obstacleManager.spawnJump[i][j] > 0)
-                    {
-                        obstacleManager.spawnJump[i][j] += addNumberObstacle;
-                    }
-                }
-            }
-        }
+        //if (obstacleManager.spawnJump != null)
+        //{
+        //    for (int i = 0; i < obstacleManager.spawnJump.Length; ++i)
+        //    {
+        //        for (int j = 0; j < obstacleManager.spawnJump[i].Length; ++j)
+        //        {
+        //            if (obstacleManager.spawnJump[i][j] > 0)
+        //            {
+        //                obstacleManager.spawnJump[i][j] += addNumberObstacle;
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (obstacleManager.spawnIce != null)
-        {
-            for (int i = 0; i < obstacleManager.spawnIce.Length; ++i)
-            {
-                for (int j = 0; j < obstacleManager.spawnIce[i].Length; ++j)
-                {
-                    if (obstacleManager.spawnIce[i][j] > 0)
-                    {
-                        obstacleManager.spawnIce[i][j] += addNumberObstacle;
-                    }
-                }
-            }
-        }
+        //if (obstacleManager.spawnIce != null)
+        //{
+        //    for (int i = 0; i < obstacleManager.spawnIce.Length; ++i)
+        //    {
+        //        for (int j = 0; j < obstacleManager.spawnIce[i].Length; ++j)
+        //        {
+        //            if (obstacleManager.spawnIce[i][j] > 0)
+        //            {
+        //                obstacleManager.spawnIce[i][j] += addNumberObstacle;
+        //            }
+        //        }
+        //    }
+        //}
 
         ChangePostCamera(addNumberObstacle);
     }
@@ -251,6 +260,83 @@ public class DataLoading : MonoBehaviour
         return result;
     }
 
+    public ObstacleColume[][] ConvertListStringToObstacleColume(List<string> list)
+    {
+        ObstacleColume[][] result = new ObstacleColume[list.Count][];
+        for (int i = 0; i < list.Count; ++i)
+        {
+            string entry = list[i];
+
+            string[] listItem = entry.Split(',');
+
+            ObstacleColume[] resultItem = new ObstacleColume[listItem.Length];
+
+            for (int j = 0; j < listItem.Length; ++j)
+            {
+                string item = listItem[j];
+
+                ObstacleColume itemObstacle = new ObstacleColume();
+
+                if (item.Contains('-'))
+                {
+                    string[] parts = item.Split('-');
+                    
+                    itemObstacle.number = int.Parse(parts[0]);
+                    int type = int.Parse(parts[1]);
+                    
+                    switch(type)
+                    {
+                        case 0:
+                            itemObstacle.type = TypePrefab.Obstacle;
+                            break;
+                        case 1:
+                            itemObstacle.type = TypePrefab.BlockRoll;
+                            break;
+                        case 2:
+                            itemObstacle.type = TypePrefab.Dive;
+                            break;
+                        case 3:
+                            itemObstacle.type = TypePrefab.Water;
+                            break;
+                        case 4:
+                            itemObstacle.type = TypePrefab.Jump;
+                            break;
+                        case 5:
+                            itemObstacle.type = TypePrefab.Obstacle;
+                            break;
+                        case 6:
+                            itemObstacle.type = TypePrefab.Obstacle;
+                            break;
+                        case 7:
+                            itemObstacle.type = TypePrefab.Ice;
+                            break;
+                        case 8:
+                            itemObstacle.type = TypePrefab.Ball;
+                            break;
+                        case 9:
+                            itemObstacle.type = TypePrefab.Goal;
+                            break;
+                        default:
+                            itemObstacle.type = TypePrefab.Obstacle;
+                            break;
+                    }
+                } else
+                {
+                    itemObstacle.number = int.Parse(item);
+                    itemObstacle.type = TypePrefab.Obstacle;
+                }
+
+                resultItem[j] = itemObstacle;
+            }
+
+            result[i] = resultItem;
+        }
+
+        Debug.Log(result[0][0].type);
+
+        return result;
+    }
+
     public List<List<Hint>> ConvertListStringToHint(List<string> list)
     {
         List<List<Hint>> result = new List<List<Hint>>();
@@ -273,4 +359,6 @@ public class DataLoading : MonoBehaviour
 
         return result;    
     }
+
+
 }

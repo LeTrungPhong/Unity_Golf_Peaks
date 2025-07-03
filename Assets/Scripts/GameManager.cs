@@ -1,9 +1,11 @@
-﻿using DG.Tweening.Core.Easing;
+﻿using DG.Tweening;
+using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -26,6 +28,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameObjectHintDirect;
     [SerializeField] private GameObject gameObjectCamera;
     [SerializeField] private EffectSurfaceManager effectSurfaceManager;
+
+    // image turn
+    [SerializeField] private Texture2D textureTurnRoll;
+    [SerializeField] private Texture2D textTurnFly;
+    private Sprite spriteTurnRoll;
+    private Sprite spriteTurnFly;
+    
     private CameraMovement cameraMovement;
     private Transform hintTransform;
     private GameObject canvas;
@@ -35,8 +44,8 @@ public class GameManager : MonoBehaviour
     private LevelManager levelManager;
     private CanvasScript canvasScript;
     public bool isGameOver = false;
-    public float heigtButton = 50;
-    public float widthButton = 200;
+    public float heigtButton = 400;
+    public float widthButton = 100;
     private float transButtonX = 200;
     private float transButtonY = 100;
     private float spaceButton = 20;
@@ -59,13 +68,15 @@ public class GameManager : MonoBehaviour
         cameraMovement = gameObjectCamera.GetComponent<CameraMovement>();
         listButton = new List<Button>();
         listHiddenButton = new List<Move>();
-        transButtonX = canvas.GetComponent<RectTransform>().sizeDelta.x / 2.5f / 2 + 100;
+        transButtonX = canvas.GetComponent<RectTransform>().sizeDelta.x;
         transButtonY = canvas.GetComponent<RectTransform>().sizeDelta.y / 20;
-        widthButton = canvas.GetComponent<RectTransform>().sizeDelta.x / 2.5f;
-        heigtButton = canvas.GetComponent<RectTransform>().sizeDelta.y / 20;
+        widthButton = canvas.GetComponent<RectTransform>().sizeDelta.x / 3.0f;
+        heigtButton = canvas.GetComponent<RectTransform>().sizeDelta.y / 4;
 
         hintTransform.localScale = new Vector3(2, 2, 2);
         gameObjectHintDirect.SetActive(false);
+
+
     }
 
     // Start is called before the first frame update
@@ -94,7 +105,7 @@ public class GameManager : MonoBehaviour
     {
         if (player.transform.position.y < positionEndY && isGameOver == false)
         {
-            //Debug.Log("Game Over");
+            Debug.Log("Game Over");
             GameOver();
             isGameOver = true;
         }
@@ -194,7 +205,7 @@ public class GameManager : MonoBehaviour
         FocusButton();
     }
 
-    public void createButton(int[] index)
+    public void createButton(int[] value, int index, int length)
     {
         // Tạo Button
         GameObject buttonObject = new GameObject("MyButton");
@@ -206,34 +217,147 @@ public class GameManager : MonoBehaviour
         image.color = Color.white; // Màu nền trắng cho button
 
         // Thêm văn bản cho Button
-        GameObject textObject = new GameObject("Text");
-        textObject.transform.SetParent(buttonObject.transform);
+        //GameObject textObject = new GameObject("Text");
+        //textObject.transform.SetParent(buttonObject.transform);
 
-        Text buttonText = textObject.AddComponent<Text>();
-        buttonText.text = index[0] == 0 ? $"Move {index[1]}, Fly {index[2]}" : $"Fly {index[2]}, Move {index[1]}";
-        buttonText.alignment = TextAnchor.MiddleCenter;
-        buttonText.color = Color.black;
-        buttonText.fontSize = 35;
-        buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        //Text buttonText = textObject.AddComponent<Text>();
+        //buttonText.text = value[0] == 0 ? $"Move {value[1]}, Fly {value[2]}" : $"Fly {value[2]}, Move {value[1]}";
+        //buttonText.alignment = TextAnchor.UpperLeft;
+        //buttonText.color = Color.black;
+        //buttonText.fontSize = 35;
+        //buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
-//      (0, 0): Góc dưới trái.
-//      (1, 0): Góc dưới phải.
-//      (0, 1): Góc trên trái.
-//      (1, 1): Góc trên phải.
-//      (0.5, 0.5): Chính giữa.
+        // roll
+        GameObject objectTurnRoll = new GameObject("Text Turn Roll");
+        objectTurnRoll.transform.SetParent(buttonObject.transform);
+
+        RectTransform rectRoll = objectTurnRoll.AddComponent<RectTransform>();
+        rectRoll.anchorMin = new Vector2(0, 1.0f);
+        rectRoll.anchorMax = new Vector2(0, 1.0f);
+        rectRoll.pivot = new Vector2(0.5f, 0.5f);
+        rectRoll.sizeDelta = new Vector2(100, 100);
+
+        Sprite spriteRoll = Sprite.Create(textureTurnRoll, new Rect(0, 0, textureTurnRoll.width, textureTurnRoll.height), new Vector2(0.5f, 0.5f));
+
+        GameObject imageObjectRoll = new GameObject("Image Roll");
+        imageObjectRoll.transform.SetParent(objectTurnRoll.transform);
+
+        RectTransform rectRollImage = imageObjectRoll.AddComponent<RectTransform>();
+        rectRollImage.anchoredPosition = new Vector2(textureTurnRoll.width / 2, -textureTurnRoll.height / 2);
+
+        Image imageTurnRoll = imageObjectRoll.AddComponent<Image>();
+        imageTurnRoll.sprite = spriteRoll;
+
+        GameObject textObjectRoll = new GameObject("Text Roll");
+        textObjectRoll.transform.SetParent(objectTurnRoll.transform);
+
+        RectTransform rectRollText = textObjectRoll.AddComponent<RectTransform>();
+        rectRollText.anchoredPosition = new Vector2(textureTurnRoll.width / 2, -textureTurnRoll.height);
+
+        Text textRoll = textObjectRoll.AddComponent<Text>();
+        textRoll.text = value[1].ToString();
+        textRoll.color = Color.black;
+        textRoll.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        textRoll.fontSize = 50;
+        textRoll.alignment = TextAnchor.MiddleCenter;
+
+        //TextMeshProUGUI textRoll = textObjectTurnRoll.AddComponent<TextMeshProUGUI>();
+        //textRoll.text = value[1].ToString();
+        //textRoll.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        //textRoll.fontSize = 30;
+        //textRoll.alignment = TextAlignmentOptions.Center;
+        //textRoll.color = Color.black;
+
+        //RectTransform textRollRect = textRoll.GetComponent<RectTransform>();
+        //textRollRect.anchorMin = new Vector2(0.5f, 0.5f);
+        //textRollRect.anchorMax = new Vector2(0.5f, 0.5f);
+        //textRollRect.pivot = new Vector2(0.5f, 0.5f);
+        //textRollRect.anchoredPosition = Vector2.zero;
+
+        // fly
+        GameObject objectTurnFly = new GameObject("Text Turn Fly");
+        objectTurnFly.transform.SetParent(buttonObject.transform);
+
+        RectTransform rectFly = objectTurnFly.AddComponent<RectTransform>();
+        rectFly.anchorMin = new Vector2(0, 1.0f);
+        rectFly.anchorMax = new Vector2(0, 1.0f);
+        rectFly.pivot = new Vector2(0.5f, 0.5f);
+        rectFly.sizeDelta = new Vector2(100, 100);
+
+        Sprite spriteFly = Sprite.Create(textTurnFly, new Rect(0, 0, textTurnFly.width, textTurnFly.height), new Vector2(0.5f, 0.5f));
+
+        GameObject imageObjectFly = new GameObject("Image Fly");
+        imageObjectFly.transform.SetParent(objectTurnFly.transform);
+
+        RectTransform rectFlyImage = imageObjectFly.AddComponent<RectTransform>();
+        rectFlyImage.localRotation = Quaternion.Euler(0, 0, -90.0f);
+        rectFlyImage.anchoredPosition = new Vector2(textTurnFly.width / 2, textTurnFly.height);
+
+        Image imageTurnFly = imageObjectFly.AddComponent<Image>();
+        imageTurnFly.sprite = spriteFly;
+
+        GameObject textObjectFly = new GameObject("Text Roll");
+        textObjectFly.transform.SetParent(objectTurnFly.transform);
+
+        RectTransform rectFlyText = textObjectFly.AddComponent<RectTransform>();
+        rectFlyText.anchoredPosition = new Vector2(textureTurnRoll.width / 2 - 5, textureTurnRoll.height);
+
+        Text textFly = textObjectFly.AddComponent<Text>();
+        textFly.text = value[2].ToString();
+        textFly.color = Color.black;
+        textFly.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        textFly.fontSize = 50;
+        textFly.alignment = TextAnchor.MiddleCenter;
+
+        //Text textFly = textObjectTurnFly.AddComponent<Text>();
+        //textFly.text = value[2].ToString();
+
+        //GameObject textObject = new GameObject("Text");
+        //textObject.transform.SetParent(buttonObject.transform);
+
+        //if (value[0] == 0)
+        //{
+
+        //}
+
+        //if (value[1] > 0)
+        //{
+        //    GameObject textObjectTurnRoll = new GameObject("Turn Roll");
+        //    textObjectTurnRoll.transform.SetParent(buttonObject.transform);
+
+        //    Sprite sprite = Sprite.Create(
+        //        textureTurnRoll,
+        //        new Rect(0, 0, textureTurnRoll.width, textureTurnRoll.height),
+        //        new Vector2(0.5f, 0.5f)  // pivot giữa
+        //    );
+
+        //    Image imageTurnRoll = textObjectTurnRoll.AddComponent<Image>();
+        //    imageTurnRoll.sprite = sprite;
+
+
+        //}
+
+        //      (0, 0): Góc dưới trái.
+        //      (1, 0): Góc dưới phải.
+        //      (0, 1): Góc trên trái.
+        //      (1, 1): Góc trên phải.
+        //      (0.5, 0.5): Chính giữa.
 
         // Chỉnh kích thước Button
         RectTransform btnRect = buttonObject.GetComponent<RectTransform>();
         btnRect.sizeDelta = new Vector2(widthButton, heigtButton);
-        btnRect.anchorMin = new Vector2(1, 0);
-        btnRect.anchorMax = new Vector2(1, 0);
-        btnRect.anchoredPosition = new Vector2(- transButtonX, transButtonY);
-        transButtonY = transButtonY + heigtButton + spaceButton;
-
+        btnRect.anchorMin = new Vector2(0.5f, 0);
+        btnRect.anchorMax = new Vector2(0.5f, 0);
+        btnRect.pivot = new Vector2(0.5f, 0);
+        btnRect.anchoredPosition = new Vector2(((float)transButtonX / (length + 4)) * ((float)index - (float)length / 2 + 0.5f), transButtonY);
+        //transButtonY = transButtonY + heigtButton + spaceButton;
+        
+        //Debug.Log((float)length / 2);
         // Chỉnh kích thước văn bản
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.sizeDelta = new Vector2(widthButton * 2, heigtButton * 2);
-        textRect.anchoredPosition = Vector2.zero;
+
+        //RectTransform textRect = textObject.GetComponent<RectTransform>();
+        //textRect.sizeDelta = new Vector2(widthButton, heigtButton);
+        //textRect.anchoredPosition = Vector2.zero;
 
         Outline outLine = buttonObject.AddComponent<Outline>();
         outLine.effectColor = Color.white;
@@ -241,7 +365,10 @@ public class GameManager : MonoBehaviour
 
         // Thêm sự kiện khi nhấn Button
         button.onClick.AddListener(() => {
-            playerController.setNumber(index[0], index[1], index[2]);
+            //Debug.Log(value[0]);
+            //Debug.Log(value[1]);
+            //Debug.Log(value[2]);
+            playerController.setNumber(value[0], value[1], value[2]);
             selectButton = button;
             SelectButton(button);
             if (hiddenSoundButtonClickFirst == false)
@@ -262,14 +389,19 @@ public class GameManager : MonoBehaviour
 
         foreach(Button btn in allButtons)
         {
+            float duration = 0.15f;
             if (btn == button)
             {
                 btn.GetComponent<Image>().color = Color.grey;
-                btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.white;
+                //btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.white;
+                btn.transform.DOMoveY(transButtonY + 50, duration)
+                    .SetEase(Ease.Linear);
             } else
             {
                 btn.GetComponent<Image>().color = Color.white;
-                btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.black;
+                //btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.black;
+                btn.transform.DOMoveY(transButtonY, duration)
+                    .SetEase(Ease.Linear);
             }
         }
     }

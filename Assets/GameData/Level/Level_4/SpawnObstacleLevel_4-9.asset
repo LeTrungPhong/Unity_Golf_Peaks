@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fc4e772c5463db40af14ff57260fe23, type: 3}
+  m_Name: SpawnObstacleLevel_4-9
+  m_EditorClassIdentifier: 
+  spawnObstacles:
+  - 6-3,6,6,6,9-8
+  - 6,6,6-1,6-1,7
+  - 6,6-1,6-3,6-2,6
+  - 7,7,6-2,6-2,6
+  - 10-9,8,7,6,6
+  spawnPlanes:
+  - 0,0,0,3,0
+  - 0,0,0,0,2
+  - 4,0,0,0,2
+  - 4,0,0,0,0
+  - 0,1,1,1,0
+  spawnChangeDirectionOb: []
+  spawnPortal: []
+  spawnConveyor: []
+  itemMove:
+  - 0,1,0
+  - 1,0,1
+  - 1,0,3
+  - 1,1,1
+  hint:
+  - 3-4,0-3,1-4,2-3
+  - 3-4,1-3,0-4,2-3
+  highFly: 5
+  positionX: 8.83
+  positionY: 11.88
+  positionZ: 8.05
+  obstacleSizeY: 0

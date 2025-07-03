@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fc4e772c5463db40af14ff57260fe23, type: 3}
+  m_Name: SpawnObstacleLevel_10-3
+  m_EditorClassIdentifier: 
+  spawnObstacles:
+  - 0,0,7-0,7-7,7-2,7-7,7-0,0,7-8
+  - 0,0,7-0,7-7,7-0,7-7,7-0,0,0
+  - 7-0,7-0,7-0,7-7,7-3,7-7,7-0,7-0,7-0
+  - 7-7,7-7,7-7,7-3,7-2,7-3,7-7,7-7,7-7
+  - 7-2,7-0,7-3,7-2,7-4,7-2,7-3,7-0,7-2
+  - 7-7,7-7,7-7,7-3,7-2,7-3,7-7,7-7,7-7
+  - 7-0,7-0,7-0,7-7,7-3,7-7,7-0,7-0,7-0
+  - 0,0,7-0,7-7,7-0,7-7,7-0,0,0
+  - 7-9,0,7-0,7-7,7-2,7-7,7-0,0,0
+  spawnPlanes: []
+  spawnChangeDirectionOb: []
+  spawnBlockRoll: []
+  spawnDive: []
+  spawnWater: []
+  spawnJump: []
+  spawnPortal: []
+  spawnConveyor: []
+  spawnIce: []
+  spawnGoal: []
+  spawnBall: []
+  itemMove:
+  - 0,1,0
+  - 1,0,1
+  - 1,0,2
+  - 1,0,2
+  - 1,0,3
+  - 1,3,3
+  hint:
+  - 2-4,0-3,1-3,5-4,4-3,3-3
+  highFly: 0
+  positionX: 16.354
+  positionY: 18.854
+  positionZ: 15.302
+  obstacleSizeY: 0

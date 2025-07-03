@@ -16,8 +16,8 @@ public class LoadUILevel : MonoBehaviour
     private SettingManager settingManager;
 
     private LevelManager levelManager;
-    private int numberRow = 5;
-    private int numberColumn = 5;
+    [SerializeField] private int numberRow = 5;
+    [SerializeField] private int numberColumn = 3;
     float widthItem = 0;
     float heightItem = 0;
     private int indexLevel;
@@ -64,9 +64,13 @@ public class LoadUILevel : MonoBehaviour
 
         int index = PlayerPrefs.GetInt(PlayerPrefsName.indexLevelPrefs, 0);
 
+        Debug.Log(index);
+        Debug.Log(numberColumn + " " + numberRow);
+
         if (index + numberColumn * (numberRow - 1) < LevelManager.Instance.listDataLevel.Count)
         {
-            index = index + numberRow * (numberRow - 1);
+            index = index + numberColumn * (numberRow - 1);
+            Debug.Log(index);
         }
 
         PlayerPrefs.SetInt(PlayerPrefsName.indexLevelPrefs, index);
