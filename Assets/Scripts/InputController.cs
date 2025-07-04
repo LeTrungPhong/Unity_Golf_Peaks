@@ -95,7 +95,6 @@ public class InputController : MonoBehaviour
             direction = 0;
 
             gameManager.StopTouch();
-
             gameManager.FocusButton();
             gameManager.HiddenDirect();
         }

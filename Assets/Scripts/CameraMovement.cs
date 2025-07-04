@@ -22,7 +22,13 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
         gameObject.transform.position = postCam - postChange;
-        gameObject.transform.DOMove(postCam, 1.5f).SetEase(Ease.OutQuad);
+        if (LevelManager.Instance.animationLoadMap == true)
+        {
+            gameObject.transform.DOMove(postCam, 1.5f).SetEase(Ease.OutQuad);
+        } else
+        {
+            gameObject.transform.position = postCam;
+        }
     }
 
     // Update is called once per frame

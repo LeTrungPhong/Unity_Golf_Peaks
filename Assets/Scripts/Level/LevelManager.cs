@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using TMPro;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -14,6 +8,7 @@ public class LevelManager : MonoBehaviour
     public List<SpawnObstacleLevelScriptableObject> listDataLevel;
     public int levelSelected;
     public int indexLevel;
+    public bool animationLoadMap = true;
 
     // Start is called before the first frame update
 

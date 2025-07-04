@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,6 +25,7 @@ public struct Move
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI stateGame;
     [SerializeField] private GameObject gameObjectHintDirect;
     [SerializeField] private GameObject gameObjectCamera;
@@ -93,9 +95,9 @@ public class GameManager : MonoBehaviour
         {
             GameNotData();
         }
-        FocusButton();
+        //FocusButton();
 
-        Debug.Log("Level: " + levelManager.levelSelected);
+        //Debug.Log("Level: " + levelManager.levelSelected);
 
         if (levelManager.levelSelected == 0)
         {
@@ -117,7 +119,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerator DelayHint()
     {
-        yield return new WaitForSeconds(2.0f);
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = false;
+        yield return new WaitForSeconds(1.7f);
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
         StartHint();
     }
 
@@ -178,6 +184,7 @@ public class GameManager : MonoBehaviour
         stateGame.color = Color.green;
         stateGame.text = "Game Win";
         //stateGame.gameObject.SetActive(true);
+        levelManager.animationLoadMap = true;
         PlayerPrefs.SetInt(levelManager.levelSelected.ToString(), 1);
         cameraMovement.CameraChangeLevel();
         StartCoroutine(DelayToNextMap());
@@ -211,20 +218,22 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
-        Debug.Log(playerController.checkMove + " " + playerController.checkBallMove);
+        //Debug.Log(playerController.checkMove + " " + playerController.checkBallMove);
         SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
-        if (playerController.checkMove == false && playerController.checkBallMove == false)
-        {
-            //StartCoroutine(DelayedReset());
-            Debug.Log("Reset game");
-            //SceneManager.LoadScene("GamePlay");
-            isGameOver = false;
-            //Debug.Log(listButton.Count);
-            NumberBack(listButton.Count);
-            canvasScript.DisplayHint();
-            effectSurfaceManager.StopEffectConveyor();
-            gameObjectHintDirect.SetActive(false);
-        }
+        //if (playerController.checkMove == false && playerController.checkBallMove == false)
+        //{
+        //    //StartCoroutine(DelayedReset());
+        //    Debug.Log("Reset game");
+        //    //SceneManager.LoadScene("GamePlay");
+        //    isGameOver = false;
+        //    //Debug.Log(listButton.Count);
+        //    NumberBack(listButton.Count);
+        //    canvasScript.DisplayHint();
+        //    effectSurfaceManager.StopEffectConveyor();
+        //    gameObjectHintDirect.SetActive(false);
+        //}
+        LevelManager.Instance.animationLoadMap = false;
+        SceneManager.LoadScene("GamePlay");
     }
 
     public IEnumerator DelayedReset()
@@ -415,9 +424,12 @@ public class GameManager : MonoBehaviour
         btnRect.anchorMin = new Vector2(0.5f, 0);
         btnRect.anchorMax = new Vector2(0.5f, 0);
         btnRect.pivot = new Vector2(0.5f, 0);
-        btnRect.anchoredPosition = new Vector2(((float)transButtonX / (length + 4)) * ((float)index - (float)length / 2 + 0.5f), transButtonY);
+        btnRect.anchoredPosition = new Vector2(((float)transButtonX / (length + 4)) * ((float)index - (float)length / 2 + 0.5f), -heigtButton);
+
+        StartCoroutine(DelayShowCard(button, (index + 1.5f) * 0.01f, index, length));
+
         //transButtonY = transButtonY + heigtButton + spaceButton;
-        
+
         //Debug.Log((float)length / 2);
         // Chỉnh kích thước văn bản
 
@@ -431,12 +443,10 @@ public class GameManager : MonoBehaviour
 
         // Thêm sự kiện khi nhấn Button
         button.onClick.AddListener(() => {
-            //Debug.Log(value[0]);
-            //Debug.Log(value[1]);
-            //Debug.Log(value[2]);
             playerController.setNumber(value[0], value[1], value[2]);
             selectButton = button;
             SelectButton(button);
+
             if (levelManager.levelSelected == 0 && hiddenSoundButtonClickFirst == false && checkShowTouch == false)
             {
                 StopHint();
@@ -446,13 +456,32 @@ public class GameManager : MonoBehaviour
             if (hiddenSoundButtonClickFirst == false)
             {
                 //SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
-            } else
+            }
+            else
             {
                 hiddenSoundButtonClickFirst = false;
             }
         });
 
         listButton.Add(button);
+    }
+    private IEnumerator DelayShowCard(Button btn, float duration, int index, int length)
+    {
+        yield return new WaitForSeconds(duration);
+        btn.transform.DOMoveY(transButtonY + 180, 0.35f)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                btn.transform.DOMoveY(transButtonY, 0.20f)
+                    .SetEase(Ease.Linear);
+            })
+            .OnComplete(() =>
+            {
+                if (index == length - 1)
+                {
+                    btn.onClick.Invoke();
+                }
+            });
     }
 
     public void SelectButton(Button button)
@@ -465,13 +494,11 @@ public class GameManager : MonoBehaviour
             if (btn == button)
             {
                 btn.GetComponent<Image>().color = Color.grey;
-                //btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.white;
                 btn.transform.DOMoveY(transButtonY + 50, duration)
                     .SetEase(Ease.Linear);
             } else
             {
                 btn.GetComponent<Image>().color = Color.white;
-                //btn.transform.GetChild(0).gameObject.GetComponent<Text>().color = Color.black;
                 btn.transform.DOMoveY(transButtonY, duration)
                     .SetEase(Ease.Linear);
             }
@@ -480,6 +507,7 @@ public class GameManager : MonoBehaviour
 
     public void FocusButton()
     {
+        Debug.Log("Focus button");
         StartCoroutine(FocusAfterDelay());
     }
 
@@ -491,11 +519,12 @@ public class GameManager : MonoBehaviour
 
         if (allButtons.Length != 0)
         {
-            foreach (Button btn in allButtons)
-            {
-                btn.onClick.Invoke();
-                break;
-            }
+            //foreach (Button btn in allButtons)
+            //{
+            //    btn.onClick.Invoke();
+            //    break;
+            //}
+            allButtons[0].onClick.Invoke();
         }
     }
 
@@ -512,8 +541,27 @@ public class GameManager : MonoBehaviour
                     move.direct = direction;
                     listHiddenButton.Add(move);
                     selectButton.gameObject.SetActive(false);
+                    ResetPositionButton();
                     return;
                 }
+            }
+        }
+    }
+
+    public void ResetPositionButton()
+    {
+        Debug.Log("Reset Position Button");
+        int index = 0;
+        int lengthButtonValid = listButton.Count - listHiddenButton.Count;
+        for (int i = 0; i < listButton.Count; ++i)
+        {
+            if (listButton[i].gameObject.activeSelf == true)
+            {
+                listButton[i].gameObject.transform.DOKill();
+                RectTransform btnRect = listButton[i].gameObject.GetComponent<RectTransform>();
+                listButton[i].GetComponent<RectTransform>().DOAnchorPosX(((float)transButtonX / (lengthButtonValid + 4)) * ((float)index - (float)lengthButtonValid / 2 + 0.5f), 0.2f)
+                    .SetEase(Ease.Linear);
+                index++;
             }
         }
     }
@@ -575,7 +623,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Reset");
         canvasScript.HintToReset();
         HiddenDirect();
     }

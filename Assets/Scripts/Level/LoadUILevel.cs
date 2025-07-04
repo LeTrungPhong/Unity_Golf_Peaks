@@ -180,6 +180,7 @@ public class LoadUILevel : MonoBehaviour
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.SoundList[(int)SoundType.BUTTON_CLICK]);
                 LevelManager.Instance.SetLevel(index);
+                LevelManager.Instance.animationLoadMap = true;
                 SceneManager.LoadScene("GamePlay");
             });
         }
